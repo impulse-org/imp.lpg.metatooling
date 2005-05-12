@@ -1,0 +1,13 @@
+    
+
+    public void setSym1(Ast node) {
+    	lpgParser.setSym1(node);
+    }
+    
+    private Ast getSym(Rule rule, int n) {
+    	if (rule.isTerminal(n-1))
+			return null;
+    	return (Ast)lpgParser.getSym(n);
+    }
+
+}

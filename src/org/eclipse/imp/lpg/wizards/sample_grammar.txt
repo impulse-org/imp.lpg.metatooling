@@ -1,0 +1,28 @@
+%Options la=2,package=$PKG$
+
+-- This is just a sample grammar and not a real grammar for $LNG$
+
+$Terminals              
+    -- Here you list all the terminals defined by this grammar.
+
+    SEMICOLON ::= ';'       -- define the known symbols
+    ASSIGN ::= '='
+    PLUS ::= '+'
+    MINUS ::= '-'
+    IDENTIFIER              -- see Scanner.java
+$End
+
+$Rules
+    -- In this section you list all the rules for your grammar.
+    -- When reduced, each rule will produce one Ast node.
+
+    block ::= $empty
+    block ::= block statement
+    statement ::= IDENTIFIER '=' expression ';'
+    expression ::= term
+    expression ::= expression '+' term
+    expression ::= expression '-' term
+    term ::= IDENTIFIER
+$End
+
+-- Make sure you check the todo's (see the Task View)

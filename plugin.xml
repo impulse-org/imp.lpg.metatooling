@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.jikespg.uide"
+   name="org.jikespg.uide"
+   version="1.0.1"
+   provider-name="IBM"
+   >
+
+   <runtime>
+      <library name="jikespg.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.pde.core"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.uide"/>
+   </requires>
+   
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="org.jikespg.uide.wizards.NewGrammarWizard"
+            icon="icons/sample.gif"
+            category="org.eclipse.uide.wizards/org.eclipse.uide.wizards.parser"
+            name="Parser using JikesPG"
+            id="org.jikespg.uide.NewJikesPGParserWizard"/>
+   </extension>
+ 
+  <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="JikesPG Editor"
+            icon="icons/JikesPG.gif"
+            extensions="g"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.jikespg.uide.editor.Editor"
+            id="org.jikespg.uide.editor.Editor">
+      </editor>
+   </extension>
+   <extension
+         id="jikesPGBuilder"
+         name="JikesPG Grammar File Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run class="org.jikespg.uide.builder.JikesPGBuilder"/>
+      </builder>
+   </extension>
+   <extension
+         id="xmlBuilder"
+         name="JikesPG XML Output Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run class="org.jikespg.uide.builder.XmlBuilder"/>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="JikesPG UIDE"
+            id="org.jikespg.uide"/>
+      <view
+            class="org.jikespg.uide.views.JikesPGView"
+            icon="icons/sample.gif"
+            category="org.jikespg.uide"
+            name="JikesPG Console"
+            id="org.jikespg.uide.views.JikesPGView"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"
+               id="org.jikespg.uide.views.JikesPGView"/>
+      </perspectiveExtension>
+   </extension>  
+   
+</plugin>
