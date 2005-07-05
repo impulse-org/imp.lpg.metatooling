@@ -3,14 +3,11 @@ package org.jikespg.uide.wizards;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,9 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -38,8 +33,8 @@ import org.eclipse.uide.wizards.ExtensionPointWizardPage;
  */
 
 public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard {
-	private NewGrammarWizardPage page;
-	private ISelection selection;
+//	private NewGrammarWizardPage page;
+//	private ISelection selection;
 
 	/**
 	 * Constructor for NewLanguageWizard.
@@ -168,20 +163,20 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
         return file;
     }
 	
-	private void generateFile(IProject project, IContainer src, String input) {
-		try {
-			String output = "org/jikes/lpg/runtime/"+input+".java";
-			input = input+"_java.txt";
-			IFile file = src.getFile(new Path(output));		
-			if (file.exists())
-				return;
-			file.create(NewGrammarWizard.class.getResourceAsStream(input), IResource.NONE, null);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			MessageDialog.openError(new Shell(), "UIDE Internal Error", "Missing file: "+input);
-		}
-	}
+//	private void generateFile(IProject project, IContainer src, String input) {
+//		try {
+//			String output = "org/jikes/lpg/runtime/"+input+".java";
+//			input = input+"_java.txt";
+//			IFile file = src.getFile(new Path(output));		
+//			if (file.exists())
+//				return;
+//			file.create(NewGrammarWizard.class.getResourceAsStream(input), IResource.NONE, null);
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//			MessageDialog.openError(new Shell(), "UIDE Internal Error", "Missing file: "+input);
+//		}
+//	}
 
 	
 	private void addBuilder(IProject project, String id) throws CoreException {
@@ -229,6 +224,6 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
+//		this.selection = selection;
 	}
 }

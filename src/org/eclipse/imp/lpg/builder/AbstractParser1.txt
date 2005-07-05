@@ -138,8 +138,8 @@ public abstract class AbstractParser implements RuleAction, IParser, ILanguageSe
                             errorToken));
                 }
             } else {
-                int startOffset = errorToken.getStartOffset();
-                int endOffset = errorToken.getEndOffset();
+//              int startOffset = errorToken.getStartOffset();
+//              int endOffset = errorToken.getEndOffset();
                 String tokenKindName = errorToken.getTokenKindName();
                 String value = result.getString(errorToken);
                 result.errors.add(new ParseError("Syntax error on \"" + value

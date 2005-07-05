@@ -1,7 +1,5 @@
 package org.jikespg.uide.wizards;
 
-import java.util.List;
-
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
@@ -9,7 +7,6 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.uide.core.ErrorHandler;
 import org.eclipse.uide.wizards.ExtensionPointEnabler;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
@@ -24,7 +21,7 @@ import org.eclipse.uide.wizards.ExtensionPointWizardPage;
 
 public class NewGrammarWizardPage extends ExtensionPointWizardPage {
 	
-	private Text packageText;
+//	private Text packageText;
     private String packageName;
     private static final String UIDE = "org.eclipse.uide";
     private static final String JIKESPG = "org.jikespg.uide";

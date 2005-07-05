@@ -83,11 +83,11 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 	protected void compile(String fileName, final IResource currentResource) {
 		if (!currentResource.exists())
 			return;
-		IPath projectRelativePath = currentResource.getProjectRelativePath();
+//		IPath projectRelativePath = currentResource.getProjectRelativePath();
         //System.out.println("JikesPG builder runs on "+currentResource.getProject()+". Compiling "+fileName);
 		try {
 			File includeDir = new File(fileName).getParentFile();
-			String includeDirName = includeDir.getAbsolutePath();
+//			String includeDirName = includeDir.getAbsolutePath();
 			String cmd[] = new String[] {
 					getLpgExecutable(),
 					"-list",
@@ -107,7 +107,7 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 			Process process = Runtime.getRuntime().exec(cmd,new String[0],includeDir);
 			InputStream is = process.getInputStream();
 			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			String projectLocation = currentResource.getProject().getLocation().toOSString();
+//			String projectLocation = currentResource.getProject().getLocation().toOSString();
 			String line = null;
 			JikesPGView view = JikesPGView.getDefault();
 			while ((line = in.readLine()) != null) {
@@ -129,6 +129,8 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 			is = process.getErrorStream();
 			in = new BufferedReader(new InputStreamReader(is));
 			while ((line = in.readLine()) != null) {
+				if (view != null)
+					JikesPGView.println(line);
 				System.err.println(line);
 			}
 			new Thread() {

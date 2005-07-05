@@ -35,14 +35,14 @@ public class XmlOutputParser {
 	private static HashMap aliases;
 	private static HashSet terminals;
 	private static HashMap warnings;
-	private static int maximumRuleSize;
+//	private static int maximumRuleSize;
 	
 	static void parse(IProject project, String xmlFileName) throws FactoryConfigurationError, ParserConfigurationException, SAXException, IOException {
 		options = new HashMap();
 		aliases = new HashMap();
 		warnings = new HashMap();
 		terminals = new HashSet();
-		maximumRuleSize = 0;
+//		maximumRuleSize = 0;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder parser = factory.newDocumentBuilder();
 		org.w3c.dom.Document doc = parser.parse(xmlFileName);
@@ -131,7 +131,7 @@ public class XmlOutputParser {
 	        	return;
 	        String file = getStringAttribute(attributes, "file", null);
 	        if (file != null) msg += ": "+file;
-	        String template = getStringAttribute(attributes, "template", "");
+//	        String template = getStringAttribute(attributes, "template", "");
 	        IResource resource = getProjectFile(project, getOutputDirectory(project), file);
 	        int lineNumber = getIntAttribute(attributes, "start-line", 1);
 	        int startOffset = getIntAttribute(attributes, "start-offset", 1);
@@ -208,8 +208,8 @@ public class XmlOutputParser {
 
 	static void parseOptions(Node node, NamedNodeMap attributes, IProject project) {
 		try {
-			String file = getStringAttribute(attributes, "file", "");
-	        IResource resource = getProjectFile(project, getOutputDirectory(project), file);
+//			String file = getStringAttribute(attributes, "file", "");
+//	        IResource resource = getProjectFile(project, getOutputDirectory(project), file);
 		    NodeList nodes = node.getChildNodes();
 		    for(int i=0; i<nodes.getLength(); i++) {
 		        Node option = nodes.item(i);
@@ -365,8 +365,8 @@ public class XmlOutputParser {
     }
 
 	private static void generateParserRuleBody(PrintStream ps, Node rule, String packageName, NamedNodeMap attributes, int nr, String className) {
-		String lhs = getStringAttribute(attributes, "lhs", "<unknown lhs>");
-		String astClass = lhs;
+//		String lhs = getStringAttribute(attributes, "lhs", "<unknown lhs>");
+//		String astClass = lhs;
 		NodeList rhss = rule.getChildNodes();
 		for (int k=rhss.getLength()-1; k>=0; k--) {
 			Node rhs = rhss.item(k);
@@ -375,8 +375,8 @@ public class XmlOutputParser {
 		rhss = rule.getChildNodes();
         ps.println();
 		ps.println("\tvoid ruleAction"+nr+"() {");
-		String base = packageName.substring(0, packageName.lastIndexOf('.'));
-		String astName = base+".model.AstNodeWith"+rhss.getLength()+"Children";
+//		String base = packageName.substring(0, packageName.lastIndexOf('.'));
+//		String astName = base+".model.AstNodeWith"+rhss.getLength()+"Children";
 		ps.println("\t\tAst ast = createAstNode(Rule.rule"+nr+");");
 		for (int k=0; k<rhss.getLength(); k++) {
 			ps.println("\t\tast.addChild(this,(Ast)getSym(Rule.rule"+nr+", "+(k+1)+
