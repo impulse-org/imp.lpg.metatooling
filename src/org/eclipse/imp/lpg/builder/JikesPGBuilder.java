@@ -96,6 +96,7 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 					//"-scopes",		// generates GPF
 					"-em",
 					"-parseTable=org.jikes.lpg.runtime.*",
+					// TODO RMF 7/21/05 -- probably shouldn't use this - performance issue - ask Philippe for details
 					"-dat-directory="+getOutputDirectory(currentResource.getProject()),
 					fileName.replace('/','\\')
 			};
