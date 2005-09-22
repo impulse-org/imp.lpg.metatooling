@@ -2,6 +2,7 @@ package org.jikespg.uide.wizards;
 
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.swt.events.ModifyEvent;
@@ -54,7 +55,7 @@ public class NewGrammarWizardPage extends ExtensionPointWizardPage {
 
     public String getLanguage() {
         try {
-            WorkspacePluginModel plugin = ExtensionPointEnabler.getPlugin(NewGrammarWizardPage.this);
+            IPluginModel plugin = ExtensionPointEnabler.getPlugin(NewGrammarWizardPage.this);
             if (plugin != null) {
                 IPluginExtension[] extensions = plugin.getExtensions().getExtensions();
                 for (int n = 0; n < extensions.length; n++) {
