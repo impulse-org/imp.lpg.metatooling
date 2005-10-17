@@ -36,6 +36,8 @@ import org.osgi.framework.Bundle;
 public class JikesPGBuilder extends IncrementalProjectBuilder {
     private static final String PLUGIN_ID= "org.jikespg.uide";
 
+    private static final String LPG_PLUGIN_ID= "lpg"; // houses the templates and the LPG executable
+
     private static final String JIKESPG_PROBLEM_MARKER= "org.jikespg.uide.problem";
 
     String lpg;
@@ -109,17 +111,18 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 	// System.out.println("JikesPG builder runs on "+currentResource.getProject()+". Compiling "+fileName);
 	try {
 	    File includeDir= new File(fileName).getParentFile();
-	    //			String includeDirName = includeDir.getAbsolutePath();
+	    // String includeDirName = includeDir.getAbsolutePath();
 	    String cmd[]= new String[] {
 		    getLpgExecutable(),
 		    "-list",
-		    "-table=java",
-		    "-escape=$",
-		    //"-scopes",		// generates GPF
-		    "-em",
-		    "-parseTable=org.jikes.lpg.runtime.*",
-		    // TODO RMF 7/21/05 -- probably shouldn't use this - performance issue - ask Philippe for details
-		    "-dat-directory=" + getOutputDirectory(resource.getProject()),
+		    // TODO RMF 7/21/05 -- Don't specify -dat-directory; causes performance issues with Eclipse.
+		    // Lexer tables can get quite large, so large that Java as spec'ed can't swallow them
+		    // when translated to a switch statement, or even an array initializer. As a result,
+		    // JikesPG supports the "-dat-directory" option to spill the tables into external data
+		    // files loaded by the lexer at runtime. HOWEVER, loading these external data tables is
+		    // very slow when performed using the standard Eclipse/plugin classloader.
+		    // So: don't enable it by default.
+		    // "-dat-directory=" + getOutputDirectory(resource.getProject()),
 		    fileName.replace('/', '\\') };
 	    // String projectLocation = currentResource.getProject().getLocation().toOSString();
 	    Process process= Runtime.getRuntime().exec(cmd, new String[0], includeDir);
@@ -229,8 +232,8 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 
     String getLpgExecutable() throws IOException {
 	if (lpg == null) {
-	    Bundle bundle= Platform.getBundle(PLUGIN_ID);
-	    Path path= new Path("lpg.exe");
+	    Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
+	    Path path= new Path("bin/lpg.exe");
 	    URL url= Platform.resolve(Platform.find(bundle, path));
 	    lpg= url.getFile();
 	    if (lpg.startsWith("/"))
