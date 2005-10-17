@@ -158,6 +158,9 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 	is.close();
     }
 
+    final String lineSep= System.getProperty("line.separator");
+    final int lineSepBias= lineSep.length() - 1;
+
     private void processJikesPGOutput(final IResource resource, Process process, JikesPGView view) throws IOException {
 	InputStream is= process.getInputStream();
 	BufferedReader in= new BufferedReader(new InputStreamReader(is));
@@ -178,6 +181,8 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 		    int startCol= Integer.parseInt(matcher.group(3));
 		    int endLine= Integer.parseInt(matcher.group(4));
 		    int endCol= Integer.parseInt(matcher.group(5));
+		    int startChar= Integer.parseInt(matcher.group(6)) + (startLine - 1) * lineSepBias;
+		    int endChar= Integer.parseInt(matcher.group(7)) + (startLine - 1) * lineSepBias;
 		    String descrip= matcher.group(8);
 
 		    try {
@@ -185,6 +190,8 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 
 			m.setAttribute(IMarker.LINE_NUMBER, startLine);
 			m.setAttribute(IMarker.MESSAGE, descrip);
+			m.setAttribute(IMarker.CHAR_START, startChar);
+			m.setAttribute(IMarker.CHAR_END, endChar);
 			m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 			m.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
 		    } catch (CoreException e) {
