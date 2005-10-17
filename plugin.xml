@@ -56,14 +56,14 @@
          <run class="org.jikespg.uide.builder.JikesPGBuilder"/>
       </builder>
    </extension>
-   <extension
+<!--   <extension
          id="xmlBuilder"
          name="JikesPG XML Output Builder"
          point="org.eclipse.core.resources.builders">
       <builder>
          <run class="org.jikespg.uide.builder.XmlBuilder"/>
       </builder>
-   </extension>
+   </extension> -->
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -85,6 +85,12 @@
                relative="org.eclipse.ui.views.TaskList"
                id="org.jikespg.uide.views.JikesPGView"/>
       </perspectiveExtension>
+   </extension>
+   <extension
+         id="problem"
+         name="JikesPG Error"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
    </extension>  
    
 </plugin>
