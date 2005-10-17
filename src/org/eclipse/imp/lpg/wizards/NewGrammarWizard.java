@@ -33,111 +33,104 @@ import org.eclipse.uide.wizards.ExtensionPointWizardPage;
  */
 
 public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard {
-//	private NewGrammarWizardPage page;
-//	private ISelection selection;
+    //	private NewGrammarWizardPage page;
+    //	private ISelection selection;
 
-	/**
-	 * Constructor for NewLanguageWizard.
-	 */
-	public NewGrammarWizard() {
-		super();
-		setNeedsProgressMonitor(true);
-	}
-	
-    
-    public void addPages() {        
-        addPages(new ExtensionPointWizardPage[] {
-            new NewGrammarWizardPage(this),
-        });
-    }  
-
-	/**
-	 * This method is called when 'Finish' button is pressed in
-	 * the wizard. We will create an operation and run it
-	 * using wizard as execution context.
-	 */
-	public boolean performFinish() {
-        super.performFinish();
-        IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					doFinish(monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		try {
-			getContainer().run(true, false, op);
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * The worker method. It will find the container, create the
-	 * file if missing or just replace its contents, and open
-	 * the editor on the newly created file.
-	 */
-	private void doFinish(IProgressMonitor monitor) throws CoreException {	
-        NewGrammarWizardPage page = (NewGrammarWizardPage)pages[0];
-		IProject project = page.getProject();
-        String packageName = page.getPackage();
-        String languageName = page.getLanguage();
-        String fileName = "src/"+languageName.toLowerCase() + ".g";
-		IFile file = createSampleGrammarFile(monitor, project, packageName, languageName, fileName);
-		editSampleGrammarFile(monitor, file);		
-		enableBuilders(monitor, file);
+    /**
+     * Constructor for NewLanguageWizard.
+     */
+    public NewGrammarWizard() {
+	super();
+	setNeedsProgressMonitor(true);
     }
 
+    public void addPages() {
+	addPages(new ExtensionPointWizardPage[] { new NewGrammarWizardPage(this), });
+    }
+
+    /**
+     * This method is called when 'Finish' button is pressed in
+     * the wizard. We will create an operation and run it
+     * using wizard as execution context.
+     */
+    public boolean performFinish() {
+	super.performFinish();
+	IRunnableWithProgress op= new IRunnableWithProgress() {
+	    public void run(IProgressMonitor monitor) throws InvocationTargetException {
+		try {
+		    doFinish(monitor);
+		} catch (CoreException e) {
+		    throw new InvocationTargetException(e);
+		} finally {
+		    monitor.done();
+		}
+	    }
+	};
+	try {
+	    getContainer().run(true, false, op);
+	} catch (InterruptedException e) {
+	    return false;
+	} catch (InvocationTargetException e) {
+	    Throwable realException= e.getTargetException();
+	    MessageDialog.openError(getShell(), "Error", realException.getMessage());
+	    return false;
+	}
+	return true;
+    }
+
+    /**
+     * The worker method. It will find the container, create the
+     * file if missing or just replace its contents, and open
+     * the editor on the newly created file.
+     */
+    private void doFinish(IProgressMonitor monitor) throws CoreException {
+	NewGrammarWizardPage page= (NewGrammarWizardPage) pages[0];
+	IProject project= page.getProject();
+	String packageName= page.getPackage();
+	String languageName= page.getLanguage();
+	String fileName= "src/" + languageName.toLowerCase() + ".g";
+	IFile file= createSampleGrammarFile(monitor, project, packageName, languageName, fileName);
+	editSampleGrammarFile(monitor, file);
+	enableBuilders(monitor, file);
+    }
 
     /**
      * @param monitor
      * @param file
      */
     private void enableBuilders(IProgressMonitor monitor, final IFile file) {
-        monitor.setTaskName("Enabling builders...");
-        Job job = new WorkspaceJob("Enabling builders...") {
-			public IStatus runInWorkspace(IProgressMonitor monitor) {
-				try {
-					addBuilder(file.getProject(), "org.jikespg.uide.jikesPGBuilder");
-					addBuilder(file.getProject(), "org.jikespg.uide.xmlBuilder");
-				} catch (Throwable e) {
-					e.printStackTrace();
-				}
-				return Status.OK_STATUS;
-			}
-		};
-        job.schedule();
+	monitor.setTaskName("Enabling builders...");
+	Job job= new WorkspaceJob("Enabling builders...") {
+	    public IStatus runInWorkspace(IProgressMonitor monitor) {
+		try {
+		    addBuilder(file.getProject(), "org.jikespg.uide.jikesPGBuilder");
+		    addBuilder(file.getProject(), "org.jikespg.uide.xmlBuilder");
+		} catch (Throwable e) {
+		    e.printStackTrace();
+		}
+		return Status.OK_STATUS;
+	    }
+	};
+	job.schedule();
     }
-
 
     /**
      * @param monitor
      * @param file
      */
     private void editSampleGrammarFile(IProgressMonitor monitor, final IFile file) {
-        monitor.setTaskName("Opening file for editing...");
-        getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchPage page =
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				try {
-					IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
-				}
-			}
-		});
-        monitor.worked(1);
+	monitor.setTaskName("Opening file for editing...");
+	getShell().getDisplay().asyncExec(new Runnable() {
+	    public void run() {
+		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		try {
+		    IDE.openEditor(page, file, true);
+		} catch (PartInitException e) {
+		}
+	    }
+	});
+	monitor.worked(1);
     }
-
 
     /**
      * @param monitor
@@ -148,82 +141,81 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
      * @return
      * @throws CoreException
      */
-    private IFile createSampleGrammarFile(IProgressMonitor monitor, IProject project, String packageName, String languageName, String fileName) throws CoreException {
-        monitor.beginTask("Creating " + fileName, 2);
-        final IFile file = project.getFile(new Path(fileName));
-        StringBuffer buffer = new StringBuffer(new String(getSampleGrammar()));
-        replace(buffer, "$LNG$", languageName);
-        replace(buffer, "$PKG$", packageName);
-        if (file.exists()) {
-			file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
-		} else {
-			file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
-		}
-        monitor.worked(1);
-        return file;
+    private IFile createSampleGrammarFile(IProgressMonitor monitor, IProject project, String packageName, String languageName,
+	    String fileName) throws CoreException {
+	monitor.beginTask("Creating " + fileName, 2);
+	final IFile file= project.getFile(new Path(fileName));
+	StringBuffer buffer= new StringBuffer(new String(getSampleGrammar()));
+	replace(buffer, "$LNG$", languageName);
+	replace(buffer, "$PKG$", packageName);
+	if (file.exists()) {
+	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
+	} else {
+	    file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
+	}
+	monitor.worked(1);
+	return file;
     }
-	
-//	private void generateFile(IProject project, IContainer src, String input) {
-//		try {
-//			String output = "org/jikes/lpg/runtime/"+input+".java";
-//			input = input+"_java.txt";
-//			IFile file = src.getFile(new Path(output));		
-//			if (file.exists())
-//				return;
-//			file.create(NewGrammarWizard.class.getResourceAsStream(input), IResource.NONE, null);
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//			MessageDialog.openError(new Shell(), "UIDE Internal Error", "Missing file: "+input);
-//		}
-//	}
 
-	
-	private void addBuilder(IProject project, String id) throws CoreException {
-		IProjectDescription desc = project.getDescription();
-		ICommand[] commands = desc.getBuildSpec();
-		for (int i = 0; i < commands.length; ++i)
-			if (commands[i].getBuilderName().equals(id))
-				return;
-		//add builder to project
-		ICommand command = desc.newCommand();
-		command.setBuilderName(id);
-		ICommand[] nc = new ICommand[commands.length + 1];
-		// Add it before other builders.
-		System.arraycopy(commands, 0, nc, 1, commands.length);
-		nc[0] = command;
-		desc.setBuildSpec(nc);
-		project.setDescription(desc, null);
-	}
-		
-	/**
-	 * We will initialize file contents with a sample grammar.
-	 */
-	private byte[] getSampleGrammar() {
-		try {
-			DataInputStream is = new DataInputStream(NewGrammarWizard.class.getResourceAsStream("sample_grammar.txt"));
-			byte bytes[] = new byte[is.available()];
-			is.readFully(bytes);
-			is.close();
-            return bytes;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return "// missing sample grammar file".getBytes();
-		}
-	}
+    //	private void generateFile(IProject project, IContainer src, String input) {
+    //		try {
+    //			String output = "org/jikes/lpg/runtime/"+input+".java";
+    //			input = input+"_java.txt";
+    //			IFile file = src.getFile(new Path(output));		
+    //			if (file.exists())
+    //				return;
+    //			file.create(NewGrammarWizard.class.getResourceAsStream(input), IResource.NONE, null);
+    //		}
+    //		catch (Exception e) {
+    //			e.printStackTrace();
+    //			MessageDialog.openError(new Shell(), "UIDE Internal Error", "Missing file: "+input);
+    //		}
+    //	}
 
-	static void replace(StringBuffer sb, String goal, String substitute) {
-		for (int index = sb.indexOf(goal); index!=-1; index = sb.indexOf(goal))
-			sb.replace(index, index+goal.length(), substitute);
+    private void addBuilder(IProject project, String id) throws CoreException {
+	IProjectDescription desc= project.getDescription();
+	ICommand[] commands= desc.getBuildSpec();
+	for(int i= 0; i < commands.length; ++i)
+	    if (commands[i].getBuilderName().equals(id))
+		return;
+	//add builder to project
+	ICommand command= desc.newCommand();
+	command.setBuilderName(id);
+	ICommand[] nc= new ICommand[commands.length + 1];
+	// Add it before other builders.
+	System.arraycopy(commands, 0, nc, 1, commands.length);
+	nc[0]= command;
+	desc.setBuildSpec(nc);
+	project.setDescription(desc, null);
+    }
+
+    /**
+     * We will initialize file contents with a sample grammar.
+     */
+    private byte[] getSampleGrammar() {
+	try {
+	    DataInputStream is= new DataInputStream(NewGrammarWizard.class.getResourceAsStream("sample_grammar.txt"));
+	    byte bytes[]= new byte[is.available()];
+	    is.readFully(bytes);
+	    is.close();
+	    return bytes;
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    return "// missing sample grammar file".getBytes();
 	}
-	
-	/**
-	 * We will accept the selection in the workbench to see if
-	 * we can initialize from it.
-	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-//		this.selection = selection;
-	}
+    }
+
+    static void replace(StringBuffer sb, String goal, String substitute) {
+	for(int index= sb.indexOf(goal); index != -1; index= sb.indexOf(goal))
+	    sb.replace(index, index + goal.length(), substitute);
+    }
+
+    /**
+     * We will accept the selection in the workbench to see if
+     * we can initialize from it.
+     * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
+     */
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+	//		this.selection = selection;
+    }
 }
