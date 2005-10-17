@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -48,17 +49,21 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
     private final Pattern MSG_PATTERN= Pattern.compile(MSG_REGEXP);
 
     protected IProject[] build(int kind, Map args, IProgressMonitor monitor) {
-	if (kind == IncrementalProjectBuilder.FULL_BUILD) {
-	    fullBuild(monitor);
-	} else {
-	    IResourceDelta delta= getDelta(getProject());
-	    if (delta == null) {
+	try {
+	    if (kind == IncrementalProjectBuilder.FULL_BUILD) {
 		fullBuild(monitor);
 	    } else {
-		incrementalBuild(delta, monitor);
+		IResourceDelta delta= getDelta(getProject());
+		if (delta == null) {
+		    fullBuild(monitor);
+		} else {
+		    incrementalBuild(delta, monitor);
+		}
 	    }
+	} catch (CoreException e) {
+	    e.printStackTrace();
 	}
-	return null;
+	return new IProject[0];
     }
 
     private boolean isGrammarFile(IResource resource) {
@@ -69,26 +74,33 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 	return (fileName.indexOf("/bin/") == -1 && "g".equals(path.getFileExtension()));
     }
 
-    private void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) {
-	try {
-	    delta.accept(new IResourceDeltaVisitor() {
-		public boolean visit(IResourceDelta delta) {
-		    IResource resource= delta.getResource();
-//		    if (!resource.getProject().equals(getProject()))
-//			return false;
-		    if (isGrammarFile(resource) && resource.exists()) {
-			try {
-			    resource.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-			} catch (CoreException e) {
-			}
-			compile(resource);
-		    }
-		    return true; // visit children too
+    private void fullBuild(IProgressMonitor monitor) throws CoreException {
+	getProject().accept(new IResourceVisitor() {
+	    public boolean visit(IResource resource) throws CoreException {
+		if (isGrammarFile(resource) && resource.exists()) {
+		    compile(resource);
+		    return false;
 		}
-	    });
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+		return true;
+	    }
+	});
+    }
+
+    private void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
+	delta.accept(new IResourceDeltaVisitor() {
+	    public boolean visit(IResourceDelta delta) {
+		IResource resource= delta.getResource();
+		if (isGrammarFile(resource) && resource.exists()) {
+		    try {
+			resource.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		    } catch (CoreException e) {
+		    }
+		    compile(resource);
+		    return false;
+		}
+		return true; // visit children too
+	    }
+	});
     }
 
     protected void compile(final IResource resource) {
@@ -219,9 +231,5 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 	    lpg= lpg.replace('/', '\\');
 	}
 	return lpg;
-    }
-
-    private void fullBuild(IProgressMonitor monitor) {
-	System.out.println("full LPG build"); // TODO: implement full Lpg builder
     }
 }
