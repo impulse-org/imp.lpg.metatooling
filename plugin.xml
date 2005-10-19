@@ -24,6 +24,8 @@
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.uide.runtime"/>
+      <import plugin="lpg"/>
       <import plugin="org.eclipse.uide"/>
    </requires>
    
