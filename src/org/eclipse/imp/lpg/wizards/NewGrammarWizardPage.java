@@ -9,6 +9,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.uide.core.ErrorHandler;
+import org.eclipse.uide.runtime.RuntimePlugin;
 import org.eclipse.uide.wizards.ExtensionPointEnabler;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
@@ -28,7 +29,7 @@ public class NewGrammarWizardPage extends ExtensionPointWizardPage {
     private static final String JIKESPG = "org.jikespg.uide";
     
     public NewGrammarWizardPage(ExtensionPointWizard wizard) {
-		super(wizard, "org.eclipse.uide", "parser");
+		super(wizard, RuntimePlugin.UIDE_RUNTIME, "parser");
         setTitle("LPG Grammar for New Language");
 		setDescription("This wizard creates a new grammar file with *.g extension.");
         requires.add(UIDE);
