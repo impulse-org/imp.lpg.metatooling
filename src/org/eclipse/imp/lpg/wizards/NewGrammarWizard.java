@@ -104,7 +104,7 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	    public IStatus runInWorkspace(IProgressMonitor monitor) {
 		try {
 		    addBuilder(file.getProject(), "org.jikespg.uide.jikesPGBuilder");
-		    addBuilder(file.getProject(), "org.jikespg.uide.xmlBuilder");
+//		    addBuilder(file.getProject(), "org.jikespg.uide.xmlBuilder");
 		} catch (Throwable e) {
 		    e.printStackTrace();
 		}
