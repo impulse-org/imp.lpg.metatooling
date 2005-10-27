@@ -6,11 +6,9 @@ package org.jikespg.uide.parser;
 
 
 /**
- * 
  * @author Chris Laffra
  *
  * LPG parser
- * 
  */
 public class Parser {
 	public final static String KEYWORDS[] = new String[] { 
