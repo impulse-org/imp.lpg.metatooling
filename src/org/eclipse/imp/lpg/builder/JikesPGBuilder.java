@@ -38,7 +38,7 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 
     private static final String LPG_PLUGIN_ID= "lpg"; // houses the templates and the LPG executable
 
-    private static final String JIKESPG_PROBLEM_MARKER= "org.jikespg.uide.problem";
+    private static final String JIKESPG_PROBLEM_MARKER= PLUGIN_ID + ".problem";
 
     String lpg;
 
