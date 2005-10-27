@@ -36,9 +36,6 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
     //	private NewGrammarWizardPage page;
     //	private ISelection selection;
 
-    /**
-     * Constructor for NewLanguageWizard.
-     */
     public NewGrammarWizard() {
 	super();
 	setNeedsProgressMonitor(true);
@@ -49,9 +46,8 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
     }
 
     /**
-     * This method is called when 'Finish' button is pressed in
-     * the wizard. We will create an operation and run it
-     * using wizard as execution context.
+     * This method is called when 'Finish' button is pressed in the wizard. We will create
+     * an operation and run it using wizard as execution context.
      */
     public boolean performFinish() {
 	super.performFinish();
@@ -85,11 +81,18 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
      */
     private void doFinish(IProgressMonitor monitor) throws CoreException {
 	NewGrammarWizardPage page= (NewGrammarWizardPage) pages[0];
+
 	IProject project= page.getProject();
 	String packageName= page.getPackage();
 	String languageName= page.getLanguage();
+	String templateName= page.getTemplateName();
 	String fileName= "src/" + languageName.toLowerCase() + ".g";
-	IFile file= createSampleGrammarFile(monitor, project, packageName, languageName, fileName);
+	boolean hasKeywords= page.hasKeywords();
+	boolean autoGenerateASTs= page.autoGenerateASTs();
+
+	IFile file= createSampleGrammarFile(monitor, project, packageName, languageName,
+		fileName, templateName, hasKeywords, autoGenerateASTs);
+
 	editSampleGrammarFile(monitor, file);
 	enableBuilders(monitor, file);
     }
@@ -132,22 +135,32 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	monitor.worked(1);
     }
 
+    static final String sAutoGenTemplate= "%options ast=ASTNode,visitor";
+    static final String sKeywordTemplate= "%options ast=ASTNode,visitor";
+
     /**
      * @param monitor
      * @param project
      * @param packageName
      * @param languageName
      * @param fileName
+     * @param templateName name of a JikesPG template file to use
      * @return
      * @throws CoreException
      */
     private IFile createSampleGrammarFile(IProgressMonitor monitor, IProject project, String packageName, String languageName,
-	    String fileName) throws CoreException {
+	    String fileName, String templateName, boolean hasKeywords, boolean autoGenerateASTs) throws CoreException {
 	monitor.beginTask("Creating " + fileName, 2);
+
 	final IFile file= project.getFile(new Path(fileName));
 	StringBuffer buffer= new StringBuffer(new String(getSampleGrammar()));
-	replace(buffer, "$LNG$", languageName);
-	replace(buffer, "$PKG$", packageName);
+
+	replace(buffer, "$GRAMMAR_NAME$", languageName);
+	replace(buffer, "$PACKAGE$", packageName);
+	replace(buffer, "$TEMPLATE$", templateName);
+	replace(buffer, "$KEYWORD_TEMPLATE$", hasKeywords ? "" : sKeywordTemplate);
+	replace(buffer, "$AUTO_GENERATE$", autoGenerateASTs ? "" : sAutoGenTemplate);
+
 	if (file.exists()) {
 	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
 	} else {
@@ -156,21 +169,6 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	monitor.worked(1);
 	return file;
     }
-
-    //	private void generateFile(IProject project, IContainer src, String input) {
-    //		try {
-    //			String output = "org/jikes/lpg/runtime/"+input+".java";
-    //			input = input+"_java.txt";
-    //			IFile file = src.getFile(new Path(output));		
-    //			if (file.exists())
-    //				return;
-    //			file.create(NewGrammarWizard.class.getResourceAsStream(input), IResource.NONE, null);
-    //		}
-    //		catch (Exception e) {
-    //			e.printStackTrace();
-    //			MessageDialog.openError(new Shell(), "UIDE Internal Error", "Missing file: "+input);
-    //		}
-    //	}
 
     private void addBuilder(IProject project, String id) throws CoreException {
 	IProjectDescription desc= project.getDescription();
@@ -205,9 +203,9 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	}
     }
 
-    static void replace(StringBuffer sb, String goal, String substitute) {
-	for(int index= sb.indexOf(goal); index != -1; index= sb.indexOf(goal))
-	    sb.replace(index, index + goal.length(), substitute);
+    static void replace(StringBuffer sb, String target, String substitute) {
+	for(int index= sb.indexOf(target); index != -1; index= sb.indexOf(target))
+	    sb.replace(index, index + target.length(), substitute);
     }
 
     /**
