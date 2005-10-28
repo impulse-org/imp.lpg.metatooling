@@ -39,17 +39,6 @@
             id="org.jikespg.uide.NewJikesPGParserWizard"/>
    </extension>
  
-  <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            name="JikesPG Editor"
-            icon="icons/JikesPG.gif"
-            extensions="g"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            class="org.jikespg.uide.editor.Editor"
-            id="org.jikespg.uide.editor.Editor">
-      </editor>
-   </extension>
    <extension
          id="jikesPGBuilder"
          name="JikesPG Grammar File Builder"
@@ -93,6 +82,30 @@
          name="JikesPG Error"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
+   </extension>
+   <extension
+         id="org.jikespg.uide.jikesPG"
+         name="JikesPG Language"
+         point="org.eclipse.uide.runtime.languageDescription">
+      <language
+            description="JikesPG Grammar Specification"
+            extensions="g,gi"
+            language="JikesPG"/>
+   </extension>
+   <extension
+         name="JikesPG Grammar Parser"
+         point="org.eclipse.uide.runtime.parser">
+      <parser
+            class="org.jikespg.uide.parser.ParseContoller"
+            id="org.jikespg.uide.parser"
+            language="JikesPG"
+            name="JikesPG Grammar Parser"/>
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.tokenColorer">
+      <tokenColorer
+            class="org.jikespg.uide.editor.TokenColorer"
+            language="JikesPG"/>
    </extension>  
    
 </plugin>
