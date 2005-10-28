@@ -96,7 +96,7 @@
          name="JikesPG Grammar Parser"
          point="org.eclipse.uide.runtime.parser">
       <parser
-            class="org.jikespg.uide.parser.ParseContoller"
+            class="org.jikespg.uide.parser.ParseController"
             id="org.jikespg.uide.parser"
             language="JikesPG"
             name="JikesPG Grammar Parser"/>
