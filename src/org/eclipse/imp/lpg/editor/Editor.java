@@ -8,6 +8,7 @@ package org.jikespg.uide.editor;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import org.apache.crimson.tree.ParseContext;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -43,7 +44,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.uide.core.ErrorHandler;
-import org.jikespg.uide.parser.Parser;
+import org.jikespg.uide.parser.JikesPGLexer;
 
 /**
  *  @author Chris Laffra
@@ -80,7 +81,7 @@ public class Editor extends TextEditor {
     class Configuration extends SourceViewerConfiguration {
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 	    PresentationReconciler reconciler= new PresentationReconciler();
-	    DefaultDamagerRepairer ddr= new DefaultDamagerRepairer(new Scanner());
+	    DefaultDamagerRepairer ddr= new DefaultDamagerRepairer(null);
 	    reconciler.setRepairer(ddr, IDocument.DEFAULT_CONTENT_TYPE);
 	    reconciler.setDamager(ddr, IDocument.DEFAULT_CONTENT_TYPE);
 	    return reconciler;
@@ -96,31 +97,6 @@ public class Editor extends TextEditor {
 
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 	    return new TextHover();
-	}
-    }
-
-    class Scanner extends RuleBasedScanner {
-	public Scanner() {
-	    WordRule rule= new WordRule(new IWordDetector() {
-		public boolean isWordStart(char c) {
-		    return c == '%' || c == '-' || c == ':' || Character.isJavaIdentifierStart(c);
-		}
-
-		public boolean isWordPart(char c) {
-		    return c == ':' || c == '=' || Character.isJavaIdentifierPart(c);
-		}
-	    });
-	    for(int n= 0; n < Parser.KEYWORDS.length; n++)
-		rule.addWord(Parser.KEYWORDS[n], new Token(new TextAttribute(Editor.KEYWORD, null, SWT.BOLD)));
-	    setRules(new IRule[] { rule,
-		    new SingleLineRule("--", null, new Token(new TextAttribute(Editor.COMMENT, null, SWT.BOLD))),
-		    new SingleLineRule("\"", "\"", new Token(new TextAttribute(Editor.STRING)), '\\'),
-		    new SingleLineRule("'", "'", new Token(new TextAttribute(Editor.STRING)), '\\'),
-		    new WhitespaceRule(new IWhitespaceDetector() {
-			public boolean isWhitespace(char c) {
-			    return Character.isWhitespace(c);
-			}
-		    }), });
 	}
     }
 
