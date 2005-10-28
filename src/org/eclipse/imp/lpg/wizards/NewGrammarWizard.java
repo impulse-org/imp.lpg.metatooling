@@ -136,7 +136,7 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
     }
 
     static final String sAutoGenTemplate= "%options ast=ASTNode,visitor";
-    static final String sKeywordTemplate= "%options ast=ASTNode,visitor";
+    static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
 
     /**
      * @param monitor
@@ -158,8 +158,8 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	replace(buffer, "$GRAMMAR_NAME$", languageName);
 	replace(buffer, "$PACKAGE$", packageName);
 	replace(buffer, "$TEMPLATE$", templateName);
-	replace(buffer, "$KEYWORD_TEMPLATE$", hasKeywords ? "" : sKeywordTemplate);
-	replace(buffer, "$AUTO_GENERATE$", autoGenerateASTs ? "" : sAutoGenTemplate);
+	replace(buffer, "$KEYWORD_TEMPLATE$", hasKeywords ? sKeywordTemplate : "");
+	replace(buffer, "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
 
 	if (file.exists()) {
 	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
