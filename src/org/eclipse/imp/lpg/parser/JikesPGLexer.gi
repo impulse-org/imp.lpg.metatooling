@@ -120,11 +120,38 @@ $End
 $Rules
     digit ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
-    lower ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
+    aA ::= a | A
+    bB ::= b | B
+    cC ::= c | C
+    dD ::= d | D
+    eE ::= e | E
+    fF ::= f | F
+    gG ::= g | G
+    hH ::= h | H
+    iI ::= i | I
+    jJ ::= j | J
+    kK ::= k | K
+    lL ::= l | L
+    mM ::= m | M
+    nN ::= n | N
+    oO ::= o | O
+    pP ::= p | P
+    qQ ::= q | Q
+    rR ::= r | R
+    sS ::= s | S
+    tT ::= t | T
+    uU ::= u | U
+    vV ::= v | V
+    wW ::= w | W
+    xX ::= x | X
+    yY ::= y | Y
+    zZ ::= z | Z
 
-    upper ::= A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
+--  lower ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
 
-    letter ::= lower | upper
+--  upper ::= A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
+
+    letter ::= aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
 
     any    ::= letter | digit | special | white
 
@@ -132,7 +159,19 @@ $Rules
 
     specialNoDotOrSlash ::= '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' |
                             '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
-                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_'
+
+    specialNoDoubleQuote ::= '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
+                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_'
+
+    specialNoSingleQuote ::= '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
+                            '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_'
+
+    specialNoRightAngle ::= '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
+                            '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | "'" | '=' | '#' | '*' | '_'
 
     whiteChar ::= Space | LF | CR | HT | FF
 
@@ -140,7 +179,19 @@ $Rules
 
     notEOL ::= letter | digit | special | Space | HT | FF
 
+    notEOLOrQuote ::= letter | digit | specialNoSingleQuote | Space | HT | FF
+
+    notEOLOrDoubleQuote ::= letter | digit | specialNoDoubleQuote | Space | HT | FF
+
+    notEOLOrRightAngle ::= letter | digit | specialNoRightAngle | Space | HT | FF
+
     notEOLs ::= notEOL | notEOLs notEOL
+
+    notEOLOrQuotes ::= notEOLOrQuote | notEOLOrQuotes notEOLOrQuote
+
+    notEOLOrDoubleQuotes ::= notEOLOrDoubleQuote | notEOLOrDoubleQuotes notEOLOrDoubleQuote
+
+    notEOLOrRightAngles ::= notEOLOrRightAngle | notEOLOrRightAngles notEOLOrRightAngle
 
     slc   ::= '-' '-'
             | slc notEOL
@@ -148,8 +199,8 @@ $Rules
     Token ::= white /.$BeginJava skipToken(); $EndJava./
             | slc   /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
 
-    Equivalence ::= : : =
-    Arrow       ::= - >
+    Equivalence ::= ':' ':' '='
+    Arrow       ::= '-' '>'
 
     Dots  ::= '.' | Dots '.'
 
@@ -160,42 +211,44 @@ $Rules
 
     Block ::= '/' '.' InsideBlock Dots '/'
 
-    Symbol ::= delimitedSymbol | normalSymbol
+    Symbol ::= delimitedSymbol | normalSymbol | number
 
-    delimitedSymbol ::= "'" notEOLs "'"
-                      | '"' notEOLs '"'
-                      | '<' notEOLs '>'
+    delimitedSymbol ::= "'" notEOLOrQuotes "'"
+                      | '"' notEOLOrDoubleQuotes '"'
+                      | '<' notEOLOrRightAngles '>'
 
     normalSymbol ::= letter | normalSymbol symbolChar
 
-    symbolChar ::= letter | digit | '_'
+    symbolChar ::= letter | digit | '_' | '.'
 
-    Token ::= '%' O P T I O N S         /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+    number ::= digit | number digit
 
-    Token ::= '$' A L I A S             /.$BeginJava makeToken($_ALIAS_KEY);$EndJava./
-    Token ::= '$' D E F I N E           /.$BeginJava makeToken($_DEFINE_KEY);$EndJava./
-    Token ::= '$' D R O P S Y M B O L S /.$BeginJava makeToken($_DROPSYMBOLS_KEY);$EndJava./
-    Token ::= '$' D R O P R U L E S     /.$BeginJava makeToken($_DROPRULES_KEY);$EndJava./
-    Token ::= '$' E M P T Y             /.$BeginJava makeToken($_EMPTY_KEY);$EndJava./
-    Token ::= '$' E N D                 /.$BeginJava makeToken($_END_KEY);$EndJava./
-    Token ::= '$' E O L                 /.$BeginJava makeToken($_EOL_KEY);$EndJava./
-    Token ::= '$' E O F                 /.$BeginJava makeToken($_EOF_KEY);$EndJava./
-    Token ::= '$' E R R O R             /.$BeginJava makeToken($_ERROR_KEY);$EndJava./
-    Token ::= '$' E X P O R T           /.$BeginJava makeToken($_EXPORT_KEY);$EndJava./
-    Token ::= '$' G L O B A L S         /.$BeginJava makeToken($_GLOBALS_KEY);$EndJava./
-    Token ::= '$' H E A D E R S         /.$BeginJava makeToken($_HEADERS_KEY);$EndJava./
-    Token ::= '$' I D E N T I F I E R   /.$BeginJava makeToken($_IDENTIFIER_KEY);$EndJava./
-    Token ::= '$' I M P O R T           /.$BeginJava makeToken($_IMPORT_KEY);$EndJava./
-    Token ::= '$' I N C L U D E         /.$BeginJava makeToken($_INCLUDE_KEY);$EndJava./
-    Token ::= '$' K E Y W O R D S       /.$BeginJava makeToken($_KEYWORDS_KEY);$EndJava./
-    Token ::= '$' N A M E S             /.$BeginJava makeToken($_NAMES_KEY);$EndJava./
-    Token ::= '$' N O T I C E           /.$BeginJava makeToken($_NOTICE_KEY);$EndJava./
-    Token ::= '$' R U L E S             /.$BeginJava makeToken($_RULES_KEY);$EndJava./
-    Token ::= '$' S T A R T             /.$BeginJava makeToken($_START_KEY);$EndJava./
-    Token ::= '$' T E R M I N A L S     /.$BeginJava makeToken($_TERMINALS_KEY);$EndJava./
-    Token ::= '$' T R A I L E R S       /.$BeginJava makeToken($_TRAILERS_KEY);$EndJava./
-    Token ::= '$' T Y P E S             /.$BeginJava makeToken($_TYPES_KEY);$EndJava./
-    Token ::= '$' T I T L E             /.$BeginJava makeToken($_TITLE_KEY);$EndJava./
+    Token ::= '%' oO pP tT iI oO nN sS           /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+
+    Token ::= '$' aA lL iI aA sS                 /.$BeginJava makeToken($_ALIAS_KEY);$EndJava./
+    Token ::= '$' dD eE fF iI nN eE              /.$BeginJava makeToken($_DEFINE_KEY);$EndJava./
+    Token ::= '$' dD rR oO pP sS yY mM bB oO lL sS /.$BeginJava makeToken($_DROPSYMBOLS_KEY);$EndJava./
+    Token ::= '$' dD rR oO pP rR uU lL eE sS     /.$BeginJava makeToken($_DROPRULES_KEY);$EndJava./
+    Token ::= '$' eE mM pP tT yY                 /.$BeginJava makeToken($_EMPTY_KEY);$EndJava./
+    Token ::= '$' eE nN dD                       /.$BeginJava makeToken($_END_KEY);$EndJava./
+    Token ::= '$' eE oO fF                       /.$BeginJava makeToken($_EOF_KEY);$EndJava./
+    Token ::= '$' eE oO lL                       /.$BeginJava makeToken($_EOL_KEY);$EndJava./
+    Token ::= '$' eE rR rR oO rR                 /.$BeginJava makeToken($_ERROR_KEY);$EndJava./
+    Token ::= '$' eE xX pP oO rR tT              /.$BeginJava makeToken($_EXPORT_KEY);$EndJava./
+    Token ::= '$' gG lL oO bB aA lL sS           /.$BeginJava makeToken($_GLOBALS_KEY);$EndJava./
+    Token ::= '$' hH eE aA dD eE rR sS           /.$BeginJava makeToken($_HEADERS_KEY);$EndJava./
+    Token ::= '$' iI dD eE nN tT iI fF iI eE rR  /.$BeginJava makeToken($_IDENTIFIER_KEY);$EndJava./
+    Token ::= '$' iI mM pP oO rR tT              /.$BeginJava makeToken($_IMPORT_KEY);$EndJava./
+    Token ::= '$' iI nN cC lL uU dD eE           /.$BeginJava makeToken($_INCLUDE_KEY);$EndJava./
+    Token ::= '$' kK eE yY wW oO rR dD sS        /.$BeginJava makeToken($_KEYWORDS_KEY);$EndJava./
+    Token ::= '$' nN aA mM eE sS                 /.$BeginJava makeToken($_NAMES_KEY);$EndJava./
+    Token ::= '$' nN oO tT iI cC eE              /.$BeginJava makeToken($_NOTICE_KEY);$EndJava./
+    Token ::= '$' rR uU lL eE sS                 /.$BeginJava makeToken($_RULES_KEY);$EndJava./
+    Token ::= '$' sS tT aA rR tT                 /.$BeginJava makeToken($_START_KEY);$EndJava./
+    Token ::= '$' tT eE rR mM iI nN aA lL sS     /.$BeginJava makeToken($_TERMINALS_KEY);$EndJava./
+    Token ::= '$' tT rR aA iI lL eE rR sS        /.$BeginJava makeToken($_TRAILERS_KEY);$EndJava./
+    Token ::= '$' tT yY pP eE sS                 /.$BeginJava makeToken($_TYPES_KEY);$EndJava./
+    Token ::= '$' tT iI tT lL eE                 /.$BeginJava makeToken($_TITLE_KEY);$EndJava./
 
     Token ::= '$' Symbol        /.$BeginJava makeToken($_MACRO_NAME);$EndJava./
     Token ::= Symbol            /.$BeginJava makeToken($_SYMBOL);$EndJava./
