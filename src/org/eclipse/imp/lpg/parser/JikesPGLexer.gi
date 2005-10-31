@@ -3,6 +3,7 @@
 %options package=org.jikespg.uide.parser
 %options template=uide/UIDELexerTemplate.gi
 %options export_terminals=("JikesPGsym.java", "TK_")
+%options verbose
 
 $Title
     /.package $package;./
@@ -34,6 +35,7 @@ $Export
     HEADERS_KEY TRAILERS_KEY EXPORT_KEY IMPORT_KEY INCLUDE_KEY
     MACRO_NAME SYMBOL BLOCK EQUIVALENCE PRIORITY_EQUIVALENCE
     ARROW PRIORITY_ARROW OR_MARKER
+    EQUAL OPTIONS_KEY COMMA
 
     EOF_TOKEN ERROR_SYMBOL
 $End
@@ -101,7 +103,8 @@ $Headers
 			$_DROPSYMBOLS_KEY, $_DROPRULES_KEY, $_NOTICE_KEY, $_DEFINE_KEY,
 			$_TERMINALS_KEY, $_KEYWORDS_KEY, $_IDENTIFIER_KEY, $_ALIAS_KEY,
 			$_EMPTY_KEY, $_START_KEY, $_TYPES_KEY, $_RULES_KEY, $_NAMES_KEY, $_END_KEY,
-			$_HEADERS_KEY, $_TRAILERS_KEY, $_EXPORT_KEY, $_IMPORT_KEY, $_INCLUDE_KEY
+			$_HEADERS_KEY, $_TRAILERS_KEY, $_EXPORT_KEY, $_IMPORT_KEY, $_INCLUDE_KEY,
+			$_OPTIONS_KEY
 		};
 		public boolean isKeyword(IToken token) { return true; }
 
@@ -109,6 +112,10 @@ $Headers
 
 		public boolean isKeywordStart(char c) { return false; }
      ./
+
+$Start
+    Token
+$End
 
 $Rules
     digit ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
@@ -153,7 +160,7 @@ $Rules
 
     Block ::= '/' '.' InsideBlock Dots '/'
 
-    Symbol ::= special | delimitedSymbol | normalSymbol
+    Symbol ::= delimitedSymbol | normalSymbol
 
     delimitedSymbol ::= "'" notEOLs "'"
                       | '"' notEOLs '"'
@@ -162,6 +169,8 @@ $Rules
     normalSymbol ::= letter | normalSymbol symbolChar
 
     symbolChar ::= letter | digit | '_'
+
+    Token ::= '%' O P T I O N S         /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
 
     Token ::= '$' D R O P S Y M B O L S /.$BeginJava makeToken($_DROPSYMBOLS_KEY);$EndJava./
     Token ::= '$' D R O P R U L E S     /.$BeginJava makeToken($_DROPRULES_KEY);$EndJava./
@@ -186,7 +195,7 @@ $Rules
     Token ::= '$' I M P O R T           /.$BeginJava makeToken($_IMPORT_KEY);$EndJava./
     Token ::= '$' I N C L U D E         /.$BeginJava makeToken($_INCLUDE_KEY);$EndJava./
 
-    Token ::= '$' Symbol          /.$BeginJava makeToken($_MACRO_NAME);$EndJava./
+    Token ::= '$' Symbol        /.$BeginJava makeToken($_MACRO_NAME);$EndJava./
     Token ::= Symbol            /.$BeginJava makeToken($_SYMBOL);$EndJava./
     Token ::= Block             /.$BeginJava makeToken($_BLOCK);$EndJava./
     Token ::= Equivalence       /.$BeginJava makeToken($_EQUIVALENCE);$EndJava./
@@ -194,4 +203,6 @@ $Rules
     Token ::= Arrow             /.$BeginJava makeToken($_ARROW);$EndJava./
     Token ::= Arrow ?           /.$BeginJava makeToken($_PRIORITY_ARROW);$EndJava./
     Token ::= '|'               /.$BeginJava makeToken($_OR_MARKER);$EndJava./
+    Token ::= '='               /.$BeginJava makeToken($_EQUAL);$EndJava./
+    Token ::= ','               /.$BeginJava makeToken($_COMMA);$EndJava./
 $End

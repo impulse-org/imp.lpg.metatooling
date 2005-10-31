@@ -26,12 +26,15 @@ $Terminals
     HEADERS_KEY TRAILERS_KEY EXPORT_KEY IMPORT_KEY INCLUDE_KEY
     MACRO_NAME SYMBOL BLOCK EQUIVALENCE PRIORITY_EQUIVALENCE
     ARROW PRIORITY_ARROW OR_MARKER
+    EQUAL OPTIONS_KEY
 
     EOF_TOKEN ERROR_SYMBOL
 
+    EQUALS ::= '='
     EQUIVALENCE ::= '::='
     PRIORITY_EQUIVALENCE ::= '::=?'
     ARROW ::= '->'
+    COMMA ::= ','
     PRIORITY_ARROW ::= '->?'
     OR_MARKER ::= '|'
 $End
@@ -41,10 +44,12 @@ $EOF
 $End
 
 $Start
-    JikesPG_INPUT
+    JikesPG
 $End
 
 $Rules
+    JikesPG ::= options_segment JikesPG_INPUT
+
     JikesPG_INPUT ::= $empty
 
     JikesPG_INPUT ::= JikesPG_INPUT include_segment END_KEY_OPT
@@ -82,6 +87,16 @@ $Rules
     JikesPG_INPUT ::= JikesPG_INPUT rules_segment END_KEY_OPT
 
     JikesPG_INPUT ::= JikesPG_INPUT types_segment END_KEY_OPT
+
+    options_segment ::= $empty | options_segment option_spec
+
+    option_spec ::= OPTIONS_KEY option_list
+
+    option_list ::= option | option_list ',' option
+
+    option ::= IDENTIFIER_KEY option_value
+
+    option_value ::= $empty | '=' IDENTIFIER_KEY
 
     include_segment ::= INCLUDE_KEY
 
