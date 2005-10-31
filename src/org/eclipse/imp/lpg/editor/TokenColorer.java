@@ -37,6 +37,8 @@ public class TokenColorer implements ITokenColorer {
 	    return KEYWORD;
 	else if (token.getKind() == JikesPGLexer.TK_SYMBOL)
 	    return SYMBOL;
+	else if (token.getKind() == JikesPGLexer.TK_SINGLE_LINE_COMMENT)
+	    return COMMENT;
 	return null;
     }
 }
