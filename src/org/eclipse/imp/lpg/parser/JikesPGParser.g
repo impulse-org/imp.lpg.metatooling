@@ -21,7 +21,7 @@ $End
 
 $Terminals
     DROPSYMBOLS_KEY DROPRULES_KEY NOTICE_KEY DEFINE_KEY TERMINALS_KEY KEYWORDS_KEY EOL_KEY
-    EOF_KEY ERROR_KEY IDENTIFIER_KEY ALIAS_KEY
+    EOF_KEY ERROR_KEY IDENTIFIER_KEY ALIAS_KEY TITLE_KEY GLOBALS_KEY
     EMPTY_KEY START_KEY TYPES_KEY RULES_KEY NAMES_KEY END_KEY
     HEADERS_KEY TRAILERS_KEY EXPORT_KEY IMPORT_KEY INCLUDE_KEY
     MACRO_NAME SYMBOL BLOCK EQUIVALENCE PRIORITY_EQUIVALENCE
@@ -52,19 +52,9 @@ $Rules
 
     JikesPG_INPUT ::= $empty
 
-    JikesPG_INPUT ::= JikesPG_INPUT include_segment END_KEY_OPT
-
-    JikesPG_INPUT ::= JikesPG_INPUT notice_segment END_KEY_OPT
+    JikesPG_INPUT ::= JikesPG_INPUT alias_segment END_KEY_OPT
 
     JikesPG_INPUT ::= JikesPG_INPUT define_segment END_KEY_OPT
-
-    JikesPG_INPUT ::= JikesPG_INPUT terminals_segment END_KEY_OPT
-
-    JikesPG_INPUT ::= JikesPG_INPUT export_segment END_KEY_OPT
-
-    JikesPG_INPUT ::= JikesPG_INPUT import_segment END_KEY_OPT
-
-    JikesPG_INPUT ::= JikesPG_INPUT keywords_segment END_KEY_OPT
 
     JikesPG_INPUT ::= JikesPG_INPUT eof_segment END_KEY_OPT
 
@@ -72,19 +62,31 @@ $Rules
 
     JikesPG_INPUT ::= JikesPG_INPUT error_segment END_KEY_OPT
 
-    JikesPG_INPUT ::= JikesPG_INPUT identifier_segment END_KEY_OPT
-
-    JikesPG_INPUT ::= JikesPG_INPUT start_segment END_KEY_OPT
-
-    JikesPG_INPUT ::= JikesPG_INPUT alias_segment END_KEY_OPT
-
-    JikesPG_INPUT ::= JikesPG_INPUT names_segment END_KEY_OPT
+    JikesPG_INPUT ::= JikesPG_INPUT export_segment END_KEY_OPT
 
     JikesPG_INPUT ::= JikesPG_INPUT headers_segment END_KEY_OPT
 
-    JikesPG_INPUT ::= JikesPG_INPUT trailers_segment END_KEY_OPT
+    JikesPG_INPUT ::= JikesPG_INPUT import_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT identifier_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT include_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT keywords_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT names_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT notice_segment END_KEY_OPT
 
     JikesPG_INPUT ::= JikesPG_INPUT rules_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT start_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT terminals_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT title_segment END_KEY_OPT
+
+    JikesPG_INPUT ::= JikesPG_INPUT trailers_segment END_KEY_OPT
 
     JikesPG_INPUT ::= JikesPG_INPUT types_segment END_KEY_OPT
 
@@ -97,6 +99,14 @@ $Rules
     option ::= IDENTIFIER_KEY option_value
 
     option_value ::= $empty | '=' IDENTIFIER_KEY
+
+    title_segment ::= TITLE_KEY
+
+    title_segment ::= TITLE_KEY action_segment
+
+    globals_segment ::= GLOBALS_KEY
+
+    globals_segment ::= globals_segment action_segment
 
     include_segment ::= INCLUDE_KEY
 
