@@ -75,6 +75,7 @@ public class ParseController implements IParseController {
         lexer.initialize(contentsArray, "ECLIPSE FILE");
         parser.getParseStream().resetTokenStream();
         lexer.lexer(my_monitor, parser.getParseStream()); // Lex the stream to produce the token stream
+        parser.dumpTokens();
         if (my_monitor.isCancelled())
         	return currentAst; // TODO currentAst might (probably will) be inconsistent wrt the lex stream now
 
