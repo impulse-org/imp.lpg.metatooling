@@ -30,7 +30,7 @@ $Terminals
 
     EOF_TOKEN ERROR_SYMBOL
 
-    EQUALS ::= '='
+    EQUAL ::= '='
     EQUIVALENCE ::= '::='
     PRIORITY_EQUIVALENCE ::= '::=?'
     ARROW ::= '->'
@@ -50,45 +50,47 @@ $End
 $Rules
     JikesPG ::= options_segment JikesPG_INPUT
 
-    JikesPG_INPUT ::= $empty
+    JikesPG_INPUT ::= $empty | JikesPG_INPUT JikesPG_item END_KEY_OPT
 
-    JikesPG_INPUT ::= JikesPG_INPUT alias_segment END_KEY_OPT
+    JikesPG_item$AliasSeg ::= alias_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT define_segment END_KEY_OPT
+    JikesPG_item$DefineSeg ::= define_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT eof_segment END_KEY_OPT
+    JikesPG_item$EofSeg ::= eof_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT eol_segment END_KEY_OPT
+    JikesPG_item$EolSeg ::= eol_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT error_segment END_KEY_OPT
+    JikesPG_item$ErrorSeg ::= error_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT export_segment END_KEY_OPT
+    JikesPG_item$ExportSeg ::= export_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT headers_segment END_KEY_OPT
+    JikesPG_item$GlobalsSeg::= globals_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT import_segment END_KEY_OPT
+    JikesPG_item$HeadersSeg ::= headers_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT identifier_segment END_KEY_OPT
+    JikesPG_item$ImportSeg ::= import_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT include_segment END_KEY_OPT
+    JikesPG_item$IdentifierSeg ::= identifier_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT keywords_segment END_KEY_OPT
+    JikesPG_item$IncludeSeg ::= include_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT names_segment END_KEY_OPT
+    JikesPG_item$KeywordsSeg ::= keywords_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT notice_segment END_KEY_OPT
+    JikesPG_item$NamesSeg ::= names_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT rules_segment END_KEY_OPT
+    JikesPG_item$NoticeSeg ::= notice_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT start_segment END_KEY_OPT
+    JikesPG_item$RulesSeg ::= rules_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT terminals_segment END_KEY_OPT
+    JikesPG_item$StartSeg ::= start_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT title_segment END_KEY_OPT
+    JikesPG_item$TerminalsSeg ::= terminals_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT trailers_segment END_KEY_OPT
+    JikesPG_item$TitleSeg ::= title_segment
 
-    JikesPG_INPUT ::= JikesPG_INPUT types_segment END_KEY_OPT
+    JikesPG_item$TrailersSeg ::= trailers_segment
+
+    JikesPG_item$TypesSeg ::= types_segment
 
     options_segment ::= $empty | options_segment option_spec
 
@@ -96,9 +98,9 @@ $Rules
 
     option_list ::= option | option_list ',' option
 
-    option ::= IDENTIFIER_KEY option_value
+    option ::= SYMBOL option_value
 
-    option_value ::= $empty | '=' IDENTIFIER_KEY
+    option_value ::= $empty | '=' SYMBOL
 
     title_segment ::= TITLE_KEY
 
