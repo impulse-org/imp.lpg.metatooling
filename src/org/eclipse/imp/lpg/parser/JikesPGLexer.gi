@@ -35,7 +35,7 @@ $Export
     HEADERS_KEY TRAILERS_KEY EXPORT_KEY IMPORT_KEY INCLUDE_KEY
     MACRO_NAME SYMBOL BLOCK EQUIVALENCE PRIORITY_EQUIVALENCE
     ARROW PRIORITY_ARROW OR_MARKER
-    EQUAL OPTIONS_KEY COMMA
+    EQUAL OPTIONS_KEY COMMA SINGLE_LINE_COMMENT
 
     EOF_TOKEN ERROR_SYMBOL
 $End
@@ -146,7 +146,7 @@ $Rules
             | slc notEOL
 
     Token ::= white /.$BeginJava skipToken(); $EndJava./
-            | slc   /.$BeginJava skipToken(); $EndJava./
+            | slc   /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
 
     Equivalence ::= : : =
     Arrow       ::= - >
