@@ -106,6 +106,14 @@
       <tokenColorer
             class="org.jikespg.uide.editor.TokenColorer"
             language="JikesPG"/>
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.outliner">
+      <outliner
+            class="org.jikespg.uide.views.Outliner"
+            id="org.jikespg.uide.outliner"
+            language="JikesPG"
+            name="JikesPG Grammar Outliner"/>
    </extension>  
    
 </plugin>
