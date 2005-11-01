@@ -1,7 +1,7 @@
 /*
  * Created on Oct 31, 2005
  */
-package org.jikespg.uide.views;
+package org.jikespg.uide.editor;
 
 import java.util.Iterator;
 import java.util.List;
