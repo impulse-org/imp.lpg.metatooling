@@ -254,13 +254,13 @@ $Rules
 
     rhs ::= $empty
 
-    rhs ::= rhs SYMBOL
+    rhs$rhsSymbol ::= rhs SYMBOL
 
-    rhs ::= rhs SYMBOL MACRO_NAME
+    rhs$rhsSymbolMacro ::= rhs SYMBOL MACRO_NAME
 
-    rhs ::= rhs EMPTY_KEY 
+    rhs$emptyRHS ::= rhs EMPTY_KEY 
 
-    rhs ::= rhs action_segment
+    rhs$rhsAction ::= rhs action_segment
 
     action_segment ::= BLOCK 
 
