@@ -11,30 +11,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.uide.core.UIDEBuilderBase;
+import org.eclipse.uide.runtime.UIDEPluginBase;
 import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.views.JikesPGView;
 import org.osgi.framework.Bundle;
 
 /**
+ * @author rfuhrer@watson.ibm.com
  * @author CLaffra
  */
-public class JikesPGBuilder extends IncrementalProjectBuilder {
+public class JikesPGBuilder extends UIDEBuilderBase {
     /**
      * Extension ID of the JikesPG builder. Must match the ID in the corresponding
      * extension definition in plugin.xml.
@@ -61,63 +58,38 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
     private static final String MISSING_MSG_REGEXP= "Input file \"([^\"]+)\" could not be read";
     private static final Pattern MISSING_MSG_PATTERN= Pattern.compile(MISSING_MSG_REGEXP);
 
-    protected IProject[] build(int kind, Map args, IProgressMonitor monitor) {
-	try {
-	    if (kind == IncrementalProjectBuilder.FULL_BUILD) {
-		fullBuild(monitor);
-	    } else {
-		IResourceDelta delta= getDelta(getProject());
-		if (delta == null) {
-		    fullBuild(monitor);
-		} else {
-		    incrementalBuild(delta, monitor);
-		}
-	    }
-	} catch (CoreException e) {
-	    e.printStackTrace();
-	}
-	return new IProject[0];
+    protected UIDEPluginBase getPlugin() {
+	return JikesPGPlugin.getInstance();
     }
 
-    private boolean isGrammarFile(IResource resource) {
-	IPath path= resource.getRawLocation();
+    protected String getErrorMarkerID() {
+	return PROBLEM_MARKER_ID;
+    }
+
+    protected String getWarningMarkerID() {
+	return PROBLEM_MARKER_ID;
+    }
+
+    protected String getInfoMarkerID() {
+	return PROBLEM_MARKER_ID;
+    }
+
+    protected boolean isSourceFile(IFile file) {
+	IPath path= file.getRawLocation();
+
 	if (path == null) return false;
 
 	String fileName= path.toString();
+
 	return (fileName.indexOf("/bin/") == -1 && "g".equals(path.getFileExtension()));
     }
 
-    private void fullBuild(IProgressMonitor monitor) throws CoreException {
-	getProject().accept(new IResourceVisitor() {
-	    public boolean visit(IResource resource) throws CoreException {
-		if (isGrammarFile(resource) && resource.exists()) {
-		    compile(resource);
-		    return false;
-		}
-		return true;
-	    }
-	});
+    protected boolean isOutputFolder(IResource resource) {
+	return resource.getFullPath().lastSegment().equals("bin");
     }
 
-    private void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
-	delta.accept(new IResourceDeltaVisitor() {
-	    public boolean visit(IResourceDelta delta) {
-		IResource resource= delta.getResource();
-		if (isGrammarFile(resource) && resource.exists()) {
-		    try {
-			resource.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-		    } catch (CoreException e) {
-		    }
-		    compile(resource);
-		    return false;
-		}
-		return true; // visit children too
-	    }
-	});
-    }
-
-    protected void compile(final IResource resource) {
-	String fileName= resource.getLocation().toOSString();
+    protected void compile(final IFile file) {
+	String fileName= file.getLocation().toOSString();
 	// IPath projectRelativePath = currentResource.getProjectRelativePath();
 	// System.out.println("JikesPG builder runs on "+currentResource.getProject()+". Compiling "+fileName);
 	try {
@@ -139,24 +111,12 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 	    Process process= Runtime.getRuntime().exec(cmd, new String[0], includeDir);
 	    JikesPGView consoleView= JikesPGView.getDefault();
 
-	    processJikesPGOutput(resource, process, consoleView);
-	    processJikesPGErrors(resource, process, consoleView);
-	    doRefresh(resource);
+	    processJikesPGOutput(file, process, consoleView);
+	    processJikesPGErrors(file, process, consoleView);
+	    doRefresh(file);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
-    }
-
-    private void doRefresh(final IResource resource) {
-	new Thread() {
-	    public void run() {
-		try {
-		    resource.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (CoreException e) {
-		    e.printStackTrace();
-		}
-	    }
-	}.start();
     }
 
     private void processJikesPGErrors(IResource resource, Process process, JikesPGView view) throws IOException {
@@ -231,24 +191,7 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 	}
     }
 
-    private void createMarker(IResource errorResource, int startLine, int startChar, int endChar, String descrip, int severity) {
-	try {
-	    IMarker m= errorResource.createMarker(PROBLEM_MARKER_ID);
-
-	    m.setAttribute(IMarker.SEVERITY, severity);
-	    m.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-	    m.setAttribute(IMarker.LINE_NUMBER, startLine);
-	    m.setAttribute(IMarker.MESSAGE, descrip);
-	    if (startChar >= 0)
-		m.setAttribute(IMarker.CHAR_START, startChar);
-	    if (endChar >= 0)
-		m.setAttribute(IMarker.CHAR_END, endChar);
-	} catch (CoreException e) {
-	    JikesPGPlugin.getInstance().writeErrorMsg("Unable to create marker: " + e.getMessage());
-	}
-    }
-
-    String getOutputDirectory(IProject project) throws IOException {
+    private String getOutputDirectory(IProject project) throws IOException {
 	if (outdir == null) {
 	    outdir= new File(project.getLocation().toFile(), "/src").getAbsolutePath().replace('\\', '/');
 	}
@@ -256,7 +199,7 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 
     }
 
-    String getInputDirectory(IProject project) throws IOException {
+    private String getInputDirectory(IProject project) throws IOException {
 	if (incdir == null) {
 	    File file= new File(project.getLocation().toFile(), "/src");
 	    file.mkdirs();
@@ -267,7 +210,7 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 
     }
 
-    String getLpgExecutable() throws IOException {
+    private String getLpgExecutable() throws IOException {
 	if (lpg == null) {
 	    Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
 	    Path path= new Path("bin/lpg.exe");
