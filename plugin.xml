@@ -5,7 +5,7 @@
    name="org.jikespg.uide"
    version="1.0.1"
    provider-name="IBM"
-   >
+   class="org.jikespg.uide.JikesPGPlugin">
 
    <runtime>
       <library name="jikespg.jar">
@@ -110,10 +110,27 @@
    <extension
          point="org.eclipse.uide.runtime.outliner">
       <outliner
-            class="org.jikespg.uide.views.Outliner"
+            class="org.jikespg.uide.editor.Outliner"
             id="org.jikespg.uide.outliner"
             language="JikesPG"
             name="JikesPG Grammar Outliner"/>
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.contentProposer">
+      <proposer
+            class="org.jikespg.uide.editor.ContentProposer"
+            id="org.jikespg.uide.proposer"
+            language="JikesPG"
+            name="JikesPG Content Proposer"/>
+   </extension>
+   <extension
+         id="jikesPGNature"
+         name="JikesPG Nature"
+         point="org.eclipse.core.resources.natures">
+      <builder id="org.jikespg.uide.jikesPGBuilder"/>
+      <runtime>
+         <run class="org.jikespg.uide.builder.JikesPGNature"/>
+      </runtime>
    </extension>  
    
 </plugin>
