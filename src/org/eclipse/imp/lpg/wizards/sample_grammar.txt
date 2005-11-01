@@ -1,12 +1,12 @@
 %options table=java,escape=$
-%options fp=$GRAMMAR_NAME$,prefix=TK_
+%options fp=$LANG_NAME$,prefix=TK_
 %options package=$PACKAGE$
 $AUTO_GENERATE$
 %options template=$TEMPLATE$
-%options import_terminals=$GRAMMAR_NAME$Lexer.g
+%options import_terminals=$LANG_NAME$Lexer.gi
 $KEYWORD_TEMPLATE$
 
--- This is just a sample grammar and not a real grammar for $GRAMMAR_NAME$
+-- This is just a sample grammar and not a real grammar for $LANG_NAME$
 
 $Title
     /.package $package;./

@@ -86,12 +86,16 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	String packageName= page.getPackage();
 	String languageName= page.getLanguage();
 	String templateName= page.getTemplateName();
-	String fileName= "src/" + languageName.toLowerCase() + ".g";
+	String grammarFileName= "src/" + languageName.toLowerCase() + "Parser.g";
+	String lexerFileName= "src/" + languageName.toLowerCase() + "Lexer.gi";
 	boolean hasKeywords= page.hasKeywords();
 	boolean autoGenerateASTs= page.autoGenerateASTs();
 
 	IFile file= createSampleGrammarFile(monitor, project, packageName, languageName,
-		fileName, templateName, hasKeywords, autoGenerateASTs);
+		grammarFileName, templateName, hasKeywords, autoGenerateASTs);
+
+	IFile lexerFile= createSampleLexerFile(monitor, project, packageName, languageName,
+		lexerFileName, templateName);
 
 	editSampleGrammarFile(monitor, file);
 	enableBuilders(monitor, file);
@@ -155,11 +159,31 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	final IFile file= project.getFile(new Path(fileName));
 	StringBuffer buffer= new StringBuffer(new String(getSampleGrammar()));
 
-	replace(buffer, "$GRAMMAR_NAME$", languageName);
+	replace(buffer, "$LANG_NAME$", languageName);
 	replace(buffer, "$PACKAGE$", packageName);
 	replace(buffer, "$TEMPLATE$", templateName);
 	replace(buffer, "$KEYWORD_TEMPLATE$", hasKeywords ? sKeywordTemplate : "");
 	replace(buffer, "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
+
+	if (file.exists()) {
+	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
+	} else {
+	    file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
+	}
+	monitor.worked(1);
+	return file;
+    }
+
+    private IFile createSampleLexerFile(IProgressMonitor monitor, IProject project, String packageName,
+	    String languageName, String fileName, String templateName) throws CoreException {
+	monitor.beginTask("Creating " + fileName, 2);
+
+	final IFile file= project.getFile(new Path(fileName));
+	StringBuffer buffer= new StringBuffer(new String(getSampleLexer()));
+
+	replace(buffer, "$LANG_NAME$", languageName);
+	replace(buffer, "$PACKAGE$", packageName);
+	replace(buffer, "$TEMPLATE$", templateName);
 
 	if (file.exists()) {
 	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
@@ -187,19 +211,24 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	project.setDescription(desc, null);
     }
 
-    /**
-     * We will initialize file contents with a sample grammar.
-     */
     private byte[] getSampleGrammar() {
+	return getSampleFile("sample_grammar.txt");
+    }
+
+    private byte[] getSampleLexer() {
+	return getSampleFile("sample_lexer.txt");
+    }
+
+    private byte[] getSampleFile(String fileName) {
 	try {
-	    DataInputStream is= new DataInputStream(NewGrammarWizard.class.getResourceAsStream("sample_grammar.txt"));
+	    DataInputStream is= new DataInputStream(NewGrammarWizard.class.getResourceAsStream(fileName));
 	    byte bytes[]= new byte[is.available()];
 	    is.readFully(bytes);
 	    is.close();
 	    return bytes;
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    return "// missing sample grammar file".getBytes();
+	    return ("// missing sample file: " + fileName).getBytes();
 	}
     }
 
