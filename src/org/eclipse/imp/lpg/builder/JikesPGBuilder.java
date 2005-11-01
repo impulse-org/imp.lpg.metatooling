@@ -41,13 +41,13 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
      */
     public static final String BUILDER_ID= JikesPGPlugin.kPluginID + ".jikesPGBuilder";
 
+    public static final String PROBLEM_MARKER_ID= JikesPGPlugin.kPluginID + ".problem";
+
     /**
      * ID of the LPG plugin, which houses the templates, the LPG executable,
      * and the LPG runtime library
      */
     public static final String LPG_PLUGIN_ID= "lpg";
-
-    public static final String JIKESPG_PROBLEM_MARKER= JikesPGPlugin.kPluginID + ".problem";
 
     String lpg;
 
@@ -55,9 +55,11 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 
     String incdir;
 
-    private final String MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (.*)";
+    private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (.*)";
+    private static final Pattern SYNTAX_MSG_PATTERN= Pattern.compile(SYNTAX_MSG_REGEXP);
 
-    private final Pattern MSG_PATTERN= Pattern.compile(MSG_REGEXP);
+    private static final String MISSING_MSG_REGEXP= "Input file \"([^\"]+)\" could not be read";
+    private static final Pattern MISSING_MSG_PATTERN= Pattern.compile(MISSING_MSG_REGEXP);
 
     protected IProject[] build(int kind, Map args, IProgressMonitor monitor) {
 	try {
@@ -177,42 +179,72 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 	InputStream is= process.getInputStream();
 	BufferedReader in= new BufferedReader(new InputStreamReader(is));
 	String line= null;
+
 	while ((line= in.readLine()) != null) {
 	    if (view != null)
 		JikesPGView.println(line);
 	    else {
 		System.out.println(line);
 	    }
+
 	    final String msg= line;
+
 	    if (msg.indexOf(": Syntax error detected") >= 0) {
-		Matcher matcher= MSG_PATTERN.matcher(msg);
+		parseSyntaxMessageCreateMarker(msg);
+	    } else if (msg.indexOf("Input file ") == 0) {
+		parseMissingFileMessage(msg, resource);
+	    } else
+		handleMiscMessage(msg, resource);
+	}
+    }
 
-		if (matcher.matches()) {
-		    String errorFile= matcher.group(1);
-		    IResource errorResource= getProject().getFile(errorFile);
-		    int startLine= Integer.parseInt(matcher.group(2));
-//		    int startCol= Integer.parseInt(matcher.group(3));
-//		    int endLine= Integer.parseInt(matcher.group(4));
-//		    int endCol= Integer.parseInt(matcher.group(5));
-		    int startChar= Integer.parseInt(matcher.group(6)) + (startLine - 1) * lineSepBias;
-		    int endChar= Integer.parseInt(matcher.group(7)) + (startLine - 1) * lineSepBias;
-		    String descrip= matcher.group(8);
+    private void handleMiscMessage(String msg, IResource file) {
+	createMarker(file, 1, -1, -1, msg, IMarker.SEVERITY_ERROR);
+    }
 
-		    try {
-			IMarker m= errorResource.createMarker(JIKESPG_PROBLEM_MARKER);
+    private void parseMissingFileMessage(String msg, IResource file) {
+	Matcher matcher= MISSING_MSG_PATTERN.matcher(msg);
 
-			m.setAttribute(IMarker.LINE_NUMBER, startLine);
-			m.setAttribute(IMarker.MESSAGE, descrip);
-			m.setAttribute(IMarker.CHAR_START, startChar);
-			m.setAttribute(IMarker.CHAR_END, endChar);
-			m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-			m.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-		    } catch (CoreException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-		    }
-		}
-	    }
+	if (matcher.matches()) {
+	    String missingFile= matcher.group(1);
+	    int refLine= 1; // Integer.parseInt(matcher.group(2))
+
+	    createMarker(file, refLine, -1, -1, "Non-existent file referenced: " + missingFile, IMarker.SEVERITY_ERROR);
+	}
+    }
+
+    private void parseSyntaxMessageCreateMarker(final String msg) {
+	Matcher matcher= SYNTAX_MSG_PATTERN.matcher(msg);
+
+	if (matcher.matches()) {
+	    String errorFile= matcher.group(1);
+	    IResource errorResource= getProject().getFile(errorFile);
+	    int startLine= Integer.parseInt(matcher.group(2));
+//	    int startCol= Integer.parseInt(matcher.group(3));
+//	    int endLine= Integer.parseInt(matcher.group(4));
+//	    int endCol= Integer.parseInt(matcher.group(5));
+	    int startChar= Integer.parseInt(matcher.group(6)) + (startLine - 1) * lineSepBias;
+	    int endChar= Integer.parseInt(matcher.group(7)) + (startLine - 1) * lineSepBias;
+	    String descrip= matcher.group(8);
+
+	    createMarker(errorResource, startLine, startChar, endChar, descrip, IMarker.SEVERITY_ERROR);
+	}
+    }
+
+    private void createMarker(IResource errorResource, int startLine, int startChar, int endChar, String descrip, int severity) {
+	try {
+	    IMarker m= errorResource.createMarker(PROBLEM_MARKER_ID);
+
+	    m.setAttribute(IMarker.SEVERITY, severity);
+	    m.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+	    m.setAttribute(IMarker.LINE_NUMBER, startLine);
+	    m.setAttribute(IMarker.MESSAGE, descrip);
+	    if (startChar >= 0)
+		m.setAttribute(IMarker.CHAR_START, startChar);
+	    if (endChar >= 0)
+		m.setAttribute(IMarker.CHAR_END, endChar);
+	} catch (CoreException e) {
+	    JikesPGPlugin.getInstance().writeErrorMsg("Unable to create marker: " + e.getMessage());
 	}
     }
 
