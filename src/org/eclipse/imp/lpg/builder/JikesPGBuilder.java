@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.views.JikesPGView;
 import org.osgi.framework.Bundle;
 
@@ -34,11 +35,19 @@ import org.osgi.framework.Bundle;
  * @author CLaffra
  */
 public class JikesPGBuilder extends IncrementalProjectBuilder {
-    private static final String PLUGIN_ID= "org.jikespg.uide";
+    /**
+     * Extension ID of the JikesPG builder. Must match the ID in the corresponding
+     * extension definition in plugin.xml.
+     */
+    public static final String BUILDER_ID= JikesPGPlugin.kPluginID + ".jikesPGBuilder";
 
-    private static final String LPG_PLUGIN_ID= "lpg"; // houses the templates and the LPG executable
+    /**
+     * ID of the LPG plugin, which houses the templates, the LPG executable,
+     * and the LPG runtime library
+     */
+    public static final String LPG_PLUGIN_ID= "lpg";
 
-    private static final String JIKESPG_PROBLEM_MARKER= PLUGIN_ID + ".problem";
+    public static final String JIKESPG_PROBLEM_MARKER= JikesPGPlugin.kPluginID + ".problem";
 
     String lpg;
 
@@ -180,16 +189,17 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 
 		if (matcher.matches()) {
 		    String errorFile= matcher.group(1);
+		    IResource errorResource= getProject().getFile(errorFile);
 		    int startLine= Integer.parseInt(matcher.group(2));
-		    int startCol= Integer.parseInt(matcher.group(3));
-		    int endLine= Integer.parseInt(matcher.group(4));
-		    int endCol= Integer.parseInt(matcher.group(5));
+//		    int startCol= Integer.parseInt(matcher.group(3));
+//		    int endLine= Integer.parseInt(matcher.group(4));
+//		    int endCol= Integer.parseInt(matcher.group(5));
 		    int startChar= Integer.parseInt(matcher.group(6)) + (startLine - 1) * lineSepBias;
 		    int endChar= Integer.parseInt(matcher.group(7)) + (startLine - 1) * lineSepBias;
 		    String descrip= matcher.group(8);
 
 		    try {
-			IMarker m= resource.createMarker(JIKESPG_PROBLEM_MARKER);
+			IMarker m= errorResource.createMarker(JIKESPG_PROBLEM_MARKER);
 
 			m.setAttribute(IMarker.LINE_NUMBER, startLine);
 			m.setAttribute(IMarker.MESSAGE, descrip);
@@ -202,11 +212,6 @@ public class JikesPGBuilder extends IncrementalProjectBuilder {
 			e.printStackTrace();
 		    }
 		}
-//		Display.getDefault().asyncExec(new Runnable() {
-//		    public void run() {
-//			MessageDialog.openError(new Shell(), "JikesPG: Grammar Error", msg);
-//		    }
-//		});
 	    }
 	}
     }
