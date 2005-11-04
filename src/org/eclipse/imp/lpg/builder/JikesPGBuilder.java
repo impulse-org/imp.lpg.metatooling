@@ -159,7 +159,9 @@ public class JikesPGBuilder extends UIDEBuilderBase {
     }
 
     private void handleMiscMessage(String msg, IResource file) {
-	createMarker(file, 1, -1, -1, msg, IMarker.SEVERITY_ERROR);
+	if (msg.length() == 0) return;
+	if (msg.indexOf("Number of ") < 0)
+	    createMarker(file, 1, -1, -1, msg, IMarker.SEVERITY_INFO);
     }
 
     private void parseMissingFileMessage(String msg, IResource file) {
