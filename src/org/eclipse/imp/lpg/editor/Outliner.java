@@ -32,7 +32,7 @@ public class Outliner extends DefaultOutliner {
 
 	public void visitJikesPG(JikesPG n) {
 //	    fItemStack.push(createTreeItem("JikesPG Spec"));
-	    fItemStack.push(createTreeItem("Options"));
+	    fItemStack.push(createTopItem("Options"));
 	    n.getoptions_segment().accept(this);
 	    fItemStack.pop();
 	    n.getJikesPG_INPUT().accept(this);
@@ -54,44 +54,78 @@ public class Outliner extends DefaultOutliner {
 	    option_value value= (option_value) n.getoption_value();
 	    createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolImage(value.getSYMBOL()));
 	}
-	private String symbolImage(TSYMBOL symbol) {
-	    int symTokenIdx= symbol.getLeftToken();
-	    IToken token= fController.getParser().getParseStream().getTokenAt(symTokenIdx);
-
-	    return new String(fController.getLexer().getLexStream().getInputChars(), token.getStartOffset(), token.getEndOffset()-token.getStartOffset()+1);
-	}
-
 	public void visitJikesPG_INPUT(JikesPG_INPUT n) {
 //	    fItemStack.push(createTreeItem("Grammar"));
+	    if (n.getJikesPG_INPUT() != null)
+		n.getJikesPG_INPUT().accept(this);
 	    n.getJikesPG_item().accept(this);
 //	    fItemStack.pop();
 	}
 	public void visitAliasSeg(AliasSeg n) {
-	    Ialias_segment as= n.getalias_segment();
-	    createSubItem("alias");
+	    fItemStack.push(createTopItem("Alias"));
+	    n.getalias_segment().accept(this);
+	    fItemStack.pop();
 	}
 	public void visitDefineSeg(DefineSeg n) {
-	    Idefine_segment ds= n.getdefine_segment();
-	    createSubItem("define");
+	    fItemStack.push(createTopItem("Define"));
+	    n.getdefine_segment().accept(this);
+	    fItemStack.pop();
 	}
 	public void visitHeadersSeg(HeadersSeg n) {
-	    Iheaders_segment hs= n.getheaders_segment();
-	    createSubItem("headers");
+	    fItemStack.push(createTopItem("Headers"));
+	    n.getheaders_segment().accept(this);
+	    fItemStack.pop();
 	}
 	public void visitIdentifierSeg(IdentifierSeg n) {
-	    Iidentifier_segment is= n.getidentifier_segment();
-	    createSubItem("identifiers");
+	    fItemStack.push(createTopItem("Identifiers"));
+	    n.getidentifier_segment().accept(this);
+	    fItemStack.pop();
+	}
+	public void visitStartSeg(StartSeg n) {
+	    n.getstart_segment().accept(this);
+	}
+	public void visitstart_segment(start_segment n) {
+	    n.getstart_symbol().accept(this);
+//	    createTreeItem(symbolImage());
+	}
+	public void visitstart_symbol96(start_symbol96 n) {
+	    createTopItem("Start = " + symbolImage(n.getSYMBOL()));
 	}
 	public void visitTerminalsSeg(TerminalsSeg n) {
-	    Iterminals_segment ts= n.getterminals_segment();
-	    createSubItem("terminals");
+	    fItemStack.push(createTopItem("Terminals"));
+	    n.getterminals_segment().accept(this);
+	    fItemStack.pop();
+	}
+	public void visitterminals_segment45(terminals_segment45 n) {
+	    createSubItem(symbolImage(n.getTERMINALS_KEY()));
+	}
+	public void visitterminals_segment46(terminals_segment46 n) {
+	    n.getterminals_segment().accept(this);
+	    n.getterminal_symbol().accept(this);
+	}
+	public void visitterminals_segment47(terminals_segment47 n) {
+	    n.getterminals_segment().accept(this);
+	    createSubItem(nameImage(n.getname()) + " " + producesImage(n.getproduces()) + " " + symbolImage(n.getterminal_symbol()));
+	}
+	public void visitterminal_symbol74(terminal_symbol74 n) {
+	    createSubItem(symbolImage(n.getSYMBOL()));
+	}
+	public void visitterminal_symbol75(terminal_symbol75 n) {
+	    createSubItem(symbolImage(n.getMACRO_NAME()));
 	}
 	public void visitTitleSeg(TitleSeg n) {
-	    Ititle_segment ts= n.gettitle_segment();
-	    createSubItem("title");
+	    fItemStack.push(createTopItem("Title"));
+	    n.gettitle_segment().accept(this);
+	    fItemStack.pop();
+	}
+	public void visittitle_segment32(title_segment32 n) {
+	    createSubItem(symbolImage(n.getTITLE_KEY()));
+	}
+	public void visittitle_segment33(title_segment33 n) {
+	    createSubItem(symbolImage(n.getTITLE_KEY().getTITLE_KEY()));
 	}
 	public void visitRulesSeg(RulesSeg n) {
-	    fItemStack.push(createTreeItem("Rules"));
+	    fItemStack.push(createTopItem("Rules"));
 	    n.getrules_segment().accept(this);
 	    fItemStack.pop();
 	}
@@ -110,7 +144,56 @@ public class Outliner extends DefaultOutliner {
 
     private static final String MESSAGE= "This is the default outliner. Add your own using the UIDE wizard and see class 'org.eclipse.uide.defaults.DefaultOutliner'";
 
-    public TreeItem createTreeItem(String label) {
+    private String symbolImage(int symTokenIdx) {
+	IToken token= fController.getParser().getParseStream().getTokenAt(symTokenIdx);
+
+	return new String(fController.getLexer().getLexStream().getInputChars(), token.getStartOffset(), token.getEndOffset()-token.getStartOffset()+1);
+    }
+
+    public String symbolImage(Iterminal_symbol terminal_symbol) {
+	if (terminal_symbol instanceof terminal_symbol74)
+	    return symbolImage(((terminal_symbol74) terminal_symbol).getSYMBOL());
+	else if (terminal_symbol instanceof terminal_symbol75)
+	    return symbolImage(((terminal_symbol75) terminal_symbol).getMACRO_NAME());
+	else
+	    return "<???>";
+    }
+
+    public String producesImage(Iproduces produces) {
+	if (produces instanceof produces103)
+	    return symbolImage(((produces103) produces).getEQUIVALENCE());
+	else if (produces instanceof produces104)
+	    return symbolImage(((produces103) produces).getEQUIVALENCE());
+	else if (produces instanceof produces105)
+	    return symbolImage(((produces103) produces).getEQUIVALENCE());
+	else if (produces instanceof produces106)
+	    return symbolImage(((produces103) produces).getEQUIVALENCE());
+	else
+	    return "<???>";
+    }
+
+    public String nameImage(Iname name) {
+	if (name instanceof name119)
+	    return symbolImage(((name119) name).getSYMBOL());
+	else if (name instanceof name120)
+	    return symbolImage(((name120) name).getMACRO_NAME());
+	else if (name instanceof name121)
+	    return "$empty";
+	else if (name instanceof name122)
+	    return "$error";
+	else if (name instanceof name123)
+	    return "$eol";
+	else if (name instanceof name124)
+	    return symbolImage(((name124) name).getIDENTIFIER_KEY());
+	else
+	    return "<???>";
+    }
+
+    private String symbolImage(TSYMBOL symbol) {
+	return symbolImage(symbol.getLeftToken());
+    }
+
+    public TreeItem createTopItem(String label) {
 	TreeItem treeItem= new TreeItem(fTree, SWT.NONE);
 	treeItem.setText(label);
 	treeItem.setImage(JavaPluginImages.DESC_MISC_PUBLIC.createImage());
@@ -128,17 +211,19 @@ public class Outliner extends DefaultOutliner {
 	fController= controller;
 	try {
 	    if (controller != null && fTree != null) {
-		fTree.setRedraw(false);
-		fTree.removeAll();
-		fItemStack.clear();
-		if (controller.hasErrors()) {
+		if (controller.hasErrors() && false) {
 		    createDebugContents(controller);
 		} else {
 		    JikesPG jpg= (JikesPG) controller.getCurrentAst();
 
-		    jpg.accept(new OutlineVisitor());
+		    if (jpg != null) {
+			fTree.setRedraw(false);
+			fTree.removeAll();
+			fItemStack.clear();
+			jpg.accept(new OutlineVisitor());
+		    }
 		}
-		fTree.setSelection(new TreeItem[] { fTree.getItem(new Point(0, 0)) });
+//		fTree.setSelection(new TreeItem[] { fTree.getItem(new Point(0, 0)) });
 	    }
 	    //selectTreeItemAtTextOffset(offset);
 	} catch (Throwable e) {
@@ -150,25 +235,25 @@ public class Outliner extends DefaultOutliner {
     }
 
     private void createDebugContents(IParseController controller) {
-	createTreeItem(MESSAGE);
+	createTopItem(MESSAGE);
 	List errors= controller.getErrors();
-	createTreeItem("Found " + errors.size() + " syntax error(s) in input: ");
+	createTopItem("Found " + errors.size() + " syntax error(s) in input: ");
 	for(Iterator error= errors.iterator(); error.hasNext(); ) {
 	    ParseError pe= (ParseError) error.next();
-	    createTreeItem("  " + pe.description);
+	    createTopItem("  " + pe.description);
 	}
 	int count= controller.getParser().getParseStream().getSize();
 	if (count > 1) {
-	createTreeItem("Tokens:");
+	createTopItem("Tokens:");
 	for(int n= 1; n < 100 && n < count; n++) {
 	    IToken token= controller.getParser().getParseStream().getTokenAt(n);
 	    String label= n + ": "
 		    + controller.getParser().getParseStream().orderedTerminalSymbols()[token.getKind()] + " = "
 		    + token.getValue(controller.getLexer().getLexStream().getInputChars());
-	    createTreeItem(label);
+	    createTopItem(label);
 	}
 	if (count >= 100)
-	    createTreeItem("rest of outline truncated...");
+	    createTopItem("rest of outline truncated...");
 	}
     }
 
