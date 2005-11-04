@@ -27,6 +27,7 @@
       <import plugin="org.eclipse.uide.runtime"/>
       <import plugin="lpg"/>
       <import plugin="org.eclipse.uide"/>
+      <import plugin="org.eclipse.jdt.ui"/>
    </requires>
    
    <extension
