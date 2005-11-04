@@ -8,10 +8,19 @@ import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.uide.core.ErrorHandler;
 import org.eclipse.uide.defaults.DefaultOutliner;
 import org.eclipse.uide.editor.UniversalEditor;
@@ -21,6 +30,7 @@ import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.*;
 
 import com.ibm.lpg.IToken;
+import com.ibm.lpg.PrsStream;
 
 public class Outliner extends DefaultOutliner {
     Stack fItemStack= new Stack();
@@ -89,7 +99,7 @@ public class Outliner extends DefaultOutliner {
 //	    createTreeItem(symbolImage());
 	}
 	public void visitstart_symbol96(start_symbol96 n) {
-	    createTopItem("Start = " + symbolImage(n.getSYMBOL()));
+	    createTopItem("Start = " + symbolImage(n.getSYMBOL()), n);
 	}
 	public void visitTerminalsSeg(TerminalsSeg n) {
 	    fItemStack.push(createTopItem("Terminals"));
@@ -194,9 +204,15 @@ public class Outliner extends DefaultOutliner {
     }
 
     public TreeItem createTopItem(String label) {
+	return createTopItem(label, null);
+    }
+
+    public TreeItem createTopItem(String label, ASTNode n) {
 	TreeItem treeItem= new TreeItem(fTree, SWT.NONE);
 	treeItem.setText(label);
 	treeItem.setImage(JavaPluginImages.DESC_MISC_PUBLIC.createImage());
+	if (n != null)
+	    treeItem.setData(n);
 	return treeItem;
     }
 
@@ -261,5 +277,25 @@ public class Outliner extends DefaultOutliner {
 
     public void setTree(Tree tree) {
 	this.fTree= tree;
+	this.fTree.addSelectionListener(new SelectionListener() {
+	    public void widgetSelected(SelectionEvent e) {
+		TreeItem ti= (TreeItem) e.item;
+		Object data= ti.getData();
+
+		if (data instanceof ASTNode) {
+		    ASTNode node= (ASTNode) ti.getData();
+
+		    PrsStream s= fController.getParser().getParseStream();
+		    IToken token = s.getTokenAt(node.getLeftToken());
+
+		    IEditorPart activeEditor= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		    AbstractTextEditor textEditor= (AbstractTextEditor) activeEditor;
+
+		    textEditor.selectAndReveal(token.getStartOffset(), token.getEndOffset()-token.getStartOffset()+1);
+//		    textEditor.setFocus();
+		}
+	    }
+	    public void widgetDefaultSelected(SelectionEvent e) { }
+	});
     }
 }
