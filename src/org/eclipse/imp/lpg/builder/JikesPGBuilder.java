@@ -97,6 +97,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	    // String includeDirName = includeDir.getAbsolutePath();
 	    String cmd[]= new String[] {
 		    getLpgExecutable(),
+		    "-quiet",
 		    "-list",
 		    // TODO RMF 7/21/05 -- Don't specify -dat-directory; causes performance issues with Eclipse.
 		    // Lexer tables can get quite large, so large that Java as spec'ed can't swallow them
