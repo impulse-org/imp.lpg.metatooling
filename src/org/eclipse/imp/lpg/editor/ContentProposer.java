@@ -19,6 +19,7 @@ public class ContentProposer implements IContentProposer {
     public ICompletionProposal[] getContentProposals(IParseController controller, int offset) {
 	PrsStream parseStream= controller.getParser().getParseStream();
 	int thisTokIdx= parseStream.getTokenIndexAtCharacter(offset);
+        if (thisTokIdx < 0) thisTokIdx= - thisTokIdx;
 	IToken prevTok= parseStream.getTokenAt(thisTokIdx - 1);
 	ASTNode currentAst= (ASTNode) controller.getCurrentAst();
 
