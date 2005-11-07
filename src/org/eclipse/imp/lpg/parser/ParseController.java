@@ -80,8 +80,8 @@ public class ParseController implements IParseController {
 
         currentAst = (ASTNode) parser.parser(my_monitor, 0);
 
-        if (currentAst == null)
-            parser.dumpTokens();
+//        if (currentAst == null)
+//            parser.dumpTokens();
 
         if (keywords == null) {
 	        String tokenKindNames[] = parser.getParseStream().orderedTerminalSymbols();
