@@ -41,13 +41,11 @@ public class Outliner extends DefaultOutliner {
 	}
 
 	public void visitJikesPG(JikesPG n) {
-//	    fItemStack.push(createTreeItem("JikesPG Spec"));
-	    fItemStack.push(createTopItem("Options"));
+	    fItemStack.push(createTopItem("Options", n));
 	    n.getoptions_segment().accept(this);
 	    fItemStack.pop();
             if (n.getJikesPG_INPUT() != null)
                 n.getJikesPG_INPUT().accept(this);
-//	    fItemStack.pop();
 	}
 	public void visitoptions_segment(options_segment n) {
 	    if (n.getoptions_segment() != null)
@@ -63,7 +61,7 @@ public class Outliner extends DefaultOutliner {
 	}
 	public void visitoption(option n) {
 	    option_value value= (option_value) n.getoption_value();
-	    createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolImage(value.getSYMBOL()));
+	    createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolImage(value.getSYMBOL()), n);
 	}
 	public void visitJikesPG_INPUT(JikesPG_INPUT n) {
 //	    fItemStack.push(createTreeItem("Grammar"));
@@ -73,22 +71,22 @@ public class Outliner extends DefaultOutliner {
 //	    fItemStack.pop();
 	}
 	public void visitAliasSeg(AliasSeg n) {
-	    fItemStack.push(createTopItem("Alias"));
+	    fItemStack.push(createTopItem("Alias", n));
 	    n.getalias_segment().accept(this);
 	    fItemStack.pop();
 	}
 	public void visitDefineSeg(DefineSeg n) {
-	    fItemStack.push(createTopItem("Define"));
+	    fItemStack.push(createTopItem("Define", n));
 	    n.getdefine_segment().accept(this);
 	    fItemStack.pop();
 	}
 	public void visitHeadersSeg(HeadersSeg n) {
-	    fItemStack.push(createTopItem("Headers"));
+	    fItemStack.push(createTopItem("Headers", n));
 	    n.getheaders_segment().accept(this);
 	    fItemStack.pop();
 	}
 	public void visitIdentifierSeg(IdentifierSeg n) {
-	    fItemStack.push(createTopItem("Identifiers"));
+	    fItemStack.push(createTopItem("Identifiers", n));
 	    n.getidentifier_segment().accept(this);
 	    fItemStack.pop();
 	}
@@ -103,12 +101,12 @@ public class Outliner extends DefaultOutliner {
 	    createTopItem("Start = " + symbolImage(n.getSYMBOL()), n);
 	}
 	public void visitTerminalsSeg(TerminalsSeg n) {
-	    fItemStack.push(createTopItem("Terminals"));
+	    fItemStack.push(createTopItem("Terminals", n));
 	    n.getterminals_segment().accept(this);
 	    fItemStack.pop();
 	}
 	public void visitterminals_segment45(terminals_segment45 n) {
-	    createSubItem(symbolImage(n.getTERMINALS_KEY()));
+	    createSubItem(symbolImage(n.getTERMINALS_KEY()), n);
 	}
 	public void visitterminals_segment46(terminals_segment46 n) {
 	    n.getterminals_segment().accept(this);
@@ -116,27 +114,28 @@ public class Outliner extends DefaultOutliner {
 	}
 	public void visitterminals_segment47(terminals_segment47 n) {
 	    n.getterminals_segment().accept(this);
-	    createSubItem(nameImage(n.getname()) + " " + producesImage(n.getproduces()) + " " + symbolImage(n.getterminal_symbol()));
+	    String label= nameImage(n.getname()) + " " + producesImage(n.getproduces()) + " " + symbolImage(n.getterminal_symbol());
+            createSubItem(label, n);
 	}
 	public void visitterminal_symbol74(terminal_symbol74 n) {
-	    createSubItem(symbolImage(n.getSYMBOL()));
+	    createSubItem(symbolImage(n.getSYMBOL()), n);
 	}
 	public void visitterminal_symbol75(terminal_symbol75 n) {
-	    createSubItem(symbolImage(n.getMACRO_NAME()));
+	    createSubItem(symbolImage(n.getMACRO_NAME()), n);
 	}
 	public void visitTitleSeg(TitleSeg n) {
-	    fItemStack.push(createTopItem("Title"));
+	    fItemStack.push(createTopItem("Title", n));
 	    n.gettitle_segment().accept(this);
 	    fItemStack.pop();
 	}
 	public void visittitle_segment32(title_segment32 n) {
-	    createSubItem(symbolImage(n.getTITLE_KEY()));
+	    createSubItem(symbolImage(n.getTITLE_KEY()), n);
 	}
 	public void visittitle_segment33(title_segment33 n) {
-	    createSubItem(symbolImage(n.getTITLE_KEY().getTITLE_KEY()));
+	    createSubItem(symbolImage(n.getTITLE_KEY().getTITLE_KEY()), n);
 	}
 	public void visitRulesSeg(RulesSeg n) {
-	    fItemStack.push(createTopItem("Rules"));
+	    fItemStack.push(createTopItem("Rules", n));
 	    n.getrules_segment().accept(this);
 	    fItemStack.pop();
 	}
@@ -145,7 +144,7 @@ public class Outliner extends DefaultOutliner {
 	    n.getrules().accept(this);
 	}
 	public void visitrules100(rules100 n) {
-	    createSubItem(symbolImage(n.getSYMBOL()));
+	    createSubItem(symbolImage(n.getSYMBOL()), n);
 	}
     }
 
@@ -218,8 +217,14 @@ public class Outliner extends DefaultOutliner {
     }
 
     public TreeItem createSubItem(String label) {
+        return createSubItem(label, null);
+    }
+
+    public TreeItem createSubItem(String label, ASTNode n) {
 	TreeItem treeItem= new TreeItem((TreeItem) fItemStack.peek(), SWT.NONE);
 	treeItem.setText(label);
+        if (n != null)
+            treeItem.setData(n);
 	treeItem.setImage(JavaPluginImages.DESC_MISC_PUBLIC.createImage());
 	return treeItem;
     }
