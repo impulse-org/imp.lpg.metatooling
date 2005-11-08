@@ -106,7 +106,7 @@ public class Outliner extends DefaultOutliner {
 	    fItemStack.pop();
 	}
 	public void visitterminals_segment45(terminals_segment45 n) {
-	    createSubItem(symbolImage(n.getTERMINALS_KEY()), n);
+//	    createSubItem(symbolImage(n.getTERMINALS_KEY()), n);
 	}
 	public void visitterminals_segment46(terminals_segment46 n) {
 	    n.getterminals_segment().accept(this);
