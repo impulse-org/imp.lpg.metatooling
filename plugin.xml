@@ -39,6 +39,15 @@
             name="Parser using JikesPG"
             id="org.jikespg.uide.NewJikesPGParserWizard"/>
    </extension>
+   <extension
+         id="jikesPGNature"
+         name="JikesPG Nature"
+         point="org.eclipse.core.resources.natures">
+      <builder id="org.jikespg.uide.jikesPGBuilder"/>
+      <runtime>
+         <run class="org.jikespg.uide.builder.JikesPGNature"/>
+      </runtime>
+   </extension>
  
    <extension
          id="jikesPGBuilder"
@@ -56,6 +65,12 @@
          <run class="org.jikespg.uide.builder.XmlBuilder"/>
       </builder>
    </extension> -->
+   <extension
+         id="problem"
+         name="JikesPG Error"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+   </extension>
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -77,12 +92,6 @@
                relative="org.eclipse.ui.views.TaskList"
                id="org.jikespg.uide.views.JikesPGView"/>
       </perspectiveExtension>
-   </extension>
-   <extension
-         id="problem"
-         name="JikesPG Error"
-         point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.core.resources.problemmarker"/>
    </extension>
    <extension
          id="org.jikespg.uide.jikesPG"
@@ -125,13 +134,12 @@
             name="JikesPG Content Proposer"/>
    </extension>
    <extension
-         id="jikesPGNature"
-         name="JikesPG Nature"
-         point="org.eclipse.core.resources.natures">
-      <builder id="org.jikespg.uide.jikesPGBuilder"/>
-      <runtime>
-         <run class="org.jikespg.uide.builder.JikesPGNature"/>
-      </runtime>
+         point="org.eclipse.uide.runtime.hoverHelper">
+      <hoverhelper
+            class="org.jikespg.uide.editor.HoverHelper"
+            id="org.jikespg.uide.hoverHelper"
+            language="JikesPG"
+            name="JikesPG Hover Helper"/>
    </extension>  
    
 </plugin>
