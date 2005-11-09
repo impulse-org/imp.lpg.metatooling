@@ -11,6 +11,7 @@ import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
 import org.jikespg.uide.parser.JikesPGParser.headers_segment92;
 import org.jikespg.uide.parser.JikesPGParser.headers_segment93;
 import org.jikespg.uide.parser.JikesPGParser.rhsSymbol;
+import org.jikespg.uide.parser.JikesPGParser.rhsSymbolMacro;
 import org.jikespg.uide.parser.JikesPGParser.rules100;
 import org.jikespg.uide.parser.JikesPGParser.rules_segment98;
 import org.jikespg.uide.parser.JikesPGParser.rules_segment99;
@@ -37,7 +38,7 @@ public class NodeLocator implements IASTNodeLocator {
     public Object findNode(Object ast, int startOffset, int endOffset) {
         ASTNode root= (ASTNode) ast;
 
-        return null;
+        return root.accept(new LocatingVisitor(startOffset, endOffset));
     }
 
     private class LocatingVisitor extends JikesPGParser.AbstractResultVisitor {
@@ -141,6 +142,14 @@ public class NodeLocator implements IASTNodeLocator {
                 o= n.getSYMBOL().accept(this);
             return o;
         }
+        public Object visitrhsSymbolMacro(rhsSymbolMacro n) {
+            Object o= n.getSYMBOL().accept(this);
+            if (o == null)
+                o= n.getMACRO_NAME().accept(this);
+            if (o == null)
+                o= n.getrhs().accept(this);
+            return o;
+        }
         public Object visitTSYMBOL(TSYMBOL n) {
             int left= n.getLeftToken();
             int right= n.getRightToken();
@@ -148,7 +157,7 @@ public class NodeLocator implements IASTNodeLocator {
             IToken lt= fParseStream.getTokenAt(left);
             IToken rt= fParseStream.getTokenAt(right);
 
-            return (fStartOffset >= lt.getStartOffset() && fEndOffset <= rt.getEndOffset()) ? n : null;
+            return (fStartOffset >= lt.getStartOffset() && fEndOffset <= rt.getEndOffset()+1) ? n : null;
         }
     }
 }
