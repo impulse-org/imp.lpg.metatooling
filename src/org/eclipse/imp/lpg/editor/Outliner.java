@@ -42,7 +42,8 @@ public class Outliner extends DefaultOutliner {
 
 	public void visitJikesPG(JikesPG n) {
 	    fItemStack.push(createTopItem("Options", n));
-	    n.getoptions_segment().accept(this);
+	    if (n.getoptions_segment() != null)
+		n.getoptions_segment().accept(this);
 	    fItemStack.pop();
             if (n.getJikesPG_INPUT() != null)
                 n.getJikesPG_INPUT().accept(this);
