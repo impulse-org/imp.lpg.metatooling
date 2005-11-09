@@ -1,0 +1,25 @@
+Bundle-SymbolicName: org.jikespg.uide; singleton=true
+Bundle-Name: JikesPG IDE
+Bundle-Version: 1.0.1
+Bundle-Activator: org.jikespg.uide.JikesPGPlugin
+Bundle-Vendor: pcharles@us.ibm.com
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.pde.core,
+ org.eclipse.ui,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.views,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.uide.runtime,
+ org.eclipse.uide,
+ lpg,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui
+Provide-Package: org.jikespg.uide,
+ org.jikespg.uide.builder,
+ org.jikespg.uide.editor,
+ org.jikespg.uide.parser,
+ org.jikespg.uide.views,
+ org.jikespg.uide.wizards
