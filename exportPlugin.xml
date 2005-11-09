@@ -54,8 +54,10 @@
 		<copy todir="${temp.folder}/${plugin.jar.name}.bin" failonerror="true" overwrite="false">
 			<fileset dir="src/" excludes="**/*.java, **/package.htm*,null"/>
 		</copy>
+		<copy file="plugin.xml" todir="${temp.folder}/${plugin.jar.name}.bin" failonerror="true"/>
 		<mkdir dir="${build.result.folder}"/>
-		<jar destfile="${build.result.folder}/${plugin.jar.name}" basedir="${temp.folder}/${plugin.jar.name}.bin"/>
+		<jar destfile="${build.result.folder}/${plugin.jar.name}" basedir="${temp.folder}/${plugin.jar.name}.bin"
+			manifest="META-INF/MANIFEST.MF"/>
 		<delete dir="${temp.folder}/${plugin.jar.name}.bin"/>
 	</target>
 
