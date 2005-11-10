@@ -216,7 +216,9 @@ public class JikesPGBuilder extends UIDEBuilderBase {
     private String getLpgExecutable() throws IOException {
 	if (lpg == null) {
 	    Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
-	    Path path= new Path("bin/lpg.exe");
+	    String os= Platform.getOS();
+            String plat= Platform.getOSArch();
+	    Path path= new Path("bin/" + os + "_" + plat + "lpg.exe");
 	    URL url= Platform.resolve(Platform.find(bundle, path));
 	    lpg= url.getFile();
 	    if (lpg.startsWith("/"))
