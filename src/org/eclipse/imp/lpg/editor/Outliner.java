@@ -130,10 +130,11 @@ public class Outliner extends DefaultOutliner {
 	    fItemStack.pop();
 	}
 	public void visittitle_segment32(title_segment32 n) {
-	    createSubItem(symbolImage(n.getTITLE_KEY()), n);
+//	    createSubItem(symbolImage(n.getTITLE_KEY()), n);
 	}
 	public void visittitle_segment33(title_segment33 n) {
 	    createSubItem(symbolImage(n.getTITLE_KEY().getTITLE_KEY()), n);
+            createSubItem(blockImage(((action_segment) n.getaction_segment()).getBLOCK()), n);
 	}
 	public void visitRulesSeg(RulesSeg n) {
 	    fItemStack.push(createTopItem("Rules", n));
@@ -202,6 +203,16 @@ public class Outliner extends DefaultOutliner {
 
     private String symbolImage(TSYMBOL symbol) {
 	return symbolImage(symbol.getLeftToken());
+    }
+
+    private String blockImage(TBLOCK block) {
+        return blockImage(block.getBLOCK());
+    }
+
+    private String blockImage(int blockToken) {
+        String rep= fController.getParser().getParseStream().getTokenText(blockToken);
+
+        return rep;
     }
 
     public TreeItem createTopItem(String label) {
