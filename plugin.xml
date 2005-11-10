@@ -112,6 +112,9 @@
             id="org.jikespg.uide.hoverHelper"
             language="JikesPG"
             name="JikesPG Hover Helper"/>
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.hyperLink">
    </extension>  
    
 </plugin>
