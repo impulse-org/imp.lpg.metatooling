@@ -115,6 +115,21 @@
    </extension>
    <extension
          point="org.eclipse.uide.runtime.hyperLink">
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.jikespg.uide.projectContextMenu"
+            nameFilter="*"
+            objectClass="org.eclipse.jdt.core.IJavaProject">
+         <action
+               class="org.jikespg.uide.EnableBuilder"
+               icon="icons/builderEnable.gif"
+               id="org.jikespg.uide.enableBuilderAction"
+               label="Enable JikesPG Builder"
+               tooltip="Enable the JikesPG builder for this project"/>
+      </objectContribution>
    </extension>  
    
 </plugin>
