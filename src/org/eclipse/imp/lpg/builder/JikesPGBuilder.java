@@ -13,10 +13,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -46,11 +44,10 @@ public class JikesPGBuilder extends UIDEBuilderBase {
      */
     public static final String LPG_PLUGIN_ID= "lpg";
 
-    String lpg;
-
-    String outdir;
-
-    String incdir;
+    /**
+     * The path to the LPG executable file.
+     */
+    private String lpgExecPath;
 
     private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (.*)";
     private static final Pattern SYNTAX_MSG_PATTERN= Pattern.compile(SYNTAX_MSG_REGEXP);
@@ -90,11 +87,9 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 
     protected void compile(final IFile file) {
 	String fileName= file.getLocation().toOSString();
-	// IPath projectRelativePath = currentResource.getProjectRelativePath();
-	// System.out.println("JikesPG builder runs on "+currentResource.getProject()+". Compiling "+fileName);
+
 	try {
-	    File includeDir= new File(fileName).getParentFile();
-	    // String includeDirName = includeDir.getAbsolutePath();
+	    File parentDir= new File(fileName).getParentFile();
 	    String cmd[]= new String[] {
 		    getLpgExecutable(),
 		    "-quiet",
@@ -107,9 +102,8 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 		    // very slow when performed using the standard Eclipse/plugin classloader.
 		    // So: don't enable it by default.
 		    // "-dat-directory=" + getOutputDirectory(resource.getProject()),
-		    fileName.replace('/', '\\') };
-	    // String projectLocation = currentResource.getProject().getLocation().toOSString();
-	    Process process= Runtime.getRuntime().exec(cmd, new String[0], includeDir);
+		    fileName};
+	    Process process= Runtime.getRuntime().exec(cmd, new String[0], parentDir);
 	    JikesPGView consoleView= JikesPGView.getDefault();
 
 	    processJikesPGOutput(file, process, consoleView);
@@ -181,50 +175,36 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 
 	if (matcher.matches()) {
 	    String errorFile= matcher.group(1);
+	    String projectLoc= getProject().getLocation().toOSString();
+
+	    if (errorFile.startsWith(projectLoc))
+		errorFile= errorFile.substring(projectLoc.length());
+
 	    IResource errorResource= getProject().getFile(errorFile);
 	    int startLine= Integer.parseInt(matcher.group(2));
 //	    int startCol= Integer.parseInt(matcher.group(3));
-//	    int endLine= Integer.parseInt(matcher.group(4));
+	    int endLine= Integer.parseInt(matcher.group(4));
 //	    int endCol= Integer.parseInt(matcher.group(5));
-	    int startChar= Integer.parseInt(matcher.group(6)) + (startLine - 1) * lineSepBias;
-	    int endChar= Integer.parseInt(matcher.group(7)) + (startLine - 1) * lineSepBias;
+	    int startChar= Integer.parseInt(matcher.group(6));// - (startLine - 1) * lineSepBias + 1;
+	    int endChar= Integer.parseInt(matcher.group(7));// - (endLine - 1) * lineSepBias + 1;
 	    String descrip= matcher.group(8);
 
 	    createMarker(errorResource, startLine, startChar, endChar, descrip, IMarker.SEVERITY_ERROR);
 	}
     }
 
-    private String getOutputDirectory(IProject project) throws IOException {
-	if (outdir == null) {
-	    outdir= new File(project.getLocation().toFile(), "/src").getAbsolutePath().replace('\\', '/');
-	}
-	return outdir;
-
-    }
-
-    private String getInputDirectory(IProject project) throws IOException {
-	if (incdir == null) {
-	    File file= new File(project.getLocation().toFile(), "/src");
-	    file.mkdirs();
-	    file.mkdir();
-	    incdir= file.getAbsolutePath().replace('\\', '/');
-	}
-	return incdir;
-
-    }
-
     private String getLpgExecutable() throws IOException {
-	if (lpg == null) {
+	if (lpgExecPath == null) {
 	    Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
 	    String os= Platform.getOS();
             String plat= Platform.getOSArch();
-	    Path path= new Path("bin/" + os + "_" + plat + "lpg.exe");
+	    Path path= new Path("bin/lpg" + os + "_" + plat + (os.equals("win32") ? ".exe" : ""));
 	    URL url= Platform.resolve(Platform.find(bundle, path));
-	    lpg= url.getFile();
-	    if (lpg.startsWith("/"))
-		lpg= lpg.substring(1);
-	    lpg= lpg.replace('/', '\\');
+
+	    lpgExecPath= url.getFile();
+	    if (lpgExecPath.startsWith("/")) // remove leading slash from URL
+		lpgExecPath= lpgExecPath.substring(1);
 	}
-	return lpg;
+	return lpgExecPath;
     }
 }
