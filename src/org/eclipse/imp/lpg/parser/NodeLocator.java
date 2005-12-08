@@ -3,10 +3,10 @@ package org.jikespg.uide.parser;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.HeadersSeg;
+import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG_INPUT;
 import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
-import org.jikespg.uide.parser.JikesPGParser.TSYMBOL;
 import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
 import org.jikespg.uide.parser.JikesPGParser.headers_segment92;
 import org.jikespg.uide.parser.JikesPGParser.headers_segment93;
@@ -18,7 +18,6 @@ import org.jikespg.uide.parser.JikesPGParser.rules_segment99;
 import org.jikespg.uide.parser.JikesPGParser.terminal_symbol74;
 import org.jikespg.uide.parser.JikesPGParser.terminals_segment45;
 import org.jikespg.uide.parser.JikesPGParser.terminals_segment46;
-
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.PrsStream;
 
@@ -106,7 +105,7 @@ public class NodeLocator implements IASTNodeLocator {
         }
 
         public Object visitterminal_symbol74(terminal_symbol74 n) {
-            IToken symTok= fParseStream.getIToken(n.getSYMBOL());
+            IToken symTok= fParseStream.getIToken(n.getLeftToken());
             if (fStartOffset >= symTok.getStartOffset() && fEndOffset <= symTok.getEndOffset())
                 return n;
             return null;
@@ -150,7 +149,7 @@ public class NodeLocator implements IASTNodeLocator {
                 o= n.getrhs().accept(this);
             return o;
         }
-        public Object visitTSYMBOL(TSYMBOL n) {
+        public Object visitTSYMBOL(IASTNodeToken n) {
             int left= n.getLeftToken();
             int right= n.getRightToken();
 

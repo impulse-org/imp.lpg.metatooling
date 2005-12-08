@@ -40,7 +40,7 @@ public class Outliner extends DefaultOutliner {
 	    System.out.println(s);
 	}
 
-	public void visitJikesPG(JikesPG n) {
+	public void visit(JikesPG n) {
 	    fItemStack.push(createTopItem("Options", n));
 	    if (n.getoptions_segment() != null)
 		n.getoptions_segment().accept(this);
@@ -48,104 +48,107 @@ public class Outliner extends DefaultOutliner {
             if (n.getJikesPG_INPUT() != null)
                 n.getJikesPG_INPUT().accept(this);
 	}
-	public void visitoptions_segment(options_segment n) {
+	public void visit(options_segment n) {
 	    if (n.getoptions_segment() != null)
 		n.getoptions_segment().accept(this);
 	    n.getoption_spec().accept(this);
 	}
-	public void visitoption_spec(option_spec n) {
+	public void visit(option_spec n) {
 	    n.getoption_list().accept(this);
 	}
-	public void visitoption_list(option_list n) {
+	public void visit(option_list n) {
 	    n.getoption_list().accept(this);
 	    n.getoption().accept(this);
 	}
-	public void visitoption(option n) {
+	public void visit(option n) {
 	    option_value value= (option_value) n.getoption_value();
-	    createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolImage(value.getSYMBOL()), n);
+	    if (value != null)
+		createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolImage(value.getSYMBOL()), n);
+	    else
+		createSubItem(symbolImage(n.getSYMBOL()), n);
 	}
-	public void visitJikesPG_INPUT(JikesPG_INPUT n) {
+	public void visit(JikesPG_INPUT n) {
 //	    fItemStack.push(createTreeItem("Grammar"));
 	    if (n.getJikesPG_INPUT() != null)
 		n.getJikesPG_INPUT().accept(this);
 	    n.getJikesPG_item().accept(this);
 //	    fItemStack.pop();
 	}
-	public void visitAliasSeg(AliasSeg n) {
+	public void visit(AliasSeg n) {
 	    fItemStack.push(createTopItem("Alias", n));
 	    n.getalias_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visitDefineSeg(DefineSeg n) {
+	public void visit(DefineSeg n) {
 	    fItemStack.push(createTopItem("Define", n));
 	    n.getdefine_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visitHeadersSeg(HeadersSeg n) {
+	public void visit(HeadersSeg n) {
 	    fItemStack.push(createTopItem("Headers", n));
 	    n.getheaders_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visitIdentifierSeg(IdentifierSeg n) {
+	public void visit(IdentifierSeg n) {
 	    fItemStack.push(createTopItem("Identifiers", n));
 	    n.getidentifier_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visitStartSeg(StartSeg n) {
+	public void visit(StartSeg n) {
 	    n.getstart_segment().accept(this);
 	}
-	public void visitstart_segment(start_segment n) {
+	public void visit(start_segment n) {
 	    n.getstart_symbol().accept(this);
 //	    createTreeItem(symbolImage());
 	}
-	public void visitstart_symbol96(start_symbol96 n) {
-	    createTopItem("Start = " + symbolImage(n.getSYMBOL()), n);
+	public void visit(start_symbol96 n) {
+	    createTopItem("Start = " + symbolImage(n), n);
 	}
-	public void visitTerminalsSeg(TerminalsSeg n) {
+	public void visit(TerminalsSeg n) {
 	    fItemStack.push(createTopItem("Terminals", n));
 	    n.getterminals_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visitterminals_segment45(terminals_segment45 n) {
+	public void visit(terminals_segment45 n) {
 //	    createSubItem(symbolImage(n.getTERMINALS_KEY()), n);
 	}
-	public void visitterminals_segment46(terminals_segment46 n) {
+	public void visit(terminals_segment46 n) {
 	    n.getterminals_segment().accept(this);
 	    n.getterminal_symbol().accept(this);
 	}
-	public void visitterminals_segment47(terminals_segment47 n) {
+	public void visit(terminals_segment47 n) {
 	    n.getterminals_segment().accept(this);
 	    String label= nameImage(n.getname()) + " " + producesImage(n.getproduces()) + " " + symbolImage(n.getterminal_symbol());
             createSubItem(label, n);
 	}
-	public void visitterminal_symbol74(terminal_symbol74 n) {
-	    createSubItem(symbolImage(n.getSYMBOL()), n);
+	public void visit(terminal_symbol74 n) {
+	    createSubItem(symbolImage(n), n);
 	}
-	public void visitterminal_symbol75(terminal_symbol75 n) {
-	    createSubItem(symbolImage(n.getMACRO_NAME()), n);
+	public void visit(terminal_symbol75 n) {
+	    createSubItem(symbolImage(n.getLeftToken()), n);
 	}
-	public void visitTitleSeg(TitleSeg n) {
+	public void visit(TitleSeg n) {
 	    fItemStack.push(createTopItem("Title", n));
 	    n.gettitle_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visittitle_segment32(title_segment32 n) {
+	public void visit(title_segment32 n) {
 //	    createSubItem(symbolImage(n.getTITLE_KEY()), n);
 	}
-	public void visittitle_segment33(title_segment33 n) {
-	    createSubItem(symbolImage(n.getTITLE_KEY().getTITLE_KEY()), n);
-            createSubItem(blockImage(((action_segment) n.getaction_segment()).getBLOCK()), n);
+	public void visit(title_segment33 n) {
+	    createSubItem(symbolImage(n.getTITLE_KEY().getLeftToken()), n);
+            createSubItem(blockImage(((action_segment) n.getaction_segment()).getLeftToken()), n);
 	}
-	public void visitRulesSeg(RulesSeg n) {
+	public void visit(RulesSeg n) {
 	    fItemStack.push(createTopItem("Rules", n));
 	    n.getrules_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visitrules_segment99(rules_segment99 n) {
+	public void visit(rules_segment99 n) {
 	    n.getrules_segment().accept(this);
 	    n.getrules().accept(this);
 	}
-	public void visitrules100(rules100 n) {
+	public void visit(rules100 n) {
 	    createSubItem(symbolImage(n.getSYMBOL()), n);
 	}
     }
@@ -162,33 +165,33 @@ public class Outliner extends DefaultOutliner {
 	return new String(fController.getLexer().getLexStream().getInputChars(), token.getStartOffset(), token.getEndOffset()-token.getStartOffset()+1);
     }
 
-    public String symbolImage(Iterminal_symbol terminal_symbol) {
-	if (terminal_symbol instanceof terminal_symbol74)
-	    return symbolImage(((terminal_symbol74) terminal_symbol).getSYMBOL());
-	else if (terminal_symbol instanceof terminal_symbol75)
-	    return symbolImage(((terminal_symbol75) terminal_symbol).getMACRO_NAME());
-	else
-	    return "<???>";
-    }
+//    public String symbolImage(Iterminal_symbol terminal_symbol) {
+//	if (terminal_symbol instanceof terminal_symbol74)
+//	    return symbolImage(((terminal_symbol74) terminal_symbol).getLeftToken());
+//	else if (terminal_symbol instanceof terminal_symbol75)
+//	    return symbolImage(((terminal_symbol75) terminal_symbol).getLeftToken());
+//	else
+//	    return "<???>";
+//    }
 
     public String producesImage(Iproduces produces) {
 	if (produces instanceof produces103)
-	    return symbolImage(((produces103) produces).getEQUIVALENCE());
+	    return symbolImage(((produces103) produces).getLeftToken());
 	else if (produces instanceof produces104)
-	    return symbolImage(((produces103) produces).getEQUIVALENCE());
+	    return symbolImage(((produces103) produces).getLeftToken());
 	else if (produces instanceof produces105)
-	    return symbolImage(((produces103) produces).getEQUIVALENCE());
+	    return symbolImage(((produces103) produces).getLeftToken());
 	else if (produces instanceof produces106)
-	    return symbolImage(((produces103) produces).getEQUIVALENCE());
+	    return symbolImage(((produces103) produces).getLeftToken());
 	else
 	    return "<???>";
     }
 
     public String nameImage(Iname name) {
 	if (name instanceof name119)
-	    return symbolImage(((name119) name).getSYMBOL());
+	    return symbolImage(((name119) name).getLeftToken());
 	else if (name instanceof name120)
-	    return symbolImage(((name120) name).getMACRO_NAME());
+	    return symbolImage(((name120) name).getLeftToken());
 	else if (name instanceof name121)
 	    return "$empty";
 	else if (name instanceof name122)
@@ -196,17 +199,17 @@ public class Outliner extends DefaultOutliner {
 	else if (name instanceof name123)
 	    return "$eol";
 	else if (name instanceof name124)
-	    return symbolImage(((name124) name).getIDENTIFIER_KEY());
+	    return symbolImage(((name124) name).getLeftToken());
 	else
 	    return "<???>";
     }
 
-    private String symbolImage(TSYMBOL symbol) {
+    private String symbolImage(IASTNodeToken symbol) {
 	return symbolImage(symbol.getLeftToken());
     }
 
-    private String blockImage(TBLOCK block) {
-        return blockImage(block.getBLOCK());
+    private String blockImage(ASTNodeToken block) {
+        return blockImage(block.getLeftToken());
     }
 
     private String blockImage(int blockToken) {

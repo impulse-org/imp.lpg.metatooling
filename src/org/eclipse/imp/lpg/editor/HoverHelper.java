@@ -4,11 +4,9 @@ import org.eclipse.uide.editor.IHoverHelper;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.IParseController;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
+import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
 import org.jikespg.uide.parser.JikesPGParser.Irules;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG;
-import org.jikespg.uide.parser.JikesPGParser.TSYMBOL;
-import org.jikespg.uide.parser.JikesPGParser.rules100;
-
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.PrsStream;
 
@@ -30,8 +28,8 @@ public class HoverHelper implements IHoverHelper {
         if (node == null)
             return null;
 
-        if (node instanceof TSYMBOL) {
-            ASTNode def= (ASTNode) findDefOf((TSYMBOL) node, (JikesPG) ast);
+        if (node instanceof IASTNodeToken) {
+            ASTNode def= (ASTNode) findDefOf((IASTNodeToken) node, (JikesPG) ast);
 
             if (def != null)
                 return getSubstring(parseController, ps.getIToken(def.getLeftToken()).getStartOffset(), ps.getIToken(def.getRightToken()).getEndOffset());
@@ -47,7 +45,7 @@ public class HoverHelper implements IHoverHelper {
         return getSubstring(parseController, token.getStartOffset(), token.getEndOffset());
     }
 
-    private Irules findDefOf(TSYMBOL s, JikesPG root) {
+    private Irules findDefOf(IASTNodeToken s, JikesPG root) {
         return null;
     }
 }
