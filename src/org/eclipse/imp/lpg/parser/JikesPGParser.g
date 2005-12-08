@@ -1,7 +1,7 @@
 %options table=java,escape=$,la=3
 %options fp=JikesPGParser,prefix=TK_
 %options package=org.jikespg.uide.parser
-%options ast=ASTNode,visitor
+%options automatic_ast,ast=ASTNode,visitor
 %options template=uide/UIDEbtParserTemplate.gi
 %options import_terminals=JikesPGLexer.gi
 
