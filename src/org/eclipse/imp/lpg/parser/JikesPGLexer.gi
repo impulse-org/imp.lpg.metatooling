@@ -204,7 +204,10 @@ $Rules
 
     Dots  ::= '.' | Dots '.'
 
+    letterWhiteDigit ::= letter | white | digit
+
     InsideBlock ::= $empty
+    			  | InsideBlock letterWhiteDigit
                   | InsideBlock Dots specialNoDotOrSlash
                   | InsideBlock '/'
                   | InsideBlock specialNoDotOrSlash
