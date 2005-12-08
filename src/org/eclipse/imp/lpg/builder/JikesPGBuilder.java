@@ -144,9 +144,9 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 
 	    final String msg= line;
 
-	    if (msg.indexOf(": Syntax error detected") >= 0) {
-		parseSyntaxMessageCreateMarker(msg);
-	    } else if (msg.indexOf("Input file ") == 0) {
+	    if (parseSyntaxMessageCreateMarker(msg))
+		;
+	    else if (msg.indexOf("Input file ") == 0) {
 		parseMissingFileMessage(msg, resource);
 	    } else
 		handleMiscMessage(msg, resource);
@@ -170,7 +170,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	}
     }
 
-    private void parseSyntaxMessageCreateMarker(final String msg) {
+    private boolean parseSyntaxMessageCreateMarker(final String msg) {
 	Matcher matcher= SYNTAX_MSG_PATTERN.matcher(msg);
 
 	if (matcher.matches()) {
@@ -185,12 +185,14 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 //	    int startCol= Integer.parseInt(matcher.group(3));
 	    int endLine= Integer.parseInt(matcher.group(4));
 //	    int endCol= Integer.parseInt(matcher.group(5));
-	    int startChar= Integer.parseInt(matcher.group(6));// - (startLine - 1) * lineSepBias + 1;
+	    int startChar= Integer.parseInt(matcher.group(6)) - 1;// - (startLine - 1) * lineSepBias + 1;
 	    int endChar= Integer.parseInt(matcher.group(7));// - (endLine - 1) * lineSepBias + 1;
 	    String descrip= matcher.group(8);
 
 	    createMarker(errorResource, startLine, startChar, endChar, descrip, IMarker.SEVERITY_ERROR);
+	    return true;
 	}
+	return false;
     }
 
     private String getLpgExecutable() throws IOException {
