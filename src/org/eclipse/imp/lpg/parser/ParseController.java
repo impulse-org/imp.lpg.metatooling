@@ -7,14 +7,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.uide.parser.AstLocator;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.ILexer;
 import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import org.w3c.dom.Node;
 
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.Monitor;
@@ -83,23 +81,26 @@ public class ParseController implements IParseController {
         currentAst = (ASTNode) parser.parser(my_monitor, 0);
 
 //        if (currentAst == null)
-//            parser.dumpTokens();
+            parser.dumpTokens();
 
-        if (keywords == null) {
-	        String tokenKindNames[] = parser.getParseStream().orderedTerminalSymbols();
-	        this.isKeyword = new boolean[tokenKindNames.length];
-	        this.keywords = new char[tokenKindNames.length][];
-
-	        int [] keywordKinds = lexer.getKeywordKinds();
-	        for (int i = 1; i < keywordKinds.length; i++)
-	        {
-	            int index = parser.getParseStream().mapKind(keywordKinds[i]);
-
-	            isKeyword[index] = true;
-	            keywords[index] = parser.getParseStream().orderedTerminalSymbols()[index].toCharArray();
-	        }
-        }
+        if (keywords == null)
+            initKeywords();
 
         return currentAst;
+    }
+
+    private void initKeywords() {
+        String tokenKindNames[] = parser.getParseStream().orderedTerminalSymbols();
+        this.isKeyword = new boolean[tokenKindNames.length];
+        this.keywords = new char[tokenKindNames.length][];
+
+        int [] keywordKinds = lexer.getKeywordKinds();
+        for (int i = 1; i < keywordKinds.length; i++)
+        {
+            int index = parser.getParseStream().mapKind(keywordKinds[i]);
+
+            isKeyword[index] = true;
+            keywords[index] = parser.getParseStream().orderedTerminalSymbols()[index].toCharArray();
+        }
     }
 }
