@@ -200,13 +200,21 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	    Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
 	    String os= Platform.getOS();
             String plat= Platform.getOSArch();
-	    Path path= new Path("bin/lpg" + os + "_" + plat + (os.equals("win32") ? ".exe" : ""));
-	    URL url= Platform.resolve(Platform.find(bundle, path));
+	    Path path= new Path("bin/lpg-" + os + "_" + plat + (os.equals("win32") ? ".exe" : ""));
+	    URL execURL= Platform.find(bundle, path);
 
-	    lpgExecPath= url.getFile();
-	    if (lpgExecPath.startsWith("/")) // remove leading slash from URL
-		lpgExecPath= lpgExecPath.substring(1);
-            JikesPGPlugin.getInstance().maybeWriteInfoMsg("LPG executable apparently at '" + lpgExecPath + "'.");
+	    if (execURL == null) {
+		String errMsg= "Unable to find JikesPG executable at " + path + " in bundle " + bundle.getSymbolicName();
+		JikesPGPlugin.getInstance().writeErrorMsg(errMsg);
+		throw new IllegalArgumentException(errMsg);
+	    } else {
+		URL url= Platform.resolve(execURL);
+
+		lpgExecPath= url.getFile();
+		if (lpgExecPath.startsWith("/")) // remove leading slash from URL
+		    lpgExecPath= lpgExecPath.substring(1);
+		JikesPGPlugin.getInstance().maybeWriteInfoMsg("LPG executable apparently at '" + lpgExecPath + "'.");
+	    }
 	}
 	return lpgExecPath;
     }
