@@ -8,17 +8,12 @@ import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.uide.core.ErrorHandler;
@@ -27,7 +22,64 @@ import org.eclipse.uide.editor.UniversalEditor;
 import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.ParseError;
 import org.jikespg.uide.parser.JikesPGParser;
-import org.jikespg.uide.parser.JikesPGParser.*;
+import org.jikespg.uide.parser.JikesPGParser.ASTNode;
+import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
+import org.jikespg.uide.parser.JikesPGParser.AliasSeg;
+import org.jikespg.uide.parser.JikesPGParser.DefineSeg;
+import org.jikespg.uide.parser.JikesPGParser.ExportSeg;
+import org.jikespg.uide.parser.JikesPGParser.GlobalsSeg;
+import org.jikespg.uide.parser.JikesPGParser.HeadersSeg;
+import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
+import org.jikespg.uide.parser.JikesPGParser.IdentifierSeg;
+import org.jikespg.uide.parser.JikesPGParser.Iname;
+import org.jikespg.uide.parser.JikesPGParser.IncludeSeg;
+import org.jikespg.uide.parser.JikesPGParser.Ioption_value;
+import org.jikespg.uide.parser.JikesPGParser.Iproduces;
+import org.jikespg.uide.parser.JikesPGParser.Isymbol_list;
+import org.jikespg.uide.parser.JikesPGParser.JikesPG;
+import org.jikespg.uide.parser.JikesPGParser.JikesPG_INPUT;
+import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
+import org.jikespg.uide.parser.JikesPGParser.SYMBOLList;
+import org.jikespg.uide.parser.JikesPGParser.StartSeg;
+import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
+import org.jikespg.uide.parser.JikesPGParser.TitleSeg;
+import org.jikespg.uide.parser.JikesPGParser.action_segment;
+import org.jikespg.uide.parser.JikesPGParser.define_segment44;
+import org.jikespg.uide.parser.JikesPGParser.export_segment51;
+import org.jikespg.uide.parser.JikesPGParser.export_segment52;
+import org.jikespg.uide.parser.JikesPGParser.globals_segment37;
+import org.jikespg.uide.parser.JikesPGParser.globals_segment38;
+import org.jikespg.uide.parser.JikesPGParser.include_segment39;
+import org.jikespg.uide.parser.JikesPGParser.include_segment40;
+import org.jikespg.uide.parser.JikesPGParser.name125;
+import org.jikespg.uide.parser.JikesPGParser.name126;
+import org.jikespg.uide.parser.JikesPGParser.name127;
+import org.jikespg.uide.parser.JikesPGParser.name128;
+import org.jikespg.uide.parser.JikesPGParser.name129;
+import org.jikespg.uide.parser.JikesPGParser.name130;
+import org.jikespg.uide.parser.JikesPGParser.nonTerm;
+import org.jikespg.uide.parser.JikesPGParser.nonTermList;
+import org.jikespg.uide.parser.JikesPGParser.option;
+import org.jikespg.uide.parser.JikesPGParser.option_list;
+import org.jikespg.uide.parser.JikesPGParser.option_spec;
+import org.jikespg.uide.parser.JikesPGParser.option_value31;
+import org.jikespg.uide.parser.JikesPGParser.option_value32;
+import org.jikespg.uide.parser.JikesPGParser.options_segment;
+import org.jikespg.uide.parser.JikesPGParser.produces109;
+import org.jikespg.uide.parser.JikesPGParser.produces110;
+import org.jikespg.uide.parser.JikesPGParser.produces111;
+import org.jikespg.uide.parser.JikesPGParser.produces112;
+import org.jikespg.uide.parser.JikesPGParser.rules_segment;
+import org.jikespg.uide.parser.JikesPGParser.start_segment;
+import org.jikespg.uide.parser.JikesPGParser.start_symbol100;
+import org.jikespg.uide.parser.JikesPGParser.start_symbol99;
+import org.jikespg.uide.parser.JikesPGParser.terminal_symbol77;
+import org.jikespg.uide.parser.JikesPGParser.terminal_symbol78;
+import org.jikespg.uide.parser.JikesPGParser.terminals_segment48;
+import org.jikespg.uide.parser.JikesPGParser.terminals_segment49;
+import org.jikespg.uide.parser.JikesPGParser.terminals_segment50;
+import org.jikespg.uide.parser.JikesPGParser.title_segment35;
+import org.jikespg.uide.parser.JikesPGParser.title_segment36;
 
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.PrsStream;
@@ -61,10 +113,14 @@ public class Outliner extends DefaultOutliner {
 	    n.getoption().accept(this);
 	}
 	public void visit(option n) {
-	    option_value value= (option_value) n.getoption_value();
-	    if (value != null)
-		createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolImage(value.getSYMBOL()), n);
-	    else
+	    Ioption_value value= n.getoption_value();
+
+            if (value != null) {
+                if (value instanceof option_value31)
+                    createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolImage(((option_value31) value).getSYMBOL()), n);
+                else if (value instanceof option_value32)
+                    createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolListImage(((option_value32) value).getsymbol_list()), n);
+            } else
 		createSubItem(symbolImage(n.getSYMBOL()), n);
 	}
 	public void visit(JikesPG_INPUT n) {
@@ -84,11 +140,42 @@ public class Outliner extends DefaultOutliner {
 	    n.getdefine_segment().accept(this);
 	    fItemStack.pop();
 	}
+        public void visit(define_segment44 n) {
+            n.getmacro_segment();
+            createSubItem(symbolImage(n.getmacro_name_symbol()), (ASTNode) n.getmacro_name_symbol());
+        }
+        public void visit(ExportSeg n) {
+            fItemStack.push(createTopItem("Export", n));
+            n.getexport_segment().accept(this);
+            fItemStack.pop();
+        }
+        public void visit(export_segment52 n) {
+            if (n.getexport_segment() != null)
+                n.getexport_segment().accept(this);
+            createSubItem(symbolImage(n.getterminal_symbol()), (ASTNode) n.getterminal_symbol());
+        }
+        public void visit(GlobalsSeg n) {
+            fItemStack.push(createTopItem("Globals", n));
+            if (n.getglobals_segment() != null)
+                n.getglobals_segment().accept(this);
+            fItemStack.pop();
+        }
+        public void visit(globals_segment38 n) {
+            if (n.getglobals_segment() != null)
+                n.getglobals_segment().accept(this);
+            createSubItem(blockImage(n.getaction_segment()), n.getaction_segment());
+        }
 	public void visit(HeadersSeg n) {
 	    fItemStack.push(createTopItem("Headers", n));
 	    n.getheaders_segment().accept(this);
 	    fItemStack.pop();
 	}
+        public void visit(IncludeSeg n) {
+            n.getinclude_segment().accept(this);
+        }
+        public void visit(include_segment40 n) {
+            createTopItem("Include " + symbolImage(n.getSYMBOL()), n.getSYMBOL());
+        }
 	public void visit(IdentifierSeg n) {
 	    fItemStack.push(createTopItem("Identifiers", n));
 	    n.getidentifier_segment().accept(this);
@@ -101,30 +188,33 @@ public class Outliner extends DefaultOutliner {
 	    n.getstart_symbol().accept(this);
 //	    createTreeItem(symbolImage());
 	}
-	public void visit(start_symbol96 n) {
-	    createTopItem("Start = " + symbolImage(n), n);
+        public void visit(start_symbol99 n) {
+            createTopItem("Start = " + symbolImage(n), n);
+        }
+	public void visit(start_symbol100 n) {
+            createTopItem("Start = " + symbolImage(n), n);
 	}
 	public void visit(TerminalsSeg n) {
 	    fItemStack.push(createTopItem("Terminals", n));
 	    n.getterminals_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visit(terminals_segment45 n) {
+	public void visit(terminals_segment48 n) {
 //	    createSubItem(symbolImage(n.getTERMINALS_KEY()), n);
 	}
-	public void visit(terminals_segment46 n) {
+	public void visit(terminals_segment49 n) {
 	    n.getterminals_segment().accept(this);
 	    n.getterminal_symbol().accept(this);
 	}
-	public void visit(terminals_segment47 n) {
+	public void visit(terminals_segment50 n) {
 	    n.getterminals_segment().accept(this);
 	    String label= nameImage(n.getname()) + " " + producesImage(n.getproduces()) + " " + symbolImage(n.getterminal_symbol());
-            createSubItem(label, n);
+            createSubItem(label, (ASTNode) n.getterminal_symbol());
 	}
-	public void visit(terminal_symbol74 n) {
+	public void visit(terminal_symbol77 n) {
 	    createSubItem(symbolImage(n), n);
 	}
-	public void visit(terminal_symbol75 n) {
+	public void visit(terminal_symbol78 n) {
 	    createSubItem(symbolImage(n.getLeftToken()), n);
 	}
 	public void visit(TitleSeg n) {
@@ -132,11 +222,11 @@ public class Outliner extends DefaultOutliner {
 	    n.gettitle_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visit(title_segment32 n) {
+	public void visit(title_segment35 n) {
 //	    createSubItem(symbolImage(n.getTITLE_KEY()), n);
 	}
-	public void visit(title_segment33 n) {
-	    createSubItem(symbolImage(n.getTITLE_KEY().getLeftToken()), n);
+	public void visit(title_segment36 n) {
+//	    createSubItem(symbolImage(n.getTITLE_KEY().getLeftToken()), n);
             createSubItem(blockImage(((action_segment) n.getaction_segment()).getLeftToken()), n);
 	}
 	public void visit(RulesSeg n) {
@@ -144,13 +234,18 @@ public class Outliner extends DefaultOutliner {
 	    n.getrules_segment().accept(this);
 	    fItemStack.pop();
 	}
-	public void visit(rules_segment99 n) {
-	    n.getrules_segment().accept(this);
-	    n.getrules().accept(this);
-	}
-	public void visit(rules100 n) {
-	    createSubItem(symbolImage(n.getSYMBOL()), n);
-	}
+        public void visit(rules_segment n) {
+            if (n.getaction_segment_list() != null)
+                n.getaction_segment_list().accept(this);
+            n.getnonTermList().accept(this);
+        }
+        public void visit(nonTermList n) {
+            for(int i=0; i < n.size(); i++)
+                n.getnonTermAt(i).accept(this);
+        }
+        public void visit(nonTerm n) {
+            createSubItem(symbolImage(n.getSYMBOL()), n);
+        }
     }
 
     private Tree fTree;
@@ -175,37 +270,49 @@ public class Outliner extends DefaultOutliner {
 //    }
 
     public String producesImage(Iproduces produces) {
-	if (produces instanceof produces103)
-	    return symbolImage(((produces103) produces).getLeftToken());
-	else if (produces instanceof produces104)
-	    return symbolImage(((produces103) produces).getLeftToken());
-	else if (produces instanceof produces105)
-	    return symbolImage(((produces103) produces).getLeftToken());
-	else if (produces instanceof produces106)
-	    return symbolImage(((produces103) produces).getLeftToken());
+	if (produces instanceof produces109)
+	    return symbolImage(((produces109) produces).getLeftToken());
+	else if (produces instanceof produces110)
+	    return symbolImage(((produces110) produces).getLeftToken());
+	else if (produces instanceof produces111)
+	    return symbolImage(((produces111) produces).getLeftToken());
+	else if (produces instanceof produces112)
+	    return symbolImage(((produces112) produces).getLeftToken());
 	else
 	    return "<???>";
     }
 
     public String nameImage(Iname name) {
-	if (name instanceof name119)
-	    return symbolImage(((name119) name).getLeftToken());
-	else if (name instanceof name120)
-	    return symbolImage(((name120) name).getLeftToken());
-	else if (name instanceof name121)
+	if (name instanceof name125)
+	    return symbolImage(((name125) name).getLeftToken());
+	else if (name instanceof name126)
+	    return symbolImage(((name126) name).getLeftToken());
+	else if (name instanceof name127)
 	    return "$empty";
-	else if (name instanceof name122)
+	else if (name instanceof name128)
 	    return "$error";
-	else if (name instanceof name123)
+	else if (name instanceof name129)
 	    return "$eol";
-	else if (name instanceof name124)
-	    return symbolImage(((name124) name).getLeftToken());
+	else if (name instanceof name130)
+	    return symbolImage(((name130) name).getLeftToken());
 	else
 	    return "<???>";
     }
 
     private String symbolImage(IASTNodeToken symbol) {
 	return symbolImage(symbol.getLeftToken());
+    }
+
+    private String symbolListImage(Isymbol_list symbols) {
+        SYMBOLList symbolList= (SYMBOLList) symbols;
+        StringBuffer buff= new StringBuffer();
+        buff.append('(');
+        for(int i=0; i < symbolList.size(); i++) {
+            if (i > 0) buff.append(',');
+            buff.append(symbolImage(symbolList.getSYMBOLAt(i)));
+        }
+        buff.append(')');
+        return buff.toString();
     }
 
     private String blockImage(ASTNodeToken block) {
