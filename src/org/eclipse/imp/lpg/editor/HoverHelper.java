@@ -5,8 +5,9 @@ import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.IParseController;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
-import org.jikespg.uide.parser.JikesPGParser.Irules;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG;
+import org.jikespg.uide.parser.JikesPGParser.nonTerm;
+
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.PrsStream;
 
@@ -45,7 +46,7 @@ public class HoverHelper implements IHoverHelper {
         return getSubstring(parseController, token.getStartOffset(), token.getEndOffset());
     }
 
-    private Irules findDefOf(IASTNodeToken s, JikesPG root) {
+    private nonTerm findDefOf(IASTNodeToken s, JikesPG root) {
         return null;
     }
 }
