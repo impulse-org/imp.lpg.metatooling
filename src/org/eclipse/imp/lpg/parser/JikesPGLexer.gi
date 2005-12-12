@@ -36,6 +36,7 @@ $Export
     MACRO_NAME SYMBOL BLOCK EQUIVALENCE PRIORITY_EQUIVALENCE
     ARROW PRIORITY_ARROW OR_MARKER
     EQUAL OPTIONS_KEY COMMA SINGLE_LINE_COMMENT
+    LEFT_PAREN RIGHT_PAREN
 
     EOF_TOKEN ERROR_SYMBOL
 $End
@@ -159,7 +160,7 @@ $Rules
 
     specialNoDotOrSlash ::= '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' |
                             '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
-                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_'
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_' | '$'
 
     specialNoDoubleQuote ::= '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
                             '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
@@ -222,7 +223,7 @@ $Rules
 
     normalSymbol ::= letter | normalSymbol symbolChar
 
-    symbolChar ::= letter | digit | '_' | '.'
+    symbolChar ::= letter | digit | '_' | '.' | '-' | '/'
 
     number ::= digit | number digit
 
@@ -263,4 +264,6 @@ $Rules
     Token ::= '|'               /.$BeginJava makeToken($_OR_MARKER);$EndJava./
     Token ::= '='               /.$BeginJava makeToken($_EQUAL);$EndJava./
     Token ::= ','               /.$BeginJava makeToken($_COMMA);$EndJava./
+    Token ::= '('               /.$BeginJava makeToken($_LEFT_PAREN); $EndJava./
+    Token ::= ')'               /.$BeginJava makeToken($_RIGHT_PAREN); $EndJava./
 $End
