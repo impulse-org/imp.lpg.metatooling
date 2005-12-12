@@ -37,6 +37,8 @@ $Terminals
     COMMA ::= ','
     PRIORITY_ARROW ::= '->?'
     OR_MARKER ::= '|'
+    LEFT_PAREN ::= '('
+    RIGHT_PAREN ::= ')'
 $End
 
 $EOF
@@ -77,7 +79,9 @@ $Rules
     option_spec ::= OPTIONS_KEY option_list
     option_list ::= option | option_list ',' option
     option ::= SYMBOL option_value
-    option_value ::= $empty | '=' SYMBOL
+    option_value ::= $empty | '=' SYMBOL | '=' '(' symbol_list ')'
+
+    symbol_list$$SYMBOL ::= SYMBOL | symbol_list ',' SYMBOL
 
     title_segment ::= TITLE_KEY
     title_segment ::= TITLE_KEY action_segment
@@ -173,12 +177,17 @@ $Rules
     start_symbol ::= SYMBOL 
     start_symbol ::= MACRO_NAME
 
-    rules_segment ::= RULES_KEY action_segment_list
-    rules_segment ::= rules_segment rules
+    rules_segment ::= RULES_KEY$ action_segment_list nonTermList
 
-    rules ::= SYMBOL produces rhs
-    rules ::= SYMBOL MACRO_NAME produces rhs
-    rules ::= rules '|' rhs
+    nonTermList$$nonTerm ::= $empty | nonTermList nonTerm
+
+    nonTerm ::= SYMBOL optMacro produces rhsList
+    rhsList ::= rhs | rhsList '|'$ rhs
+    optMacro ::= MACRO_NAME | $empty
+
+--    rules$Rule ::= SYMBOL produces rhs
+--    rules$Rule ::= SYMBOL MACRO_NAME produces rhs
+--    rules$Rule ::= rules '|'$ rhs
 
     produces ::= '::='
     produces ::= '::=?'
