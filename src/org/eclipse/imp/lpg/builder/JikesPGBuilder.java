@@ -206,6 +206,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	    lpgExecPath= url.getFile();
 	    if (lpgExecPath.startsWith("/")) // remove leading slash from URL
 		lpgExecPath= lpgExecPath.substring(1);
+            JikesPGPlugin.getInstance().maybeWriteInfoMsg("LPG executable apparently at '" + lpgExecPath + "'.");
 	}
 	return lpgExecPath;
     }
