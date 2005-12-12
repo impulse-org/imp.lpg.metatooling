@@ -2,22 +2,23 @@ package org.jikespg.uide.parser;
 
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
+import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
 import org.jikespg.uide.parser.JikesPGParser.HeadersSeg;
-import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG_INPUT;
 import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
 import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
-import org.jikespg.uide.parser.JikesPGParser.headers_segment92;
-import org.jikespg.uide.parser.JikesPGParser.headers_segment93;
+import org.jikespg.uide.parser.JikesPGParser.headers_segment95;
+import org.jikespg.uide.parser.JikesPGParser.headers_segment96;
+import org.jikespg.uide.parser.JikesPGParser.nonTerm;
+import org.jikespg.uide.parser.JikesPGParser.nonTermList;
 import org.jikespg.uide.parser.JikesPGParser.rhsSymbol;
 import org.jikespg.uide.parser.JikesPGParser.rhsSymbolMacro;
-import org.jikespg.uide.parser.JikesPGParser.rules100;
-import org.jikespg.uide.parser.JikesPGParser.rules_segment98;
-import org.jikespg.uide.parser.JikesPGParser.rules_segment99;
-import org.jikespg.uide.parser.JikesPGParser.terminal_symbol74;
-import org.jikespg.uide.parser.JikesPGParser.terminals_segment45;
-import org.jikespg.uide.parser.JikesPGParser.terminals_segment46;
+import org.jikespg.uide.parser.JikesPGParser.rules_segment;
+import org.jikespg.uide.parser.JikesPGParser.terminal_symbol77;
+import org.jikespg.uide.parser.JikesPGParser.terminals_segment48;
+import org.jikespg.uide.parser.JikesPGParser.terminals_segment49;
+
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.PrsStream;
 
@@ -59,13 +60,13 @@ public class NodeLocator implements IASTNodeLocator {
             return null;
         }
 
-        public Object visitJikesPG(JikesPG n) {
+        public Object visit(JikesPG n) {
             if (n.getJikesPG_INPUT() != null)
                 return n.getJikesPG_INPUT().accept(this);
             return null;
         }
 
-        public Object visitJikesPG_INPUT(JikesPG_INPUT n) {
+        public Object visit(JikesPG_INPUT n) {
             Object o= null;
             if (n.getJikesPG_INPUT() != null)
                 o= n.getJikesPG_INPUT().accept(this);
@@ -74,66 +75,76 @@ public class NodeLocator implements IASTNodeLocator {
             return o;
         }
 
-        public Object visitHeadersSeg(HeadersSeg n) {
+        public Object visit(HeadersSeg n) {
             return n.getheaders_segment().accept(this);
         }
 
-        public Object visitheaders_segment92(headers_segment92 n) {
+        public Object visit(headers_segment95 n) {
             return null; // just the HEADERS_KEY
         }
 
-        public Object visitheaders_segment93(headers_segment93 n) {
+        public Object visit(headers_segment96 n) {
             Object o= n.getheaders_segment().accept(this);
             if (o == null)
                 o= n.getaction_segment().accept(this);
             return o;
         }
 
-        public Object visitTerminalsSeg(TerminalsSeg n) {
+        public Object visit(TerminalsSeg n) {
             return n.getterminals_segment().accept(this);
         }
 
-        public Object visitterminals_segment45(terminals_segment45 n) {
+        public Object visit(terminals_segment48 n) {
             return null; // this is just for the TERMINALS_KEY
         }
 
-        public Object visitterminals_segment46(terminals_segment46 n) {
+        public Object visit(terminals_segment49 n) {
             Object o= n.getterminals_segment().accept(this);
             if (o == null)
                 o= n.getterminal_symbol().accept(this);
             return o;
         }
 
-        public Object visitterminal_symbol74(terminal_symbol74 n) {
+        public Object visit(terminal_symbol77 n) {
             IToken symTok= fParseStream.getIToken(n.getLeftToken());
             if (fStartOffset >= symTok.getStartOffset() && fEndOffset <= symTok.getEndOffset())
                 return n;
             return null;
         }
 
-        public Object visitRulesSeg(RulesSeg n) {
+        public Object visit(RulesSeg n) {
             return n.getrules_segment().accept(this);
         }
 
-        public Object visitrules_segment98(rules_segment98 n) {
-            if (n.getaction_segment_list() != null)
-                return n.getaction_segment_list().accept(this);
+        public Object visit(rules_segment n) {
+            Object ret= null;
+            if (n.getaction_segment_list() != null) {
+                ret= n.getaction_segment_list().accept(this);
+            }
+            if (ret == null)
+                ret= n.getnonTermList().accept(this);
+            return ret;
+        }
+        public Object visit(nonTermList n) {
+            for(int i= 0; i < n.size(); i++) {
+                Object ret= n.getnonTermAt(i).accept(this);
+                if (ret != null)
+                    return ret;
+            }
             return null;
         }
-
-        public Object visitrules_segment99(rules_segment99 n) {
-            Object o= n.getrules_segment().accept(this);
-            if (o == null)
-                o= n.getrules().accept(this);
-            return o;
+        public Object visit(nonTerm n) {
+            Object ret= null;
+            ret= n.getSYMBOL().accept(this);
+            if (ret == null && n.getoptMacro() != null)
+                ret= n.getoptMacro().accept(this);
+            if (ret == null)
+                ret= n.getproduces().accept(this);
+            if (ret == null)
+                ret= n.getrhsList().accept(this);
+            return ret;
         }
-        public Object visitrules100(rules100 n) {
-            Object o= n.getSYMBOL().accept(this);
-            if (o == null)
-                o= n.getrhs().accept(this);
-            return o;
-        }
-        public Object visitrhsSymbol(rhsSymbol n) {
+        public Object visit(rhsSymbol n) {
             Object o= null;
             if (n.getrhs() != null)
                 o= n.getrhs().accept(this);
@@ -141,7 +152,7 @@ public class NodeLocator implements IASTNodeLocator {
                 o= n.getSYMBOL().accept(this);
             return o;
         }
-        public Object visitrhsSymbolMacro(rhsSymbolMacro n) {
+        public Object visit(rhsSymbolMacro n) {
             Object o= n.getSYMBOL().accept(this);
             if (o == null)
                 o= n.getMACRO_NAME().accept(this);
@@ -149,7 +160,7 @@ public class NodeLocator implements IASTNodeLocator {
                 o= n.getrhs().accept(this);
             return o;
         }
-        public Object visitTSYMBOL(IASTNodeToken n) {
+        public Object visit(ASTNodeToken n) {
             int left= n.getLeftToken();
             int right= n.getRightToken();
 
