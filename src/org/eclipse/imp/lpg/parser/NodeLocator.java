@@ -1,23 +1,7 @@
 package org.jikespg.uide.parser;
 
 import org.eclipse.uide.parser.IASTNodeLocator;
-import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
-import org.jikespg.uide.parser.JikesPGParser.HeadersSeg;
-import org.jikespg.uide.parser.JikesPGParser.JikesPG;
-import org.jikespg.uide.parser.JikesPGParser.JikesPG_INPUT;
-import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
-import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
-import org.jikespg.uide.parser.JikesPGParser.headers_segment95;
-import org.jikespg.uide.parser.JikesPGParser.headers_segment96;
-import org.jikespg.uide.parser.JikesPGParser.nonTerm;
-import org.jikespg.uide.parser.JikesPGParser.nonTermList;
-import org.jikespg.uide.parser.JikesPGParser.rhsSymbol;
-import org.jikespg.uide.parser.JikesPGParser.rhsSymbolMacro;
-import org.jikespg.uide.parser.JikesPGParser.rules_segment;
-import org.jikespg.uide.parser.JikesPGParser.terminal_symbol77;
-import org.jikespg.uide.parser.JikesPGParser.terminals_segment48;
-import org.jikespg.uide.parser.JikesPGParser.terminals_segment49;
+import org.jikespg.uide.parser.JikesPGParser.*;
 
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.PrsStream;
@@ -55,7 +39,7 @@ public class NodeLocator implements IASTNodeLocator {
             fEndOffset= endOffset;
         }
 
-        public Object unimplementedVisitorFor(String s) {
+        public Object unimplementedVisitor(String s) {
             System.out.println(s);
             return null;
         }
@@ -79,11 +63,11 @@ public class NodeLocator implements IASTNodeLocator {
             return n.getheaders_segment().accept(this);
         }
 
-        public Object visit(headers_segment95 n) {
+        public Object visit(headers_segment0 n) {
             return null; // just the HEADERS_KEY
         }
 
-        public Object visit(headers_segment96 n) {
+        public Object visit(headers_segment1 n) {
             Object o= n.getheaders_segment().accept(this);
             if (o == null)
                 o= n.getaction_segment().accept(this);
@@ -94,18 +78,18 @@ public class NodeLocator implements IASTNodeLocator {
             return n.getterminals_segment().accept(this);
         }
 
-        public Object visit(terminals_segment48 n) {
+        public Object visit(terminals_segment1 n) {
             return null; // this is just for the TERMINALS_KEY
         }
 
-        public Object visit(terminals_segment49 n) {
+        public Object visit(terminals_segment2 n) {
             Object o= n.getterminals_segment().accept(this);
             if (o == null)
                 o= n.getterminal_symbol().accept(this);
             return o;
         }
 
-        public Object visit(terminal_symbol77 n) {
+        public Object visit(terminal_symbol1 n) {
             IToken symTok= fParseStream.getIToken(n.getLeftToken());
             if (fStartOffset >= symTok.getStartOffset() && fEndOffset <= symTok.getEndOffset())
                 return n;
