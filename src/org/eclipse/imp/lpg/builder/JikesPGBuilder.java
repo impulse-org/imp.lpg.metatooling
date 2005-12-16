@@ -110,6 +110,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	    processJikesPGErrors(file, process, consoleView);
 	    doRefresh(file);
 	} catch (Exception e) {
+	    JikesPGPlugin.getInstance().writeErrorMsg(e.getMessage());
 	    e.printStackTrace();
 	}
     }
@@ -208,10 +209,12 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 		JikesPGPlugin.getInstance().writeErrorMsg(errMsg);
 		throw new IllegalArgumentException(errMsg);
 	    } else {
-		URL url= Platform.resolve(execURL);
+		// N.B.: The jikespg executable will normally be inside a jar file,
+		//       so use asLocalURL() to extract to a local file if needed.
+		URL url= Platform.asLocalURL(execURL);
 
 		lpgExecPath= url.getFile();
-		if (lpgExecPath.startsWith("/")) // remove leading slash from URL
+		if (os.equals("win32")) // remove leading slash from URL
 		    lpgExecPath= lpgExecPath.substring(1);
 		JikesPGPlugin.getInstance().maybeWriteInfoMsg("LPG executable apparently at '" + lpgExecPath + "'.");
 	    }
