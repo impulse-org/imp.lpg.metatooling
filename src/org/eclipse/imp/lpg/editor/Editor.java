@@ -7,7 +7,6 @@ package org.jikespg.uide.editor;
 
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -100,10 +99,10 @@ public class Editor extends TextEditor {
 
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 	    try {
-		IDocument document= viewer.getDocument();
+//		IDocument document= viewer.getDocument();
 		ArrayList result= new ArrayList();
-		String prefix= lastWord(document, offset);
-		String indent= lastIndent(document, offset);
+//		String prefix= lastWord(document, offset);
+//		String indent= lastIndent(document, offset);
 		//AstRoot model = AstRoot.getModel(document, null);
 		//model.getContentProposals(prefix, indent, offset, result);
 		return (ICompletionProposal[]) result.toArray(new ICompletionProposal[result.size()]);
@@ -113,7 +112,7 @@ public class Editor extends TextEditor {
 	    }
 	}
 
-	private String lastWord(IDocument doc, int offset) {
+	String lastWord(IDocument doc, int offset) {
 	    try {
 		for(int n= offset - 1; n >= 0; n--)
 		    if (!Character.isJavaIdentifierPart(doc.getChar(n)))
@@ -124,7 +123,7 @@ public class Editor extends TextEditor {
 	    return "";
 	}
 
-	private String lastIndent(IDocument doc, int offset) {
+	String lastIndent(IDocument doc, int offset) {
 	    try {
 		int start= offset - 1;
 		while (start >= 0 && doc.getChar(start) != '\n')
@@ -167,7 +166,7 @@ public class Editor extends TextEditor {
 
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 	    try {
-		IDocument document= textViewer.getDocument();
+//		IDocument document= textViewer.getDocument();
 		//AstRoot model = AstRoot.getModel(document, null);
 		//AstElement element = (AstElement) model.getElementAt(hoverRegion.getOffset());
 		//return element.getHoverHelp();

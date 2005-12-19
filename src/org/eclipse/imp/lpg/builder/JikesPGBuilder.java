@@ -184,7 +184,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	    IResource errorResource= getProject().getFile(errorFile);
 	    int startLine= Integer.parseInt(matcher.group(2));
 //	    int startCol= Integer.parseInt(matcher.group(3));
-	    int endLine= Integer.parseInt(matcher.group(4));
+//	    int endLine= Integer.parseInt(matcher.group(4));
 //	    int endCol= Integer.parseInt(matcher.group(5));
 	    int startChar= Integer.parseInt(matcher.group(6)) - 1;// - (startLine - 1) * lineSepBias + 1;
 	    int endChar= Integer.parseInt(matcher.group(7));// - (endLine - 1) * lineSepBias + 1;

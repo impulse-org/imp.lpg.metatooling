@@ -94,8 +94,7 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	IFile file= createSampleGrammarFile(monitor, project, packageName, languageName,
 		grammarFileName, templateName, hasKeywords, autoGenerateASTs);
 
-	IFile lexerFile= createSampleLexerFile(monitor, project, packageName, languageName,
-		lexerFileName, templateName);
+	createSampleLexerFile(monitor, project, packageName, languageName, lexerFileName, templateName);
 
 	editSampleGrammarFile(monitor, file);
 	enableBuilders(monitor, file);

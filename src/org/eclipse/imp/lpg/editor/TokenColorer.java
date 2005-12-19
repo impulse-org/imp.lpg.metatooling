@@ -5,14 +5,10 @@ package org.jikespg.uide.editor;
 
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.uide.editor.ITokenColorer;
 import org.eclipse.uide.parser.IParseController;
 import org.jikespg.uide.parser.JikesPGLexer;
-import org.jikespg.uide.parser.JikesPGParser;
-
 import com.ibm.lpg.IToken;
 
 public class TokenColorer implements ITokenColorer {
