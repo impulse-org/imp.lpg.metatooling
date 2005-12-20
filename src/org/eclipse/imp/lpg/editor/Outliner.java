@@ -1,12 +1,8 @@
-/*
- * Created on Oct 31, 2005
- */
 package org.jikespg.uide.editor;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
-
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,8 +18,49 @@ import org.eclipse.uide.editor.UniversalEditor;
 import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.ParseError;
 import org.jikespg.uide.parser.JikesPGParser;
-import org.jikespg.uide.parser.JikesPGParser.*;
-
+import org.jikespg.uide.parser.JikesPGParser.ASTNode;
+import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
+import org.jikespg.uide.parser.JikesPGParser.AliasSeg;
+import org.jikespg.uide.parser.JikesPGParser.DefineSeg;
+import org.jikespg.uide.parser.JikesPGParser.ExportSeg;
+import org.jikespg.uide.parser.JikesPGParser.GlobalsSeg;
+import org.jikespg.uide.parser.JikesPGParser.HeadersSeg;
+import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
+import org.jikespg.uide.parser.JikesPGParser.IdentifierSeg;
+import org.jikespg.uide.parser.JikesPGParser.Iname;
+import org.jikespg.uide.parser.JikesPGParser.Ioption_value;
+import org.jikespg.uide.parser.JikesPGParser.Iproduces;
+import org.jikespg.uide.parser.JikesPGParser.Isymbol_list;
+import org.jikespg.uide.parser.JikesPGParser.JikesPG;
+import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
+import org.jikespg.uide.parser.JikesPGParser.SYMBOLList;
+import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
+import org.jikespg.uide.parser.JikesPGParser.TitleSeg;
+import org.jikespg.uide.parser.JikesPGParser.action_segment;
+import org.jikespg.uide.parser.JikesPGParser.define_segment1;
+import org.jikespg.uide.parser.JikesPGParser.export_segment1;
+import org.jikespg.uide.parser.JikesPGParser.globals_segment1;
+import org.jikespg.uide.parser.JikesPGParser.include_segment1;
+import org.jikespg.uide.parser.JikesPGParser.name0;
+import org.jikespg.uide.parser.JikesPGParser.name1;
+import org.jikespg.uide.parser.JikesPGParser.name2;
+import org.jikespg.uide.parser.JikesPGParser.name3;
+import org.jikespg.uide.parser.JikesPGParser.name4;
+import org.jikespg.uide.parser.JikesPGParser.name5;
+import org.jikespg.uide.parser.JikesPGParser.nonTerm;
+import org.jikespg.uide.parser.JikesPGParser.option;
+import org.jikespg.uide.parser.JikesPGParser.option_value0;
+import org.jikespg.uide.parser.JikesPGParser.option_value1;
+import org.jikespg.uide.parser.JikesPGParser.produces0;
+import org.jikespg.uide.parser.JikesPGParser.produces1;
+import org.jikespg.uide.parser.JikesPGParser.produces2;
+import org.jikespg.uide.parser.JikesPGParser.produces3;
+import org.jikespg.uide.parser.JikesPGParser.start_symbol0;
+import org.jikespg.uide.parser.JikesPGParser.start_symbol1;
+import org.jikespg.uide.parser.JikesPGParser.terminal_symbol0;
+import org.jikespg.uide.parser.JikesPGParser.terminal_symbol1;
+import org.jikespg.uide.parser.JikesPGParser.terminals_segment2;
+import org.jikespg.uide.parser.JikesPGParser.title_segment1;
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.PrsStream;
 
@@ -35,27 +72,14 @@ public class Outliner extends DefaultOutliner {
 	    System.out.println(s);
 	}
 
-	public void visit(JikesPG n) {
+	public boolean visit(JikesPG n) {
 	    fItemStack.push(createTopItem("Options", n));
-	    if (n.getoptions_segment() != null)
-		n.getoptions_segment().accept(this);
+	    return true;
+	}
+	public void endVisit(JikesPG n) {
 	    fItemStack.pop();
-            if (n.getJikesPG_INPUT() != null)
-                n.getJikesPG_INPUT().accept(this);
 	}
-	public void visit(options_segment n) {
-	    if (n.getoptions_segment() != null)
-		n.getoptions_segment().accept(this);
-	    n.getoption_spec().accept(this);
-	}
-	public void visit(option_spec n) {
-	    n.getoption_list().accept(this);
-	}
-	public void visit(option_list n) {
-	    n.getoption_list().accept(this);
-	    n.getoption().accept(this);
-	}
-	public void visit(option n) {
+	public boolean visit(option n) {
 	    Ioption_value value= n.getoption_value();
 
             if (value != null) {
@@ -65,128 +89,104 @@ public class Outliner extends DefaultOutliner {
                     createSubItem(symbolImage(n.getSYMBOL()) + " = " + symbolListImage(((option_value1) value).getsymbol_list()), n);
             } else
 		createSubItem(symbolImage(n.getSYMBOL()), n);
+            return true;
 	}
-	public void visit(JikesPG_INPUT n) {
-//	    fItemStack.push(createTreeItem("Grammar"));
-	    if (n.getJikesPG_INPUT() != null)
-		n.getJikesPG_INPUT().accept(this);
-	    n.getJikesPG_item().accept(this);
-//	    fItemStack.pop();
-	}
-	public void visit(AliasSeg n) {
+	public boolean visit(AliasSeg n) {
 	    fItemStack.push(createTopItem("Alias", n));
-	    n.getalias_segment().accept(this);
+	    return true;
+	}
+	public void endVisit(AliasSeg n) {
 	    fItemStack.pop();
 	}
-	public void visit(DefineSeg n) {
+	public boolean visit(DefineSeg n) {
 	    fItemStack.push(createTopItem("Define", n));
-	    n.getdefine_segment().accept(this);
+	    return true;
+	}
+	public void endVisit(DefineSeg n) {
 	    fItemStack.pop();
 	}
-        public void visit(define_segment1 n) {
-            n.getmacro_segment();
+        public boolean visit(define_segment1 n) {
             createSubItem(symbolImage(n.getmacro_name_symbol()), (ASTNode) n.getmacro_name_symbol());
+            return true;
         }
-        public void visit(ExportSeg n) {
+        public boolean visit(ExportSeg n) {
             fItemStack.push(createTopItem("Export", n));
-            n.getexport_segment().accept(this);
+            return true;
+        }
+        public void endVisit(ExportSeg n) {
             fItemStack.pop();
         }
-        public void visit(export_segment1 n) {
-            if (n.getexport_segment() != null)
-                n.getexport_segment().accept(this);
+        public void endVisit(export_segment1 n) {
             createSubItem(symbolImage(n.getterminal_symbol()), (ASTNode) n.getterminal_symbol());
         }
-        public void visit(GlobalsSeg n) {
+        public boolean visit(GlobalsSeg n) {
             fItemStack.push(createTopItem("Globals", n));
-            if (n.getglobals_segment() != null)
-                n.getglobals_segment().accept(this);
+            return true;
+        }
+        public void endVisit(GlobalsSeg n) {
             fItemStack.pop();
         }
-        public void visit(globals_segment1 n) {
-            if (n.getglobals_segment() != null)
-                n.getglobals_segment().accept(this);
+        public void endVisit(globals_segment1 n) {
             createSubItem(blockImage(n.getaction_segment()), n.getaction_segment());
         }
-	public void visit(HeadersSeg n) {
+	public boolean visit(HeadersSeg n) {
 	    fItemStack.push(createTopItem("Headers", n));
-	    n.getheaders_segment().accept(this);
+	    return true;
+	}
+	public void endVisit(HeadersSeg n) {
 	    fItemStack.pop();
 	}
-        public void visit(IncludeSeg n) {
-            n.getinclude_segment().accept(this);
-        }
-        public void visit(include_segment1 n) {
+        public void endVisit(include_segment1 n) {
             createTopItem("Include " + symbolImage(n.getSYMBOL()), n.getSYMBOL());
         }
-	public void visit(IdentifierSeg n) {
+	public boolean visit(IdentifierSeg n) {
 	    fItemStack.push(createTopItem("Identifiers", n));
-	    n.getidentifier_segment().accept(this);
+	    return true;
+	}
+	public void endVisit(IdentifierSeg n) {
 	    fItemStack.pop();
 	}
-	public void visit(StartSeg n) {
-	    n.getstart_segment().accept(this);
-	}
-	public void visit(start_segment n) {
-	    n.getstart_symbol().accept(this);
-//	    createTreeItem(symbolImage());
-	}
-        public void visit(start_symbol0 n) {
+        public void endVisit(start_symbol0 n) {
             createTopItem("Start = " + symbolImage(n), n);
         }
-	public void visit(start_symbol1 n) {
+	public void endVisit(start_symbol1 n) {
             createTopItem("Start = " + symbolImage(n), n);
 	}
-	public void visit(TerminalsSeg n) {
+	public boolean visit(TerminalsSeg n) {
 	    fItemStack.push(createTopItem("Terminals", n));
-	    n.getterminals_segment().accept(this);
+	    return true;
+	}
+	public void endVisit(TerminalsSeg n) {
 	    fItemStack.pop();
 	}
-	public void visit(terminals_segment0 n) {
-//	    createSubItem(symbolImage(n.getTERMINALS_KEY()), n);
-	}
-	public void visit(terminals_segment1 n) {
-	    n.getterminals_segment().accept(this);
-	    n.getterminal_symbol().accept(this);
-	}
-	public void visit(terminals_segment2 n) {
-	    n.getterminals_segment().accept(this);
+	public void endVisit(terminals_segment2 n) {
 	    String label= nameImage(n.getname()) + " " + producesImage(n.getproduces()) + " " + symbolImage(n.getterminal_symbol());
             createSubItem(label, (ASTNode) n.getterminal_symbol());
 	}
-	public void visit(terminal_symbol0 n) {
+	public void endVisit(terminal_symbol0 n) {
 	    createSubItem(symbolImage(n), n);
 	}
-	public void visit(terminal_symbol1 n) {
+	public void endVisit(terminal_symbol1 n) {
 	    createSubItem(symbolImage(n.getLeftToken()), n);
 	}
-	public void visit(TitleSeg n) {
+	public boolean visit(TitleSeg n) {
 	    fItemStack.push(createTopItem("Title", n));
-	    n.gettitle_segment().accept(this);
+	    return true;
+	}
+	public void endVisit(TitleSeg n) {
 	    fItemStack.pop();
 	}
-	public void visit(title_segment0 n) {
-//	    createSubItem(symbolImage(n.getTITLE_KEY()), n);
-	}
-	public void visit(title_segment1 n) {
-//	    createSubItem(symbolImage(n.getTITLE_KEY().getLeftToken()), n);
+	public void endVisit(title_segment1 n) {
             createSubItem(blockImage(((action_segment) n.getaction_segment()).getLeftToken()), n);
 	}
-	public void visit(RulesSeg n) {
+	public boolean visit(RulesSeg n) {
 	    fItemStack.push(createTopItem("Rules", n));
-	    n.getrules_segment().accept(this);
+	    return true;
+	}
+	public void endVisit(RulesSeg n) {
 	    fItemStack.pop();
 	}
-        public void visit(rules_segment n) {
-            if (n.getaction_segment_list() != null)
-                n.getaction_segment_list().accept(this);
-            n.getnonTermList().accept(this);
-        }
-        public void visit(nonTermList n) {
-            for(int i=0; i < n.size(); i++)
-                n.getnonTermAt(i).accept(this);
-        }
-        public void visit(nonTerm n) {
+        public void endVisit(nonTerm n) {
             createSubItem(symbolImage(n.getSYMBOL()), n);
         }
     }
@@ -202,15 +202,6 @@ public class Outliner extends DefaultOutliner {
 
 	return new String(fController.getLexer().getLexStream().getInputChars(), token.getStartOffset(), token.getEndOffset()-token.getStartOffset()+1);
     }
-
-//    public String symbolImage(Iterminal_symbol terminal_symbol) {
-//	if (terminal_symbol instanceof terminal_symbol74)
-//	    return symbolImage(((terminal_symbol74) terminal_symbol).getLeftToken());
-//	else if (terminal_symbol instanceof terminal_symbol75)
-//	    return symbolImage(((terminal_symbol75) terminal_symbol).getLeftToken());
-//	else
-//	    return "<???>";
-//    }
 
     public String producesImage(Iproduces produces) {
 	if (produces instanceof produces0)
