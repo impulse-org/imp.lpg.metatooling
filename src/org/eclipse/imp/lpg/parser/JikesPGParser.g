@@ -1,7 +1,7 @@
 %options table=java,escape=$,la=3
 %options fp=JikesPGParser,prefix=TK_
 %options package=org.jikespg.uide.parser
-%options automatic_ast,ast=ASTNode,visitor=deep
+%options automatic_ast,ast=ASTNode,visitor=preorder
 %options template=uide/UIDEbtParserTemplate.gi
 %options import_terminals=JikesPGLexer.gi
 
@@ -182,7 +182,7 @@ $Rules
     nonTermList$$nonTerm ::= $empty | nonTermList nonTerm
 
     nonTerm ::= SYMBOL optMacro produces rhsList
-    rhsList ::= rhs | rhsList '|'$ rhs
+    rhsList$$rhs ::= rhs | rhsList '|'$ rhs
     optMacro ::= MACRO_NAME | $empty
 
 --    rules$Rule ::= SYMBOL produces rhs
@@ -194,11 +194,19 @@ $Rules
     produces ::= '->'
     produces ::= '->?'
 
-    rhs ::= $empty
-    rhs$rhsSymbol ::= rhs SYMBOL
-    rhs$rhsSymbolMacro ::= rhs SYMBOL MACRO_NAME
-    rhs$emptyRHS ::= rhs EMPTY_KEY 
-    rhs$rhsAction ::= rhs action_segment
+--  rhs ::= $empty
+--  rhs$rhsSymbol      ::= rhs SYMBOL
+--  rhs$emptyRHS       ::= rhs EMPTY_KEY 
+--  rhs$rhsAction      ::= rhs action_segment
+
+    rhs ::= symWithAttrsList opt_action_segment
+
+    symWithAttrsList$$symWithAttrs ::= symWithAttrs | symWithAttrsList symWithAttrs
+
+    symWithAttrs ::= EMPTY_KEY 
+    symWithAttrs ::= SYMBOL optMacro
+
+    opt_action_segment ::= $empty | action_segment
 
     action_segment ::= BLOCK 
 
