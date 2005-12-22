@@ -33,7 +33,7 @@ public class HoverHelper implements IHoverHelper {
             ASTNode def= (ASTNode) findDefOf((IASTNodeToken) node, (JikesPG) ast);
 
             if (def != null)
-                return getSubstring(parseController, ps.getIToken(def.getLeftToken()).getStartOffset(), ps.getIToken(def.getRightToken()).getEndOffset());
+                return getSubstring(parseController, def.getLeftIToken().getStartOffset(), def.getRightIToken().getEndOffset());
         }
         return getSubstring(parseController, token);
     }

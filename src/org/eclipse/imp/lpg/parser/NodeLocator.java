@@ -1,8 +1,10 @@
 package org.jikespg.uide.parser;
 
 import org.eclipse.uide.parser.IASTNodeLocator;
-import org.jikespg.uide.parser.JikesPGParser.*;
-
+import org.jikespg.uide.parser.JikesPGParser.ASTNode;
+import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
+import org.jikespg.uide.parser.JikesPGParser.JikesPG;
+import org.jikespg.uide.parser.JikesPGParser.terminal_symbol1;
 import com.ibm.lpg.IToken;
 import com.ibm.lpg.PrsStream;
 
@@ -93,7 +95,7 @@ public class NodeLocator implements IASTNodeLocator {
 //        }
 
         public void endVisit(terminal_symbol1 n) {
-            IToken symTok= fParseStream.getIToken(n.getLeftToken());
+            IToken symTok= n.getLeftIToken();
             if (fStartOffset >= symTok.getStartOffset() && fEndOffset <= symTok.getEndOffset())
                 fResult= n;
         }
@@ -147,11 +149,8 @@ public class NodeLocator implements IASTNodeLocator {
 //            return o;
 //        }
         public void endVisit(ASTNodeToken n) {
-            int left= n.getLeftToken();
-            int right= n.getRightToken();
-
-            IToken lt= fParseStream.getTokenAt(left);
-            IToken rt= fParseStream.getTokenAt(right);
+            IToken lt= n.getLeftIToken();
+            IToken rt= n.getRightIToken();
 
             if (fStartOffset >= lt.getStartOffset() && fEndOffset <= rt.getEndOffset()+1)
         	fResult= n;
