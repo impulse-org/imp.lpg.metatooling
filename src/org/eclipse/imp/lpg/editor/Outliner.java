@@ -38,6 +38,7 @@ import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
 import org.jikespg.uide.parser.JikesPGParser.TitleSeg;
 import org.jikespg.uide.parser.JikesPGParser.action_segment;
 import org.jikespg.uide.parser.JikesPGParser.define_segment1;
+import org.jikespg.uide.parser.JikesPGParser.eof_segment1;
 import org.jikespg.uide.parser.JikesPGParser.export_segment1;
 import org.jikespg.uide.parser.JikesPGParser.globals_segment1;
 import org.jikespg.uide.parser.JikesPGParser.include_segment1;
@@ -55,19 +56,22 @@ import org.jikespg.uide.parser.JikesPGParser.produces0;
 import org.jikespg.uide.parser.JikesPGParser.produces1;
 import org.jikespg.uide.parser.JikesPGParser.produces2;
 import org.jikespg.uide.parser.JikesPGParser.produces3;
+import org.jikespg.uide.parser.JikesPGParser.rhs;
 import org.jikespg.uide.parser.JikesPGParser.start_symbol0;
 import org.jikespg.uide.parser.JikesPGParser.start_symbol1;
+import org.jikespg.uide.parser.JikesPGParser.symWithAttrs0;
+import org.jikespg.uide.parser.JikesPGParser.symWithAttrs1;
 import org.jikespg.uide.parser.JikesPGParser.terminal_symbol0;
 import org.jikespg.uide.parser.JikesPGParser.terminal_symbol1;
 import org.jikespg.uide.parser.JikesPGParser.terminals_segment2;
 import org.jikespg.uide.parser.JikesPGParser.title_segment1;
 import com.ibm.lpg.IToken;
-import com.ibm.lpg.PrsStream;
 
 public class Outliner extends DefaultOutliner {
     Stack fItemStack= new Stack();
 
     private final class OutlineVisitor extends JikesPGParser.AbstractVisitor {
+	private StringBuffer fRHSLabel;
 	public void unimplementedVisitor(String s) {
 	    System.out.println(s);
 	}
@@ -108,6 +112,13 @@ public class Outliner extends DefaultOutliner {
         public boolean visit(define_segment1 n) {
             createSubItem(symbolImage(n.getmacro_name_symbol()), (ASTNode) n.getmacro_name_symbol());
             return true;
+        }
+        public boolean visit(eof_segment1 n) {
+            fItemStack.push(createTopItem("EOF", n));
+            return true;
+        }
+        public void endVisit(eof_segment1 n) {
+            fItemStack.pop();
         }
         public boolean visit(ExportSeg n) {
             fItemStack.push(createTopItem("Export", n));
@@ -167,7 +178,7 @@ public class Outliner extends DefaultOutliner {
 	    createSubItem(symbolImage(n), n);
 	}
 	public void endVisit(terminal_symbol1 n) {
-	    createSubItem(symbolImage(n.getLeftToken()), n);
+	    createSubItem(n.getLeftIToken().toString(), n);
 	}
 	public boolean visit(TitleSeg n) {
 	    fItemStack.push(createTopItem("Title", n));
@@ -177,7 +188,7 @@ public class Outliner extends DefaultOutliner {
 	    fItemStack.pop();
 	}
 	public void endVisit(title_segment1 n) {
-            createSubItem(blockImage(((action_segment) n.getaction_segment()).getLeftToken()), n);
+            createSubItem(((action_segment) n.getaction_segment()).getLeftIToken().toString(), n.getaction_segment());
 	}
 	public boolean visit(RulesSeg n) {
 	    fItemStack.push(createTopItem("Rules", n));
@@ -186,41 +197,52 @@ public class Outliner extends DefaultOutliner {
 	public void endVisit(RulesSeg n) {
 	    fItemStack.pop();
 	}
+	public boolean visit(nonTerm n) {
+	    fItemStack.push(createSubItem(symbolImage(n.getSYMBOL()), n));
+	    return true;
+	}
         public void endVisit(nonTerm n) {
-            createSubItem(symbolImage(n.getSYMBOL()), n);
+            fItemStack.pop();
+        }
+        public boolean visit(rhs n) {
+            fRHSLabel = new StringBuffer();
+            return true;
+        }
+        public void endVisit(rhs n) {
+            createSubItem(fRHSLabel.toString(), n);
+        }
+        public void endVisit(symWithAttrs0 n) {
+            fRHSLabel.append(' ');
+            fRHSLabel.append(n.getToken().toString());
+        }
+        public void endVisit(symWithAttrs1 n) {
+            fRHSLabel.append(' ');
+            fRHSLabel.append(n.getSYMBOL().getToken().toString());
         }
     }
 
     private Tree fTree;
 
-    private IParseController fController;
-
     private static final String MESSAGE= "This is the default outliner. Add your own using the UIDE wizard and see class 'org.eclipse.uide.defaults.DefaultOutliner'";
-
-    private String symbolImage(int symTokenIdx) {
-	IToken token= fController.getParser().getParseStream().getTokenAt(symTokenIdx);
-
-	return new String(fController.getLexer().getLexStream().getInputChars(), token.getStartOffset(), token.getEndOffset()-token.getStartOffset()+1);
-    }
 
     public String producesImage(Iproduces produces) {
 	if (produces instanceof produces0)
-	    return symbolImage(((produces0) produces).getLeftToken());
+	    return ((produces0) produces).getLeftIToken().toString();
 	else if (produces instanceof produces1)
-	    return symbolImage(((produces1) produces).getLeftToken());
+	    return ((produces1) produces).getLeftIToken().toString();
 	else if (produces instanceof produces2)
-	    return symbolImage(((produces2) produces).getLeftToken());
+	    return ((produces2) produces).getLeftIToken().toString();
 	else if (produces instanceof produces3)
-	    return symbolImage(((produces3) produces).getLeftToken());
+	    return ((produces3) produces).getLeftIToken().toString();
 	else
 	    return "<???>";
     }
 
     public String nameImage(Iname name) {
 	if (name instanceof name0)
-	    return symbolImage(((name0) name).getLeftToken());
+	    return ((name0) name).getLeftIToken().toString();
 	else if (name instanceof name1)
-	    return symbolImage(((name1) name).getLeftToken());
+	    return ((name1) name).getLeftIToken().toString();
 	else if (name instanceof name2)
 	    return "$empty";
 	else if (name instanceof name3)
@@ -228,13 +250,13 @@ public class Outliner extends DefaultOutliner {
 	else if (name instanceof name4)
 	    return "$eol";
 	else if (name instanceof name5)
-	    return symbolImage(((name5) name).getLeftToken());
+	    return ((name5) name).getLeftIToken().toString();
 	else
 	    return "<???>";
     }
 
     private String symbolImage(IASTNodeToken symbol) {
-	return symbolImage(symbol.getLeftToken());
+	return symbol.getLeftIToken().toString();
     }
 
     private String symbolListImage(Isymbol_list symbols) {
@@ -250,13 +272,7 @@ public class Outliner extends DefaultOutliner {
     }
 
     private String blockImage(ASTNodeToken block) {
-        return blockImage(block.getLeftToken());
-    }
-
-    private String blockImage(int blockToken) {
-        String rep= fController.getParser().getParseStream().getTokenText(blockToken);
-
-        return rep;
+        return block.getLeftIToken().toString();
     }
 
     public TreeItem createTopItem(String label) {
@@ -286,7 +302,7 @@ public class Outliner extends DefaultOutliner {
     }
 
     public void createOutlinePresentation(IParseController controller, int offset) {
-	fController= controller;
+//	fController= controller;
 	try {
 	    if (controller != null && fTree != null) {
 		if (controller.hasErrors() && false) {
@@ -327,7 +343,7 @@ public class Outliner extends DefaultOutliner {
 	    IToken token= controller.getParser().getParseStream().getTokenAt(n);
 	    String label= n + ": "
 		    + controller.getParser().getParseStream().orderedTerminalSymbols()[token.getKind()] + " = "
-		    + token.getValue(controller.getLexer().getLexStream().getInputChars());
+		    + token.toString();
 	    createTopItem(label);
 	}
 	if (count >= 100)
@@ -346,9 +362,7 @@ public class Outliner extends DefaultOutliner {
 
 		if (data instanceof ASTNode) {
 		    ASTNode node= (ASTNode) ti.getData();
-
-		    PrsStream s= fController.getParser().getParseStream();
-		    IToken token = s.getTokenAt(node.getLeftToken());
+		    IToken token= node.getLeftIToken();
 
 		    IEditorPart activeEditor= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		    AbstractTextEditor textEditor= (AbstractTextEditor) activeEditor;
