@@ -91,9 +91,10 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	try {
 	    File parentDir= new File(fileName).getParentFile();
 	    String cmd[]= new String[] {
-		    getLpgExecutable(),
+		    getLPGExecutable(),
 		    "-quiet",
 		    "-list",
+		    "-include-directory=" + getLPGTemplatePath(),
 		    // TODO RMF 7/21/05 -- Don't specify -dat-directory; causes performance issues with Eclipse.
 		    // Lexer tables can get quite large, so large that Java as spec'ed can't swallow them
 		    // when translated to a switch statement, or even an array initializer. As a result,
@@ -196,7 +197,23 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	return false;
     }
 
-    private String getLpgExecutable() throws IOException {
+    private String getLPGTemplatePath() {
+	Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
+//	Path path= new Path("templates");
+//	URL templateURL= Platform.find(bundle, path);
+
+	try {
+	    String tmplPath= Platform.asLocalURL(bundle.getResource("templates")).getFile();
+	    if (Platform.getOS().equals("win32"))
+		tmplPath= tmplPath.substring(1);
+	    return tmplPath;
+	} catch(IOException e) {
+	    return null;
+	}
+//	return templateURL.getPath();
+    }
+
+    private String getLPGExecutable() throws IOException {
 	if (lpgExecPath == null) {
 	    Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
 	    String os= Platform.getOS();
