@@ -130,6 +130,17 @@
                label="Enable JikesPG Builder"
                tooltip="Enable the JikesPG builder for this project"/>
       </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.jikespg.uide.preferences.JikesPGPreferencePage"
+            id="org.jikespg.uide.preferencePage"
+            name="JikesPG"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.jikespg.uide.preferences.PreferenceInitializer"/>
    </extension>  
    
 </plugin>
