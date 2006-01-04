@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.uide.core.UIDEBuilderBase;
 import org.eclipse.uide.runtime.UIDEPluginBase;
 import org.jikespg.uide.JikesPGPlugin;
+import org.jikespg.uide.preferences.JikesPGPreferenceCache;
+import org.jikespg.uide.preferences.PreferenceConstants;
 import org.jikespg.uide.views.JikesPGView;
 import org.osgi.framework.Bundle;
 
@@ -43,11 +45,6 @@ public class JikesPGBuilder extends UIDEBuilderBase {
      * and the LPG runtime library
      */
     public static final String LPG_PLUGIN_ID= "lpg";
-
-    /**
-     * The path to the LPG executable file.
-     */
-    private String lpgExecPath;
 
     private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (.*)";
     private static final Pattern SYNTAX_MSG_PATTERN= Pattern.compile(SYNTAX_MSG_REGEXP);
@@ -94,7 +91,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 		    getLPGExecutable(),
 		    "-quiet",
 		    "-list",
-		    "-include-directory=" + getLPGTemplatePath(),
+		    "-include-directory=" + getDefaultTemplatePath(),
 		    // TODO RMF 7/21/05 -- Don't specify -dat-directory; causes performance issues with Eclipse.
 		    // Lexer tables can get quite large, so large that Java as spec'ed can't swallow them
 		    // when translated to a switch statement, or even an array initializer. As a result,
@@ -197,10 +194,8 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	return false;
     }
 
-    private String getLPGTemplatePath() {
+    public static String getDefaultTemplatePath() {
 	Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
-//	Path path= new Path("templates");
-//	URL templateURL= Platform.find(bundle, path);
 
 	try {
 	    String tmplPath= Platform.asLocalURL(bundle.getResource("templates")).getFile();
@@ -210,32 +205,43 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	} catch(IOException e) {
 	    return null;
 	}
-//	return templateURL.getPath();
     }
 
     private String getLPGExecutable() throws IOException {
-	if (lpgExecPath == null) {
-	    Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
-	    String os= Platform.getOS();
-            String plat= Platform.getOSArch();
-	    Path path= new Path("bin/lpg-" + os + "_" + plat + (os.equals("win32") ? ".exe" : ""));
-	    URL execURL= Platform.find(bundle, path);
+	return JikesPGPreferenceCache.jikesPGExecutableFile;
+    }
 
-	    if (execURL == null) {
-		String errMsg= "Unable to find JikesPG executable at " + path + " in bundle " + bundle.getSymbolicName();
-		JikesPGPlugin.getInstance().writeErrorMsg(errMsg);
-		throw new IllegalArgumentException(errMsg);
-	    } else {
-		// N.B.: The jikespg executable will normally be inside a jar file,
-		//       so use asLocalURL() to extract to a local file if needed.
-		URL url= Platform.asLocalURL(execURL);
+    public static String getDefaultExecutablePath() {
+	Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
+	String os= Platform.getOS();
+	String plat= Platform.getOSArch();
+	Path path= new Path("bin/lpg-" + os + "_" + plat + (os.equals("win32") ? ".exe" : ""));
+	URL execURL= Platform.find(bundle, path);
 
-		lpgExecPath= url.getFile();
-		if (os.equals("win32")) // remove leading slash from URL
-		    lpgExecPath= lpgExecPath.substring(1);
-		JikesPGPlugin.getInstance().maybeWriteInfoMsg("LPG executable apparently at '" + lpgExecPath + "'.");
+	if (execURL == null) {
+	    String errMsg= "Unable to find JikesPG executable at " + path + " in bundle " + bundle.getSymbolicName();
+
+	    JikesPGPlugin.getInstance().writeErrorMsg(errMsg);
+	    throw new IllegalArgumentException(errMsg);
+	} else {
+	    // N.B.: The jikespg executable will normally be inside a jar file,
+	    //       so use asLocalURL() to extract to a local file if needed.
+	    URL url;
+
+	    try {
+		url= Platform.asLocalURL(execURL);
+	    } catch (IOException e) {
+		JikesPGPlugin.getInstance().writeErrorMsg("Unable to locate default JikesPG executable." + e.getMessage());
+		return "???";
 	    }
+
+	    String jikesPGExecPath= url.getFile();
+
+	    if (os.equals("win32")) // remove leading slash from URL that shows up on Win32(?)
+		jikesPGExecPath= jikesPGExecPath.substring(1);
+
+	    JikesPGPlugin.getInstance().maybeWriteInfoMsg("JikesPG executable apparently at '" + jikesPGExecPath + "'.");
+	    return jikesPGExecPath;
 	}
-	return lpgExecPath;
     }
 }
