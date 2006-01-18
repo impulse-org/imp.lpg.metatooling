@@ -3,6 +3,7 @@ package org.jikespg.uide.editor;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -18,53 +19,8 @@ import org.eclipse.uide.editor.UniversalEditor;
 import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.ParseError;
 import org.jikespg.uide.parser.JikesPGParser;
-import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
-import org.jikespg.uide.parser.JikesPGParser.AliasSeg;
-import org.jikespg.uide.parser.JikesPGParser.DefineSeg;
-import org.jikespg.uide.parser.JikesPGParser.ExportSeg;
-import org.jikespg.uide.parser.JikesPGParser.GlobalsSeg;
-import org.jikespg.uide.parser.JikesPGParser.HeadersSeg;
-import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
-import org.jikespg.uide.parser.JikesPGParser.IdentifierSeg;
-import org.jikespg.uide.parser.JikesPGParser.Iname;
-import org.jikespg.uide.parser.JikesPGParser.Ioption_value;
-import org.jikespg.uide.parser.JikesPGParser.Iproduces;
-import org.jikespg.uide.parser.JikesPGParser.Isymbol_list;
-import org.jikespg.uide.parser.JikesPGParser.JikesPG;
-import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
-import org.jikespg.uide.parser.JikesPGParser.SYMBOLList;
-import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
-import org.jikespg.uide.parser.JikesPGParser.TitleSeg;
-import org.jikespg.uide.parser.JikesPGParser.action_segment;
-import org.jikespg.uide.parser.JikesPGParser.define_segment1;
-import org.jikespg.uide.parser.JikesPGParser.eof_segment1;
-import org.jikespg.uide.parser.JikesPGParser.export_segment1;
-import org.jikespg.uide.parser.JikesPGParser.globals_segment1;
-import org.jikespg.uide.parser.JikesPGParser.include_segment1;
-import org.jikespg.uide.parser.JikesPGParser.name0;
-import org.jikespg.uide.parser.JikesPGParser.name1;
-import org.jikespg.uide.parser.JikesPGParser.name2;
-import org.jikespg.uide.parser.JikesPGParser.name3;
-import org.jikespg.uide.parser.JikesPGParser.name4;
-import org.jikespg.uide.parser.JikesPGParser.name5;
-import org.jikespg.uide.parser.JikesPGParser.nonTerm;
-import org.jikespg.uide.parser.JikesPGParser.option;
-import org.jikespg.uide.parser.JikesPGParser.option_value0;
-import org.jikespg.uide.parser.JikesPGParser.option_value1;
-import org.jikespg.uide.parser.JikesPGParser.produces0;
-import org.jikespg.uide.parser.JikesPGParser.produces1;
-import org.jikespg.uide.parser.JikesPGParser.produces2;
-import org.jikespg.uide.parser.JikesPGParser.produces3;
-import org.jikespg.uide.parser.JikesPGParser.rhs;
-import org.jikespg.uide.parser.JikesPGParser.start_symbol0;
-import org.jikespg.uide.parser.JikesPGParser.start_symbol1;
-import org.jikespg.uide.parser.JikesPGParser.symWithAttrs0;
-import org.jikespg.uide.parser.JikesPGParser.symWithAttrs1;
-import org.jikespg.uide.parser.JikesPGParser.terminal_symbol0;
-import org.jikespg.uide.parser.JikesPGParser.terminal_symbol1;
-import org.jikespg.uide.parser.JikesPGParser.terminals_segment2;
-import org.jikespg.uide.parser.JikesPGParser.title_segment1;
+import org.jikespg.uide.parser.JikesPGParser.*;
+
 import com.ibm.lpg.IToken;
 
 public class Outliner extends DefaultOutliner {
@@ -280,7 +236,7 @@ public class Outliner extends DefaultOutliner {
     }
 
     public TreeItem createTopItem(String label, ASTNode n) {
-	TreeItem treeItem= new TreeItem(fTree, SWT.NONE);
+	TreeItem treeItem= new TreeItem(tree, SWT.NONE);
 	treeItem.setText(label);
 	treeItem.setImage(JavaPluginImages.DESC_MISC_PUBLIC.createImage());
 	if (n != null)
@@ -304,27 +260,27 @@ public class Outliner extends DefaultOutliner {
     public void createOutlinePresentation(IParseController controller, int offset) {
 //	fController= controller;
 	try {
-	    if (controller != null && fTree != null) {
+	    if (controller != null && tree != null) {
 		if (controller.hasErrors() && false) {
 		    createDebugContents(controller);
 		} else {
 		    JikesPG jpg= (JikesPG) controller.getCurrentAst();
 
 		    if (jpg != null) {
-			fTree.setRedraw(false);
-			fTree.removeAll();
+			tree.setRedraw(false);
+			tree.removeAll();
 			fItemStack.clear();
 			jpg.accept(new OutlineVisitor());
 		    }
 		}
-//		fTree.setSelection(new TreeItem[] { fTree.getItem(new Point(0, 0)) });
+//		tree.setSelection(new TreeItem[] { tree.getItem(new Point(0, 0)) });
 	    }
 	    //selectTreeItemAtTextOffset(offset);
 	} catch (Throwable e) {
 	    ErrorHandler.reportError("Could not generate outline", e);
 	} finally {
-	    if (fTree != null)
-		fTree.setRedraw(true);
+	    if (tree != null)
+		tree.setRedraw(true);
 	}
     }
 
@@ -351,11 +307,14 @@ public class Outliner extends DefaultOutliner {
 	}
     }
 
-    public void setEditor(UniversalEditor editor) {}
+    public void setEditor(UniversalEditor editor) {
+        System.out.println(editor.getTitle());
+    }
 
     public void setTree(Tree tree) {
-	this.fTree= tree;
-	this.fTree.addSelectionListener(new SelectionListener() {
+        super.setTree(tree);
+//	this.fTree= tree;
+	this.tree.addSelectionListener(new SelectionListener() {
 	    public void widgetSelected(SelectionEvent e) {
 		TreeItem ti= (TreeItem) e.item;
 		Object data= ti.getData();
