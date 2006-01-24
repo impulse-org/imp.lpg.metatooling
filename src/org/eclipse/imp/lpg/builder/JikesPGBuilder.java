@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -23,7 +24,6 @@ import org.eclipse.uide.core.UIDEBuilderBase;
 import org.eclipse.uide.runtime.UIDEPluginBase;
 import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.preferences.JikesPGPreferenceCache;
-import org.jikespg.uide.preferences.PreferenceConstants;
 import org.jikespg.uide.views.JikesPGView;
 import org.osgi.framework.Bundle;
 
