@@ -1,7 +1,7 @@
 %options table=java,escape=$,la=3
 %options fp=JikesPGParser,prefix=TK_
 %options package=org.jikespg.uide.parser
-%options automatic_ast,ast=ASTNode,visitor=preorder
+%options automatic_ast,ast_type=ASTNode,visitor=preorder
 %options template=uide/UIDEbtParserTemplate.gi
 %options import_terminals=JikesPGLexer.gi
 
@@ -14,7 +14,7 @@ $Globals
 $End
 
 $Define
-    $ast_class /.Object./
+    $ast_type /.Object./
     $action_class /.$file_prefix./
     $additional_interfaces /., IParser./
 $End
