@@ -198,7 +198,9 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
 
 	try {
-	    String tmplPath= Platform.asLocalURL(bundle.getResource("templates")).getFile();
+	    // Use getEntry() rather than getResource(), since the "templates" folder is
+	    // no longer inside the plugin jar (which is now expanded upon installation).
+	    String tmplPath= Platform.asLocalURL(bundle.getEntry("templates")).getFile();
 	    if (Platform.getOS().equals("win32"))
 		tmplPath= tmplPath.substring(1);
 	    return tmplPath;
