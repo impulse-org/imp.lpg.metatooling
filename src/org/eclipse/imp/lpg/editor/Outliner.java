@@ -177,8 +177,6 @@ public class Outliner extends DefaultOutliner {
         }
     }
 
-    private Tree fTree;
-
     private static final String MESSAGE= "This is the default outliner. Add your own using the UIDE wizard and see class 'org.eclipse.uide.defaults.DefaultOutliner'";
 
     public String producesImage(Iproduces produces) {
@@ -313,7 +311,6 @@ public class Outliner extends DefaultOutliner {
 
     public void setTree(Tree tree) {
         super.setTree(tree);
-//	this.fTree= tree;
 	this.tree.addSelectionListener(new SelectionListener() {
 	    public void widgetSelected(SelectionEvent e) {
 		TreeItem ti= (TreeItem) e.item;
