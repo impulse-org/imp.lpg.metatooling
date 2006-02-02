@@ -5,8 +5,8 @@ import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG;
 import org.jikespg.uide.parser.JikesPGParser.terminal_symbol1;
-import com.ibm.lpg.IToken;
-import com.ibm.lpg.PrsStream;
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.PrsStream;
 
 public class NodeLocator implements IASTNodeLocator {
     private final ParseController fController;

@@ -8,8 +8,8 @@ import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG;
 import org.jikespg.uide.parser.JikesPGParser.nonTerm;
 
-import com.ibm.lpg.IToken;
-import com.ibm.lpg.PrsStream;
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.PrsStream;
 
 public class HoverHelper implements IHoverHelper {
     public String getHoverHelpAt(IParseController parseController, int offset) {

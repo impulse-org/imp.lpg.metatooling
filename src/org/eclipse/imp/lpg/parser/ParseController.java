@@ -14,8 +14,8 @@ import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 
-import com.ibm.lpg.IToken;
-import com.ibm.lpg.Monitor;
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.Monitor;
 
 public class ParseController implements IParseController {
     private JikesPGParser parser;

@@ -21,7 +21,7 @@ import org.eclipse.uide.parser.ParseError;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.*;
 
-import com.ibm.lpg.IToken;
+import lpg.lpgjavaruntime.IToken;
 
 public class Outliner extends DefaultOutliner {
     Stack fItemStack= new Stack();

@@ -5,22 +5,13 @@
 %options export_terminals=("JikesPGsym.java", "TK_")
 %options verbose
 
-$Title
-    /.package $package;./
-$End
-
 $Globals
     /.import java.util.*;
     import org.eclipse.uide.parser.ILexer;./
 $End
 
 $Define
-    $package_declaration /.package $package;./
-    $action_class /.$file_prefix./
     $additional_interfaces /., ILexer./
-    $prs_stream_class /.PrsStream./
-    $eof_token /.$_EOF_TOKEN./
-
     $kw_lexer_class /.Object./
 $End
 

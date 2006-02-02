@@ -8,8 +8,8 @@ import org.eclipse.uide.editor.IContentProposer;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.IParseController;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import com.ibm.lpg.IToken;
-import com.ibm.lpg.PrsStream;
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.PrsStream;
 
 public class ContentProposer implements IContentProposer {
 

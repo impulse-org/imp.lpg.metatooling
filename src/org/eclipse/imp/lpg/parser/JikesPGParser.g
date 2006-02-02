@@ -5,10 +5,6 @@
 %options template=uide/UIDEbtParserTemplate.gi
 %options import_terminals=JikesPGLexer.gi
 
-$Title
-    /.package $package;./
-$End
-
 $Globals
     /.import org.eclipse.uide.parser.IParser;./
 $End
@@ -39,10 +35,6 @@ $Terminals
     OR_MARKER ::= '|'
     LEFT_PAREN ::= '('
     RIGHT_PAREN ::= ')'
-$End
-
-$EOF
-    EOF_TOKEN
 $End
 
 $Start
