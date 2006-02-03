@@ -2,7 +2,7 @@
 %options fp=JikesPGParser,prefix=TK_
 %options package=org.jikespg.uide.parser
 %options automatic_ast,ast_type=ASTNode,visitor=preorder
-%options template=uide/UIDEbtParserTemplate.gi
+%options template=uide/btParserTemplate.gi
 %options import_terminals=JikesPGLexer.gi
 
 $Globals
@@ -10,7 +10,7 @@ $Globals
 $End
 
 $Define
-    $ast_type /.Object./
+    $ast_class /.Object./
     $action_class /.$file_prefix./
     $additional_interfaces /., IParser./
 $End
