@@ -3,7 +3,7 @@ package org.jikespg.uide.editor;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
-
+import lpg.lpgjavaruntime.IToken;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -20,8 +20,6 @@ import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.ParseError;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.*;
-
-import lpg.lpgjavaruntime.IToken;
 
 public class Outliner extends DefaultOutliner {
     Stack fItemStack= new Stack();
@@ -169,11 +167,11 @@ public class Outliner extends DefaultOutliner {
         }
         public void endVisit(symWithAttrs0 n) {
             fRHSLabel.append(' ');
-            fRHSLabel.append(n.getToken().toString());
+            fRHSLabel.append(n.getIToken().toString());
         }
         public void endVisit(symWithAttrs1 n) {
             fRHSLabel.append(' ');
-            fRHSLabel.append(n.getSYMBOL().getToken().toString());
+            fRHSLabel.append(n.getSYMBOL().getIToken().toString());
         }
     }
 
