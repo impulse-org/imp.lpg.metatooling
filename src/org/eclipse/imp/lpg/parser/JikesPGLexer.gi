@@ -1,7 +1,7 @@
 %options fp=JikesPGLexer,prefix=Char_
 %options single-productions
 %options package=org.jikespg.uide.parser
-%options template=uide/UIDELexerTemplate.gi
+%options template=uide/LexerTemplate.gi
 %options export_terminals=("JikesPGsym.java", "TK_")
 %options verbose
 
