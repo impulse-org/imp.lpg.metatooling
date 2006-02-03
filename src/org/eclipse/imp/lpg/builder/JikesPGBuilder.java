@@ -121,7 +121,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	while ((line= in2.readLine()) != null) {
 	    if (view != null)
 		JikesPGView.println(line);
-	    System.err.println(line);
+	    JikesPGPlugin.getInstance().writeErrorMsg(line);
 	}
 	is.close();
     }
@@ -188,6 +188,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	    int endChar= Integer.parseInt(matcher.group(7));// - (endLine - 1) * lineSepBias + 1;
 	    String descrip= matcher.group(8);
 
+	    if (startLine == 0) startLine= 1;
 	    createMarker(errorResource, startLine, startChar, endChar, descrip, IMarker.SEVERITY_ERROR);
 	    return true;
 	}
