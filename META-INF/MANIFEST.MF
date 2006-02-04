@@ -1,9 +1,9 @@
 Bundle-SymbolicName: org.jikespg.uide; singleton=true
 Bundle-Name: JikesPG IDE
-Bundle-Version: 1.0.6
+Bundle-Version: 1.0.9
 Bundle-Activator: org.jikespg.uide.JikesPGPlugin
 Eclipse-AutoStart: true
-Bundle-Vendor: pcharles@us.ibm.com
+Bundle-Vendor: rfuhrer@watson.ibm.com
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.jface.text,
