@@ -29,14 +29,6 @@
          <run class="org.jikespg.uide.builder.JikesPGBuilder"/>
       </builder>
    </extension>
-<!--   <extension
-         id="xmlBuilder"
-         name="JikesPG XML Output Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder>
-         <run class="org.jikespg.uide.builder.XmlBuilder"/>
-      </builder>
-   </extension> -->
    <extension
          id="problem"
          name="JikesPG Error"
@@ -141,6 +133,40 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.jikespg.uide.preferences.PreferenceInitializer"/>
+   </extension>
+<!-- <extension
+         point="org.eclipse.compare.structureCreators">
+      <structureCreator
+            class="org.jikespg.uide.compare.JikesPGStructureNode"
+            extensions="g,gi"
+            id="org.jikespg.uide.structureCreator"/>
+      <contentTypeBinding
+            contentTypeId="org.jikespg.uide.grammarFile"
+            structureCreatorId="org.jikespg.uide.structureCreator"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.contentTypes">
+      <content-type
+            file-extensions="g,gi"
+            id="org.jikespg.uide.grammarFile"
+            name="JikesPG Grammar File"
+            priority="normal"/>
+   </extension>
+ -->
+   <extension
+         point="org.eclipse.compare.structureMergeViewers">
+      <viewer
+            class="org.jikespg.uide.StructureMergeViewerCreator"
+            extensions="g,gi"
+            id="org.jikespg.uide.viewer"/>
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.foldingUpdater">
+      <foldingUpdater
+            class="org.jikespg.uide.editor.FoldingUpdater"
+            id="org.jikespg.uide.foldingUpdater"
+            language="JikesPG"
+            name="JikesPG Source Folding Updater"/>
    </extension>  
    
 </plugin>
