@@ -9,8 +9,18 @@ import org.osgi.framework.BundleContext;
 public class JikesPGPlugin extends UIDEPluginBase {
     public static final String kPluginID= "org.jikespg.uide";
 
+    /**
+     * The unique instance of this plugin class
+     */
+    protected static JikesPGPlugin sPlugin;
+
+    public static JikesPGPlugin getInstance() {
+        return sPlugin;
+    }
+
     public JikesPGPlugin() {
 	super();
+	sPlugin= this;
     }
 
     public void start(BundleContext context) throws Exception {
