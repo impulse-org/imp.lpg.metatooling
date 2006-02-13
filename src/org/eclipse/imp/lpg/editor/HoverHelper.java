@@ -1,5 +1,6 @@
 package org.jikespg.uide.editor;
 
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.uide.editor.IHoverHelper;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.IParseController;
@@ -12,7 +13,7 @@ import lpg.lpgjavaruntime.IToken;
 import lpg.lpgjavaruntime.PrsStream;
 
 public class HoverHelper implements IHoverHelper {
-    public String getHoverHelpAt(IParseController parseController, int offset) {
+    public String getHoverHelpAt(IParseController parseController, ISourceViewer srcViewer, int offset) {
         PrsStream ps= parseController.getParser().getParseStream();
         IToken token= ps.getTokenAtCharacter(offset);
 
