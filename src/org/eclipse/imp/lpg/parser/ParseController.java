@@ -6,6 +6,10 @@ package org.jikespg.uide.parser;
 import java.util.Collections;
 import java.util.List;
 
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.Monitor;
+
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.ILexer;
@@ -14,10 +18,9 @@ import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 
-import lpg.lpgjavaruntime.IToken;
-import lpg.lpgjavaruntime.Monitor;
-
 public class ParseController implements IParseController {
+    private String filePath;
+    private IProject project;
     private JikesPGParser parser;
     private JikesPGLexer lexer;
     private ASTNode currentAst;
@@ -25,6 +28,10 @@ public class ParseController implements IParseController {
     private char keywords[][];
     private boolean isKeyword[];
 
+    public void initialize(String filePath, IProject project) {
+        this.filePath= filePath;
+        this.project= project;
+    }
     public IParser getParser() { return parser; }
     public ILexer getLexer() { return lexer; }
     public Object getCurrentAst() { return currentAst; }
@@ -72,7 +79,7 @@ public class ParseController implements IParseController {
     	//
         // lexer = new SmalltalkLexer(contentsArray, "ECLIPSE FILE"); // Create the lexer
         // parser = new SmalltalkParser((LexStream) lexer);	// Create the parser
-        lexer.initialize(contentsArray, "ECLIPSE FILE");
+        lexer.initialize(contentsArray, filePath);
         parser.getParseStream().resetTokenStream();
         lexer.lexer(my_monitor, parser.getParseStream()); // Lex the stream to produce the token stream
         if (my_monitor.isCancelled())
