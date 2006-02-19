@@ -8,7 +8,7 @@
             class="org.jikespg.uide.wizards.NewGrammarWizard"
             icon="icons/sample.gif"
             category="org.eclipse.uide.wizards/org.eclipse.uide.wizards.parser"
-            name="Parser using JikesPG"
+            name="JikesPG Parser"
             id="org.jikespg.uide.NewJikesPGParserWizard"/>
    </extension>
    <extension
