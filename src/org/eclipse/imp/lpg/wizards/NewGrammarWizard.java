@@ -2,7 +2,9 @@ package org.jikespg.uide.wizards;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -13,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -27,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
+import org.jikespg.uide.JikesPGPlugin;
 
 /**
  * This wizard creates one file with the extension "g". 
@@ -280,31 +284,36 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
     }
 
     private byte[] getSampleGrammar() {
-	return getSampleFile("sample_grammar.txt");
+	return getSampleFile("grammar.tmpl");
     }
 
     private byte[] getSampleLexer() {
-        return getSampleFile("sample_lexer.txt");
+        return getSampleFile("lexer.tmpl");
         }
 
     private byte[] getSampleKWLexer() {
-        return getSampleFile("sample_kwlexer.txt");
+        return getSampleFile("kwlexer.tmpl");
         }
 
     private byte[] getSampleParseController() {
-        return getSampleFile("sample_ParseController.txt");
+        return getSampleFile("ParseController.tmpl");
         }
 
     private byte[] getSampleFile(String fileName) {
 	try {
-	    DataInputStream is= new DataInputStream(NewGrammarWizard.class.getResourceAsStream(fileName));
-	    byte bytes[]= new byte[is.available()];
+//	    DataInputStream is= new DataInputStream(NewGrammarWizard.class.getResourceAsStream(fileName));
+	    URL url= Platform.asLocalURL(Platform.find(JikesPGPlugin.getInstance().getBundle(), new Path("/templates/" + fileName)));
+	    String path= url.getPath();
+	    FileInputStream fis= new FileInputStream(path);
+	    DataInputStream is= new DataInputStream(fis);
+	    byte bytes[]= new byte[fis.available()];
 	    is.readFully(bytes);
 	    is.close();
+	    fis.close();
 	    return bytes;
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    return ("// missing sample file: " + fileName).getBytes();
+	    return ("// missing template file: " + fileName).getBytes();
 	}
     }
 
