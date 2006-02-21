@@ -1,48 +1,68 @@
-%options table=java,escape=$
-%options fp=$LANG_NAME$,prefix=TK_
+%options fp=$LANG_NAME$Parser
 %options package=$PACKAGE$
-$AUTO_GENERATE$
 %options template=$TEMPLATE$
 %options import_terminals=$LANG_NAME$Lexer.gi
-$KEYWORD_TEMPLATE$
-
+$AUTO_GENERATE$
+--
 -- This is just a sample grammar and not a real grammar for $LANG_NAME$
-
-$Title
-    /.package $package;./
-$End
+--
 
 $Globals
-    /.import org.eclipse.uide.parser.IParser;./
+    /.import org.eclipse.uide.parser.IParser;
+    ./
 $End
 
 $Define
     $ast_class /.Object./
-    $action_class /.$file_prefix./
     $additional_interfaces /., IParser./
 $End
 
 $Terminals              
-    -- Here you list all the terminals defined by this grammar.
-
-    SEMICOLON ::= ';'       -- define the known symbols
-    ASSIGN ::= '='
-    PLUS ::= '+'
-    MINUS ::= '-'
-    IDENTIFIER              -- see Scanner.java
+    -- Here, you may list terminals needed by this grammar.
+    -- Furthermore, a terminal may be mapped into an alias
+    -- that can also be used in a grammar rule. In addition,
+    -- when an alias is specified here it instructs the
+    -- generated parser to use the alias in question when
+    -- referring to the symbol to which it is aliased. For
+    -- example, consider the following definitions:
+    --
+         int
+         short
+         IDENTIFIER 
+         NUMBER
+         SEMICOLON ::= ';'
+         PLUS ::= '+'
+         MINUS ::= '-'
+         ASSIGN ::= '='
+    --
+    -- Here the terminals int, float, IDENTIFIER and NUMBER are
+    -- defined without an alias; SEMICOLON is aliased to ';';
+    -- PLUS is aliased to '+'... etc...
+    --
+    -- Note that the terminals that do not have aliases are declared
+    -- above only for documentation purposes.
+    --
 $End
 
 $Rules
     -- In this section you list all the rules for your grammar.
     -- When reduced, each rule will produce one Ast node.
-
-    block ::= $empty
-    block ::= block statement
-    statement ::= IDENTIFIER '=' expression ';'
-    expression ::= term
-    expression ::= expression '+' term
-    expression ::= expression '-' term
-    term ::= IDENTIFIER
+    -- 
+    --  Here are some example rules:
+    -- 
+        block ::= $empty
+                | block statement
+        statement ::= declaration
+                    | assignment
+        declaration ::= int IDENTIFIER ;
+                      | short IDENTIFIER ;
+        assignment ::= IDENTIFIER '=' expression ';'
+        expression ::= expression '+' term
+                     | expression '-' term
+                     | term
+        term ::= IDENTIFIER
+               | NUMBER
+    -- 
 $End
 
 -- Make sure you check the TODO's (see the Task View)

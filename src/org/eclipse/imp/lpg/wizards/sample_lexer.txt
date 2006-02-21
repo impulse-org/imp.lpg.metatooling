@@ -1,37 +1,42 @@
-%options fp=$LANG_NAME$,prefix=Char_
+%options fp=$LANG_NAME$Lexer
 %options package=$PACKAGE$
 %options template=$TEMPLATE$
-%options export_terminals=("$LANG_NAME$sym.java", "TK_")
-
+$KEYWORD_FILTER$
+--
 -- This is just a sample lexer and not a real lexer for $LANG_NAME$
-
-$Title
-    /.package $package;./
-$End
+--
 
 $Globals
     /.import java.util.*;
-    import org.eclipse.uide.parser.ILexer;./
+    import org.eclipse.uide.parser.ILexer;
+    ./
 $End
 
 $Define
-    $package_declaration /.package $package;./
-    $action_class /.$file_prefix./
     $additional_interfaces /., ILexer./
-    $prs_stream_class /.PrsStream./
-    $eof_token /.$_EOF_TOKEN./
-
-    $kw_lexer_class /.Object./
+    $kw_lexer_class /.$KEYWORD_LEXER$./
 $End
 
 $Include
-    uide/LexerVeryBasicMap.gi
+    uide/$LEXER_MAP$.gi
 $End
 
 $Export
-    -- List all the token types the lexer will export to the parser, including keywords (if any)
-    SINGLE_LINE_COMMENT
-    EOF_TOKEN ERROR_SYMBOL
+    --
+    -- List all the token types the lexer will directly process
+    -- and export to the parser. If a keyword lexer is used as
+    -- a filter for this lexer, it may export a set of keywords
+    -- that will also be passed along to the parser.
+    -- 
+    -- For example:
+    --
+        IDENTIFIER 
+        NUMBER 
+        SEMICOLON
+        PLUS
+        MINUS
+        ASSIGN
+    
 $End
 
 $Terminals
@@ -87,30 +92,68 @@ $Terminals
     Equal        ::= '='
 $End
 
-$Eof
-    EOF
-$End
-
-$Headers
-    /.
-		public int[] keywords = {
-		    // Place here the list of identifiers for all the keywords.
-		    // These will probably all have the form "$_" followed by the
-		    // exported name (see above), e.g., "$_CLASS_KEY" for exported
-		    // symbol "CLASS_KEY" above.
-		};
-		public boolean isKeyword(IToken token) { return true; }
-
-		public char[][] getKeywords() { return null; }
-
-		public boolean isKeywordStart(char c) { return false; }
-     ./
-
 $Start
     Token
 $End
 
 $Rules
+    Token ::= identifier
+        /.$BeginJava
+                    checkForKeyWord();
+          $EndJava
+        ./
+    Token ::= number
+        /.$BeginJava
+                    checkForKeyWord();
+          $EndJava
+        ./
+    Token ::= white
+        /.$BeginJava
+                    skipToken();
+          $EndJava
+        ./
+    Token ::= slc
+        /.$BeginJava
+                    makeComment($_SINGLE_LINE_COMMENT);
+          $EndJava
+        ./
+    Token ::= ';'
+        /.$BeginJava
+                    makeToken($_SEMICOLON);
+          $EndJava
+        ./
+
+    Token ::= '+'
+        /.$BeginJava
+                    makeToken($_PLUS);
+          $EndJava
+        ./
+
+    Token ::= '-'
+        /.$BeginJava
+                    makeToken($_MINUS);
+          $EndJava
+        ./
+
+    Token ::= '='
+        /.$BeginJava
+                    makeToken($_ASSIGN);
+          $EndJava
+        ./
+
+    identifier -> letter
+                | Identifier Letter
+                | Identifier Digit
+
+    number ::= digit
+             | number digit
+
+    white ::= whiteChar
+            | white whiteChar
+
+    slc ::= '/' '/'
+          | slc notEOL
+
     digit ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
     aA ::= a | A
@@ -142,24 +185,13 @@ $Rules
 
     letter ::= aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
 
-    any    ::= letter | digit | special | white
+    any ::= letter | digit | special | white
 
     whiteChar ::= Space | LF | CR | HT | FF
-
-    white ::= whiteChar | white whiteChar
 
     special ::= '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' |
                 '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
                 '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_' | '/'
 
     notEOL ::= letter | digit | special | Space | HT | FF
-
-    notEOLs ::= notEOL | notEOLs notEOL
-
-    slc   ::= '/' '/' notEOLs
-
-    Token ::= white /.$BeginJava skipToken(); $EndJava./
-            | slc   /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
-
-    number ::= digit | number digit
 $End

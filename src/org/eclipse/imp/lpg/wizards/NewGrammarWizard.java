@@ -83,18 +83,30 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	NewGrammarWizardPage page= (NewGrammarWizardPage) pages[0];
 
 	IProject project= page.getProject();
+    boolean hasKeywords= page.hasKeywords();
+    boolean requiresBacktracking= page.requiresBacktracking();
+    boolean autoGenerateASTs= page.autoGenerateASTs();
 	String packageName= page.getPackage();
 	String languageName= page.getLanguage();
-	String templateName= page.getTemplateName();
+    String templateKind= page.getTemplateKind();
+    String parserTemplateName= page.getTemplateKind() +
+                               (requiresBacktracking ? "/bt" : "/dt") +
+                               "ParserTemplate.gi";
+    String lexerTemplateName= page.getTemplateKind() + "/LexerTemplate.gi";
+    String kwLexerTemplateName= page.getTemplateKind() + "/KeywordTemplate.gi";
 	String grammarFileName= "src/" + languageName.toLowerCase() + "Parser.g";
-	String lexerFileName= "src/" + languageName.toLowerCase() + "Lexer.gi";
-	boolean hasKeywords= page.hasKeywords();
-	boolean autoGenerateASTs= page.autoGenerateASTs();
+    String lexerFileName= "src/" + languageName.toLowerCase() + "Lexer.gi";
+    String kwlexerFileName= "src/" + languageName.toLowerCase() + "KWLexer.gi";
+    String controllerFileName= "src/ParseController.java";
 
 	IFile file= createSampleGrammarFile(monitor, project, packageName, languageName,
-		grammarFileName, templateName, hasKeywords, autoGenerateASTs);
+		grammarFileName, parserTemplateName, autoGenerateASTs);
 
-	createSampleLexerFile(monitor, project, packageName, languageName, lexerFileName, templateName);
+    createSampleLexerFile(monitor, project, packageName, languageName, lexerFileName, lexerTemplateName, hasKeywords);
+
+    createSampleKWLexerFile(monitor, project, packageName, languageName, kwlexerFileName, kwLexerTemplateName, hasKeywords);
+
+    createSampleParseControllerFile(monitor, project, packageName, languageName, controllerFileName, kwLexerTemplateName, hasKeywords);
 
 	editSampleGrammarFile(monitor, file);
 	enableBuilders(monitor, file);
@@ -138,7 +150,12 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	monitor.worked(1);
     }
 
-    static final String sAutoGenTemplate= "%options ast=ASTNode,visitor";
+    static final String astDirectory = "Ast";
+    static final String astNode = "ASTNode";
+    static final String sAutoGenTemplate= "%options automacit_ast=toplevel,visitor,ast_directory=./" +
+                                          astDirectory +
+                                          ",ast_type=" +
+                                          astNode;
     static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
 
     /**
@@ -152,7 +169,7 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
      * @throws CoreException
      */
     private IFile createSampleGrammarFile(IProgressMonitor monitor, IProject project, String packageName, String languageName,
-	    String fileName, String templateName, boolean hasKeywords, boolean autoGenerateASTs) throws CoreException {
+	    String fileName, String templateName, boolean autoGenerateASTs) throws CoreException {
 	monitor.beginTask("Creating " + fileName, 2);
 
 	final IFile file= project.getFile(new Path(fileName));
@@ -160,9 +177,8 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 
 	replace(buffer, "$LANG_NAME$", languageName);
 	replace(buffer, "$PACKAGE$", packageName);
-	replace(buffer, "$TEMPLATE$", templateName);
-	replace(buffer, "$KEYWORD_TEMPLATE$", hasKeywords ? sKeywordTemplate : "");
 	replace(buffer, "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
+    replace(buffer, "$TEMPLATE$", templateName);
 
 	if (file.exists()) {
 	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
@@ -174,7 +190,7 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
     }
 
     private IFile createSampleLexerFile(IProgressMonitor monitor, IProject project, String packageName,
-	    String languageName, String fileName, String templateName) throws CoreException {
+	    String languageName, String fileName, String templateName, boolean hasKeywords) throws CoreException {
 	monitor.beginTask("Creating " + fileName, 2);
 
 	final IFile file= project.getFile(new Path(fileName));
@@ -183,6 +199,15 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	replace(buffer, "$LANG_NAME$", languageName);
 	replace(buffer, "$PACKAGE$", packageName);
 	replace(buffer, "$TEMPLATE$", templateName);
+    replace(buffer, "$KEYWORD_FILTER$",
+            hasKeywords
+                ? ("%options filter=" + languageName + "KWLexer.gi")
+                : "");
+    replace(buffer, "$KEYWORD_LEXER$",
+            hasKeywords
+                ? ("$" + languageName + "KWLexer")
+                : "Object");
+    replace(buffer, "$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
 
 	if (file.exists()) {
 	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
@@ -192,6 +217,50 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
 	monitor.worked(1);
 	return file;
     }
+
+    private IFile createSampleKWLexerFile(IProgressMonitor monitor, IProject project, String packageName,
+            String languageName, String fileName, String templateName, boolean hasKeywords) throws CoreException {
+        monitor.beginTask("Creating " + fileName, 2);
+
+        final IFile file= project.getFile(new Path(fileName));
+        StringBuffer buffer= new StringBuffer(new String(getSampleKWLexer()));
+
+        replace(buffer, "$LANG_NAME$", languageName);
+        replace(buffer, "$PACKAGE$", packageName);
+        replace(buffer, "$TEMPLATE$", templateName);
+
+        if (file.exists()) {
+            file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
+        } else {
+            file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
+        }
+        monitor.worked(1);
+        return file;
+        }
+
+    private IFile createSampleParseControllerFile(IProgressMonitor monitor, IProject project, String packageName,
+            String languageName, String fileName, String templateName, boolean hasKeywords) throws CoreException {
+        monitor.beginTask("Creating " + fileName, 2);
+
+        final IFile file= project.getFile(new Path(fileName));
+        StringBuffer buffer= new StringBuffer(new String(getSampleParseController()));
+
+        replace(buffer, "$AST_NODE$", packageName +
+                                      "." +
+                                      astDirectory +
+                                      "." +
+                                      astNode);
+        replace(buffer, "$PARSER_TYPE$", languageName + "Parser");
+        replace(buffer, "$LEXER_TYPE$", languageName + "Lexer");
+
+        if (file.exists()) {
+            file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
+        } else {
+            file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
+        }
+        monitor.worked(1);
+        return file;
+        }
 
     private void addBuilder(IProject project, String id) throws CoreException {
 	IProjectDescription desc= project.getDescription();
@@ -215,8 +284,16 @@ public class NewGrammarWizard extends ExtensionPointWizard implements INewWizard
     }
 
     private byte[] getSampleLexer() {
-	return getSampleFile("sample_lexer.txt");
-    }
+        return getSampleFile("sample_lexer.txt");
+        }
+
+    private byte[] getSampleKWLexer() {
+        return getSampleFile("sample_kwlexer.txt");
+        }
+
+    private byte[] getSampleParseController() {
+        return getSampleFile("sample_ParseController.txt");
+        }
 
     private byte[] getSampleFile(String fileName) {
 	try {
