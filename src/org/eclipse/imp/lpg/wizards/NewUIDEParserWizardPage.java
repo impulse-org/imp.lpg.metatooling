@@ -33,11 +33,13 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
     private String fPackageName;
 
-    private String fTemplateName;
+    private String fTemplateKind;
 
     private String fTargetLanguage;
 
     private boolean fHasKeywords;
+
+    private boolean fRequiresBacktracking;
 
     private boolean fAutoGenerateASTs;
 
@@ -63,20 +65,20 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	label.setToolTipText("Select the parser/lexer template to use");
 	label.setBackground(parent.getBackground());
 
-	final int defaultTemplate= 3;  // UIDE
+	final int defaultTemplate= 1;  // UIDE
 	Combo combo= new Combo(parent, SWT.READ_ONLY);
 
 	combo.setFont(parent.getFont());
-	combo.setItems(new String[] { "none", "simple", "backtracking", "UIDE" });
+	combo.setItems(new String[] { "none", "UIDE" });
 	combo.setLayoutData(new GridData(GridData.BEGINNING));
 	combo.select(defaultTemplate);
 	combo.addSelectionListener(new SelectionListener() {
 	    public void widgetSelected(SelectionEvent e) {
-		fTemplateName= e.text;
+		fTemplateKind= e.text;
 	    }
 	    public void widgetDefaultSelected(SelectionEvent e) {}
 	});
-	fTemplateName= combo.getItem(defaultTemplate);
+	fTemplateKind= combo.getItem(defaultTemplate);
 
 	new Label(parent, SWT.NULL).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
@@ -119,6 +121,16 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	cbKeywords.addSelectionListener(new SelectionListener() {
 	    public void widgetSelected(SelectionEvent e) {
 		fHasKeywords= cbKeywords.getSelection();
+	    }
+	    public void widgetDefaultSelected(SelectionEvent e) { }
+	});
+
+	final Button cbBacktrack= new Button(parent, SWT.CHECK);
+
+	cbBacktrack.setText("Language requires Backtracking");
+	cbBacktrack.addSelectionListener(new SelectionListener() {
+	    public void widgetSelected(SelectionEvent e) {
+	        fRequiresBacktracking= cbBacktrack.getSelection();
 	    }
 	    public void widgetDefaultSelected(SelectionEvent e) { }
 	});
@@ -206,8 +218,8 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	}
     }
 
-    public String getTemplateName() {
-        return fTemplateName;
+    public String getTemplateKind() {
+        return fTemplateKind;
     }
 
     public boolean autoGenerateASTs() {
@@ -216,5 +228,9 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
     public boolean hasKeywords() {
         return fHasKeywords;
+    }
+
+    public boolean requiresBacktracking() {
+        return fRequiresBacktracking;
     }
 }
