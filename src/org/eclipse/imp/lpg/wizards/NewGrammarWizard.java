@@ -136,7 +136,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 
     static final String astDirectory= "Ast";
     static final String astNode= "ASTNode";
-    static final String sAutoGenTemplate= "%options automacit_ast=toplevel,visitor,ast_directory=./" + astDirectory + ",ast_type=" + astNode;
+    static final String sAutoGenTemplate= "%options automatic_ast=toplevel,visitor,ast_directory=./" + astDirectory + ",ast_type=" + astNode;
     static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
 
     private IFile createSampleGrammarFile(IProgressMonitor monitor, IProject project, String packageName, String languageName, String fileName,
