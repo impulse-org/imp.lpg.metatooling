@@ -6,3 +6,7 @@ JikesPGLexersym.java
 JikesPGParser.java
 JikesPGParserprs.java
 JikesPGParsersym.java
+Main.java
+JikesPGKWLexer.java
+JikesPGKWLexerprs.java
+JikesPGKWLexersym.java

@@ -1,9 +1,8 @@
-%options fp=JikesPGLexer,prefix=Char_
+%options fp=JikesPGLexer,trace=full,la=15
 %options single-productions
 %options package=org.jikespg.uide.parser
 %options template=uide/LexerTemplate.gi
-%options export_terminals=("JikesPGsym.java", "TK_")
-%options verbose
+%options filter=JikesPGKWLexer.gi
 
 $Globals
     /.import java.util.*;
@@ -12,24 +11,29 @@ $End
 
 $Define
     $additional_interfaces /., ILexer./
-    $kw_lexer_class /.Object./
+    $kw_lexer_class /.$JikesPGKWLexer./
+    $_IDENTIFIER /.$_MACRO_NAME./
 $End
 
 $Include
-    uide/LexerVeryBasicMap.gi
+    uide/LexerBasicMap.gi
 $End
 
 $Export
-    DROPSYMBOLS_KEY DROPRULES_KEY NOTICE_KEY DEFINE_KEY TERMINALS_KEY KEYWORDS_KEY EOL_KEY
-    EOF_KEY ERROR_KEY IDENTIFIER_KEY ALIAS_KEY TITLE_KEY GLOBALS_KEY
-    EMPTY_KEY START_KEY TYPES_KEY RULES_KEY NAMES_KEY END_KEY
-    HEADERS_KEY TRAILERS_KEY EXPORT_KEY IMPORT_KEY INCLUDE_KEY
-    MACRO_NAME SYMBOL BLOCK EQUIVALENCE PRIORITY_EQUIVALENCE
-    ARROW PRIORITY_ARROW OR_MARKER
-    EQUAL OPTIONS_KEY COMMA SINGLE_LINE_COMMENT
-    LEFT_PAREN RIGHT_PAREN
-
-    EOF_TOKEN ERROR_SYMBOL
+    MACRO_NAME
+    SYMBOL
+    BLOCK
+    EQUIVALENCE
+    PRIORITY_EQUIVALENCE
+    ARROW
+    PRIORITY_ARROW
+    OR_MARKER
+    EQUAL
+    OPTIONS_KEY
+    COMMA
+    SINGLE_LINE_COMMENT
+    LEFT_PAREN
+    RIGHT_PAREN
 $End
 
 $Terminals
@@ -85,167 +89,35 @@ $Terminals
     Equal        ::= '='
 $End
 
-$Eof
-    EOF
-$End
-
-$Headers
-    /.
-		public int[] keywords = {
-			$_DROPSYMBOLS_KEY, $_DROPRULES_KEY, $_NOTICE_KEY, $_DEFINE_KEY,
-			$_TERMINALS_KEY, $_KEYWORDS_KEY, $_IDENTIFIER_KEY, $_ALIAS_KEY,
-			$_EMPTY_KEY, $_START_KEY, $_TYPES_KEY, $_RULES_KEY, $_NAMES_KEY, $_END_KEY,
-			$_HEADERS_KEY, $_TRAILERS_KEY, $_EXPORT_KEY, $_IMPORT_KEY, $_INCLUDE_KEY,
-			$_OPTIONS_KEY, $_TITLE_KEY, $_GLOBALS_KEY
-		};
-		public boolean isKeyword(IToken token) { return true; }
-
-		public char[][] getKeywords() { return null; }
-
-		public boolean isKeywordStart(char c) { return false; }
-     ./
+--$Headers
+--    /.
+--		public int[] keywords = {
+--			$_DROPSYMBOLS_KEY, $_DROPRULES_KEY, $_NOTICE_KEY, $_DEFINE_KEY,
+--			$_TERMINALS_KEY, $_KEYWORDS_KEY, $_IDENTIFIER_KEY, $_ALIAS_KEY,
+--			$_EMPTY_KEY, $_START_KEY, $_TYPES_KEY, $_RULES_KEY, $_NAMES_KEY, $_END_KEY,
+--			$_HEADERS_KEY, $_TRAILERS_KEY, $_EXPORT_KEY, $_IMPORT_KEY, $_INCLUDE_KEY,
+--			$_OPTIONS_KEY, $_TITLE_KEY, $_GLOBALS_KEY
+--		};
+--		public boolean isKeyword(IToken token) { return true; }
+--
+--		public char[][] getKeywords() { return null; }
+--
+--		public boolean isKeywordStart(char c) { return false; }
+--     ./
 
 $Start
     Token
 $End
 
 $Rules
-    digit ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-
-    aA ::= a | A
-    bB ::= b | B
-    cC ::= c | C
-    dD ::= d | D
-    eE ::= e | E
-    fF ::= f | F
-    gG ::= g | G
-    hH ::= h | H
-    iI ::= i | I
-    jJ ::= j | J
-    kK ::= k | K
-    lL ::= l | L
-    mM ::= m | M
-    nN ::= n | N
-    oO ::= o | O
-    pP ::= p | P
-    qQ ::= q | Q
-    rR ::= r | R
-    sS ::= s | S
-    tT ::= t | T
-    uU ::= u | U
-    vV ::= v | V
-    wW ::= w | W
-    xX ::= x | X
-    yY ::= y | Y
-    zZ ::= z | Z
-
---  lower ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
-
---  upper ::= A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
-
-    letter ::= aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
-
-    any    ::= letter | digit | special | white
-
-    special ::= specialNoDotOrSlash | '.' | '/'
-
-    specialNoDotOrSlash ::= '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' |
-                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
-                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_' | '$'
-
-    specialNoDoubleQuote ::= '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
-                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
-                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_'
-
-    specialNoSingleQuote ::= '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
-                            '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
-                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_'
-
-    specialNoRightAngle ::= '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
-                            '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
-                            '[' | ']' | '?' | ',' | '<' | "'" | '=' | '#' | '*' | '_'
-
-    whiteChar ::= Space | LF | CR | HT | FF
-
-    white ::= whiteChar | white whiteChar
-
-    notEOL ::= letter | digit | special | Space | HT | FF
-
-    notEOLOrQuote ::= letter | digit | specialNoSingleQuote | Space | HT | FF
-
-    notEOLOrDoubleQuote ::= letter | digit | specialNoDoubleQuote | Space | HT | FF
-
-    notEOLOrRightAngle ::= letter | digit | specialNoRightAngle | Space | HT | FF
-
-    notEOLs ::= notEOL | notEOLs notEOL
-
-    notEOLOrQuotes ::= notEOLOrQuote | notEOLOrQuotes notEOLOrQuote
-
-    notEOLOrDoubleQuotes ::= notEOLOrDoubleQuote | notEOLOrDoubleQuotes notEOLOrDoubleQuote
-
-    notEOLOrRightAngles ::= notEOLOrRightAngle | notEOLOrRightAngles notEOLOrRightAngle
-
-    slc   ::= '-' '-'
-            | slc notEOL
-
     Token ::= white /.$BeginJava skipToken(); $EndJava./
-            | slc   /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
+    Token ::= slc   /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
 
-    Equivalence ::= ':' ':' '='
-    Arrow       ::= '-' '>'
-
-    Dots  ::= '.' | Dots '.'
-
-    letterWhiteDigit ::= letter | white | digit
-
-    InsideBlock ::= $empty
-    			  | InsideBlock letterWhiteDigit
-                  | InsideBlock Dots specialNoDotOrSlash
-                  | InsideBlock '/'
-                  | InsideBlock specialNoDotOrSlash
-
-    Block ::= '/' '.' InsideBlock Dots '/'
-
-    Symbol ::= delimitedSymbol | normalSymbol | number
-
-    delimitedSymbol ::= "'" notEOLOrQuotes "'"
-                      | '"' notEOLOrDoubleQuotes '"'
-                      | '<' notEOLOrRightAngles '>'
-
-    normalSymbol ::= letter | normalSymbol symbolChar
-
-    symbolChar ::= letter | digit | '_' | '.' | '-' | '/'
-
-    number ::= digit | number digit
-
-    Token ::= '%' oO pP tT iI oO nN sS           /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
-
-    Token ::= '$' aA lL iI aA sS                 /.$BeginJava makeToken($_ALIAS_KEY);$EndJava./
-    Token ::= '$' dD eE fF iI nN eE              /.$BeginJava makeToken($_DEFINE_KEY);$EndJava./
-    Token ::= '$' dD rR oO pP sS yY mM bB oO lL sS /.$BeginJava makeToken($_DROPSYMBOLS_KEY);$EndJava./
-    Token ::= '$' dD rR oO pP rR uU lL eE sS     /.$BeginJava makeToken($_DROPRULES_KEY);$EndJava./
-    Token ::= '$' eE mM pP tT yY                 /.$BeginJava makeToken($_EMPTY_KEY);$EndJava./
-    Token ::= '$' eE nN dD                       /.$BeginJava makeToken($_END_KEY);$EndJava./
-    Token ::= '$' eE oO fF                       /.$BeginJava makeToken($_EOF_KEY);$EndJava./
-    Token ::= '$' eE oO lL                       /.$BeginJava makeToken($_EOL_KEY);$EndJava./
-    Token ::= '$' eE rR rR oO rR                 /.$BeginJava makeToken($_ERROR_KEY);$EndJava./
-    Token ::= '$' eE xX pP oO rR tT              /.$BeginJava makeToken($_EXPORT_KEY);$EndJava./
-    Token ::= '$' gG lL oO bB aA lL sS           /.$BeginJava makeToken($_GLOBALS_KEY);$EndJava./
-    Token ::= '$' hH eE aA dD eE rR sS           /.$BeginJava makeToken($_HEADERS_KEY);$EndJava./
-    Token ::= '$' iI dD eE nN tT iI fF iI eE rR  /.$BeginJava makeToken($_IDENTIFIER_KEY);$EndJava./
-    Token ::= '$' iI mM pP oO rR tT              /.$BeginJava makeToken($_IMPORT_KEY);$EndJava./
-    Token ::= '$' iI nN cC lL uU dD eE           /.$BeginJava makeToken($_INCLUDE_KEY);$EndJava./
-    Token ::= '$' kK eE yY wW oO rR dD sS        /.$BeginJava makeToken($_KEYWORDS_KEY);$EndJava./
-    Token ::= '$' nN aA mM eE sS                 /.$BeginJava makeToken($_NAMES_KEY);$EndJava./
-    Token ::= '$' nN oO tT iI cC eE              /.$BeginJava makeToken($_NOTICE_KEY);$EndJava./
-    Token ::= '$' rR uU lL eE sS                 /.$BeginJava makeToken($_RULES_KEY);$EndJava./
-    Token ::= '$' sS tT aA rR tT                 /.$BeginJava makeToken($_START_KEY);$EndJava./
-    Token ::= '$' tT eE rR mM iI nN aA lL sS     /.$BeginJava makeToken($_TERMINALS_KEY);$EndJava./
-    Token ::= '$' tT rR aA iI lL eE rR sS        /.$BeginJava makeToken($_TRAILERS_KEY);$EndJava./
-    Token ::= '$' tT yY pP eE sS                 /.$BeginJava makeToken($_TYPES_KEY);$EndJava./
-    Token ::= '$' tT iI tT lL eE                 /.$BeginJava makeToken($_TITLE_KEY);$EndJava./
-
-    Token ::= '$' Symbol        /.$BeginJava makeToken($_MACRO_NAME);$EndJava./
+    Token ::= '%' oO pP tT iI oO nN sS optionWhite Eol /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+    Token ::= '%' oO pP tT iI oO nN sS optionWhite slc /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+    Token ::= '%' oO pP tT iI oO nN sS optionWhite optionList Eol /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+    Token ::= '%' oO pP tT iI oO nN sS optionWhite optionList slc /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+    Token ::= MacroSymbol       /.$BeginJava checkForKeyWord();$EndJava./
     Token ::= Symbol            /.$BeginJava makeToken($_SYMBOL);$EndJava./
     Token ::= Block             /.$BeginJava makeToken($_BLOCK);$EndJava./
     Token ::= Equivalence       /.$BeginJava makeToken($_EQUIVALENCE);$EndJava./
@@ -253,8 +125,681 @@ $Rules
     Token ::= Arrow             /.$BeginJava makeToken($_ARROW);$EndJava./
     Token ::= Arrow ?           /.$BeginJava makeToken($_PRIORITY_ARROW);$EndJava./
     Token ::= '|'               /.$BeginJava makeToken($_OR_MARKER);$EndJava./
-    Token ::= '='               /.$BeginJava makeToken($_EQUAL);$EndJava./
-    Token ::= ','               /.$BeginJava makeToken($_COMMA);$EndJava./
-    Token ::= '('               /.$BeginJava makeToken($_LEFT_PAREN); $EndJava./
-    Token ::= ')'               /.$BeginJava makeToken($_RIGHT_PAREN); $EndJava./
+
+    digit -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+    aA -> a | A
+    bB -> b | B
+    cC -> c | C
+    dD -> d | D
+    eE -> e | E
+    fF -> f | F
+    gG -> g | G
+    hH -> h | H
+    iI -> i | I
+    jJ -> j | J
+    kK -> k | K
+    lL -> l | L
+    mM -> m | M
+    nN -> n | N
+    oO -> o | O
+    pP -> p | P
+    qQ -> q | Q
+    rR -> r | R
+    sS -> s | S
+    tT -> t | T
+    uU -> u | U
+    vV -> v | V
+    wW -> w | W
+    xX -> x | X
+    yY -> y | Y
+    zZ -> z | Z
+
+--  lower ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
+
+--  upper ::= A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
+
+    letter -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
+
+    anyNonWhiteChar -> letter | digit | special
+
+    special -> specialNoDotOrSlash | '.' | '/'
+
+--    special -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
+--               '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+--               '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '$'
+
+    specialNoDotDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '/' |
+                          '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                          '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
+
+    specialNoSlashDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' |
+                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
+
+    specialNoColonDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
+                            '%' | '&' | '^' | ';' | "'" | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
+
+    specialNoEqualDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
+                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | '>' | '#' | '*'
+
+    specialNoQuestionDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
+                               '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                               '[' | ']' | ',' | '<' | '>' | '=' | '#' | '*'
+
+    specialNoMinusDollar -> '+' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
+                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
+
+    specialNoOrDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
+                         '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                         '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
+
+    specialNoMinusRightAngle -> '+' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
+                                '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
+                                '[' | ']' | '?' | ',' | '<' | "'" | '=' | '#' | '*' | '$'
+
+    specialNoDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
+                       '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                       '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
+
+    specialNoDotOrSlash -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' |
+                           '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                           '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '$'
+
+    specialNoDoubleQuote -> '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
+                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '$'
+
+    specialNoSingleQuote -> '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
+                            '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
+                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '$'
+
+    specialNoRightAngle -> '+' | '-' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
+                           '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
+                           '[' | ']' | '?' | ',' | '<' | "'" | '=' | '#' | '*' | '$'
+
+    specialNoMinusSingleQuoteDoublequoteLeftAngleCommaLparenRparen -> '+' | '!' | '@' | '`' | '~' | '.' | '/' |
+                                                                      '%' | '&' | '^' | ':' | ';' | '\' | '|' | '{' | '}' |
+                                                                      '[' | ']' | '?' | '>' | '=' | '#' | '*' | '$'
+
+    specialNoColonMinusSingleQuoteDoublequoteLeftAngleOrSlashDollarPercent -> '+' | '(' | ')' | '!' | '@' | '`' | '~' | '.' |
+                                                                              '&' | '^' | ';' | '\' | '{' | '}' |
+                                                                              '[' | ']' | '?' | ',' | '>' | '=' | '#' | '*'
+
+    Eol -> LF | CR
+
+    whiteChar -> Space | Eol | HT | FF
+
+    white ::= whiteChar
+            | white whiteChar
+
+    notEOL -> letter | digit | special | Space | HT | FF
+
+    notEOLOrQuote -> letter | digit | specialNoSingleQuote | Space | HT | FF
+
+    notEOLOrDoubleQuote -> letter | digit | specialNoDoubleQuote | Space | HT | FF
+
+    notEOLOrRightAngle -> letter | digit | specialNoRightAngle | Space | HT | FF
+
+    notEOLOrQuotes ::= notEOLOrQuote
+                     | notEOLOrQuotes notEOLOrQuote
+
+    notEOLOrDoubleQuotes ::= notEOLOrDoubleQuote
+                           | notEOLOrDoubleQuotes notEOLOrDoubleQuote
+
+    notEOLOrRightAngles ::= notEOLOrRightAngle
+                          | notEOLOrRightAngles notEOLOrRightAngle
+
+    slc ::= '-' '-'
+          | slc notEOL
+
+    Equivalence ::= ':' ':' '='
+    Arrow       ::= '-' '>'
+
+    Dots ::= '.'
+           | Dots '.'
+
+    InsideBlockChar -> letter | whiteChar | digit | specialNoDotOrSlash
+
+    InsideBlock ::= $empty
+                  | InsideBlock InsideBlockChar
+                  | InsideBlock Dots InsideBlockChar
+                  | InsideBlock '/'
+
+    Block ::= '/' '.' InsideBlock Dots '/'
+
+--    Symbol -> delimitedSymbol | normalSymbol | number
+
+    Symbol -> delimitedSymbol
+            | specialSymbol
+            | normalSymbol
+
+    delimitedSymbol ::= "'" notEOLOrQuotes "'"
+                      | '"' notEOLOrDoubleQuotes '"'
+                      | '<' letter notEOLOrRightAngles '>'
+
+    MacroSymbol ::= '$'
+                  | MacroSymbol letter
+                  | MacroSymbol digit
+
+    anyNonWhiteNoColonMinusSingleQuoteDoublequoteLeftAngleOrSlashDollarPercent -> letter | digit | specialNoColonMinusSingleQuoteDoublequoteLeftAngleOrSlashDollarPercent
+    normalSymbol ::= anyNonWhiteNoColonMinusSingleQuoteDoublequoteLeftAngleOrSlashDollarPercent
+                   | normalSymbol anyNonWhiteChar
+
+--
+--    BLOCK            /.  ...
+--    EQUIVALENCE      ::=[?]
+--    ARROW            ->[?]
+--    COMMENT          -- ...
+--    OR_MARKER        |
+--    OPTIONS_KEY      %options
+--    bracketed symbol < ... >
+--
+
+    letterNoOo -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
+    letterNoPp -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
+    letterNoTt -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | sS | uU | vV | wW | xX | yY | zZ
+    letterNoIi -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
+    letterNoNn -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | oO | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
+    letterNoSs -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | tT | uU | vV | wW | xX | yY | zZ
+
+
+    anyNonWhiteNoLetterDollar -> digit | specialNoDollar
+    anyNonWhiteNoDotDollar -> letter | digit | specialNoDotDollar
+    anyNonWhiteNoSlashDollar -> letter | digit | specialNoSlashDollar
+    anyNonWhiteNoColonDollar -> letter | digit | specialNoColonDollar
+    anyNonWhiteNoEqualDollar -> letter | digit | specialNoEqualDollar
+    anyNonWhiteNoQuestionDollar -> letter | digit | specialNoQuestionDollar
+    anyNonWhiteNoMinusDollar -> letter | digit | specialNoMinusDollar
+    anyNonWhiteNoOrDollar -> letter | digit | specialNoOrDollar
+    anyNonWhiteNoMinusRightAngle -> letter | digit | specialNoRightAngle
+    anyNonWhiteNoDollar -> letter | digit | specialNoDollar
+
+    anyNonWhiteNotOoDollar -> letterNoOo | digit | specialNoDollar
+    anyNonWhiteNotPpDollar -> letterNoPp | digit | specialNoDollar
+    anyNonWhiteNotTtDollar -> letterNoTt | digit | specialNoDollar
+    anyNonWhiteNotIiDollar -> letterNoIi | digit | specialNoDollar
+    anyNonWhiteNotNnDollar -> letterNoNn | digit | specialNoDollar
+    anyNonWhiteNotSsDollar -> letterNoSs | digit | specialNoDollar
+
+    specialSymbol ::= '<'
+                    | '<' anyNonWhiteNoLetterDollar
+                    | '/'
+                    | '/' anyNonWhiteNoDotDollar
+                    | ':'
+                    | ':' anyNonWhiteNoColonDollar
+                    | ':' ':'
+                    | ':' ':' anyNonWhiteNoEqualDollar
+                    | ':' ':' '=' anyNonWhiteNoQuestionDollar
+                    | ':' ':' '=' '?' anyNonWhiteNoDollar
+                    | '-'
+                    | '-' anyNonWhiteNoMinusRightAngleDollar
+                    | '-' '>' anyNonWhiteNoQuestionDollar
+                    | '-' '>' '?' anyNonWhiteNoDollar
+                    | '|' anyNonWhiteNoDollar
+                    | '%'
+                    | '%' anyNonWhiteNotOoDollar
+                    | '%' oO
+                    | '%' oO anyNonWhiteNotPpDollar
+                    | '%' oO pP
+                    | '%' oO pP anyNonWhiteNotTtDollar
+                    | '%' oO pP tT
+                    | '%' oO pP tT anyNonWhiteNotIiDollar
+                    | '%' oO pP tT iI
+                    | '%' oO pP tT iI anyNonWhiteNotOoDollar
+                    | '%' oO pP tT iI oO
+                    | '%' oO pP tT iI oO anyNonWhiteNotNnDollar
+                    | '%' oO pP tT iI oO nN
+                    | '%' oO pP tT iI oO nN anyNonWhiteNotSsDollar
+                    | '%' oO pP tT iI oO nN sS anyNonWhiteNotDollar
+                    | specialSymbol anyNonWhiteNotDollar
+
+
+--    symbolChar -> letter | digit | '_' | '.' | '-' | '/'
+
+    number ::= digit
+             | number digit
+
+   --
+   -- The following rules are used for processing options.
+   --
+   _opt -> $empty
+         | '_'
+
+   no ::= nN oO
+
+   none ::= nN oO nN eE
+
+   anyNoMinusSingleQuoteDoublequoteLeftAngleCommaLparenRparen -> letter
+                                                               | digit
+                                                               | specialNoMinusSingleQuoteDoublequoteLeftAngleCommaLparenRparen
+
+   optionSymbol ::= anyNoMinusSingleQuoteDoublequoteLeftAngleCommaLparenRparen
+                  | '-' anyNoMinusSingleQuoteDoublequoteLeftAngleCommaLparenRparen
+                  | optionSymbol '-' anyNoMinusSingleQuoteDoublequoteLeftAngleCommaLparenRparen
+                  | optionSymbol anyNoMinusSingleQuoteDoublequoteLeftAngleCommaLparenRparen
+
+   Value ::= delimitedSymbol
+           | '-'
+           | optionSymbol
+--           | optionSymbol '-'
+
+   optionWhiteChar -> Space | HT | FF
+   optionWhite ::= $empty
+                 | optionWhite optionWhiteChar
+
+   optionList ::= option 
+                | optionList ',' option
+
+   --
+   -- action_block
+   -- ast_directory
+   -- ast_type
+   -- automatic_ast
+   -- attributes
+   --
+   option ::= action_block optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite block_begin optionWhite ',' optionWhite block_end optionWhite ')' optionWhite
+   action_block ::= aA cC tT iI oO nN _opt bB lL oO cC kK
+                  | aA bB
+   filename -> Value
+   block_begin -> Value
+   block_end -> Value
+
+   option ::= ast_directory optionWhite '=' optionWhite Value optionWhite
+   ast_directory ::= aA sS tT _opt dD iI rR eE cC tT oO rR yY
+                   | aA dD 
+
+   option ::= ast_type optionWhite '=' optionWhite Value optionWhite
+   ast_type ::= aA sS tT _opt tT yY pP eE
+              | aA tT 
+
+   option ::= attributes optionWhite
+            | no attributes optionWhite
+   attributes ::= aA tT tT rR iI bB uU tT eE sS
+
+   option ::= automatic_ast optionWhite
+            | no automatic_ast optionWhite
+   option ::= automatic_ast optionWhite '=' optionWhite automatic_ast_value optionWhite
+   automatic_ast ::= aA uU tT oO mM aA tT iI cC _opt aA sS tT
+                   | aA aA
+   automatic_ast_value ::= none
+                         | nN eE sS tT eE dD
+                         | tT oO pP lL eE vV eE lL
+
+   --
+   -- backtrack
+   -- byte
+   --
+   option ::= backtrack optionWhite
+            | no backtrack optionWhite
+   backtrack ::= bB aA cC kK tT rR aA cC kK
+
+   option ::= byte optionWhite
+            | no byte optionWhite
+   byte ::= bB yY tT eE
+   
+
+   --
+   -- conflicts
+   --
+   option ::= conflicts optionWhite
+            | no conflicts optionWhite
+   conflicts ::= cC oO nN fF lL iI cC tT sS
+
+   --
+   -- dat_directory
+   -- dat_file
+   -- dcl_file
+   -- def_file
+   -- debug
+   --
+   option ::= dat_directory optionWhite '=' optionWhite Value optionWhite
+   dat_directory ::= dD aA tT _opt dD iI rR eE cC tT oO rR yY 
+                   | dD dD
+
+   option ::= dat_file optionWhite '=' optionWhite Value optionWhite
+   dat_file ::= dD aA tT _opt fF iI lL eE
+
+   option ::= dcl_file optionWhite '=' optionWhite Value optionWhite
+   dcl_file ::= dD cC lL _opt fF iI lL eE
+
+   option ::= def_file optionWhite '=' optionWhite Value optionWhite
+   def_file ::= dD eE fF _opt fF iI lL eE
+
+   option ::= debug optionWhite
+            | no debug optionWhite
+   debug ::= dD eE bB uU gG
+   
+
+   --
+   -- edit
+   -- error_maps
+   -- escape
+   -- export_terminals
+   -- extends_parsetable
+   --
+   option ::= edit optionWhite
+            | no edit optionWhite
+   edit ::= eE dD iI tT
+
+   option ::= error_maps optionWhite
+            | no error_maps optionWhite
+   error_maps ::= eE rR rR oO rR _opt mM aA pP sS
+                | eE mM
+
+   option ::= escape optionWhite '=' optionWhite anyNonWhiteChar optionWhite
+   escape ::= eE sS cC aA pP eE
+
+   option ::= export_terminals optionWhite '=' optionWhite filename optionWhite
+   option ::= export_terminals optionWhite '=' optionWhite '(' optionWhite filename optionWhite ')' optionWhite
+   option ::= export_terminals optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite export_prefix optionWhite ')' optionWhite
+   option ::= export_terminals optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite export_prefix optionWhite ',' optionWhite export_suffix optionWhite ')' optionWhite
+   export_terminals ::= eE xX pP oO rR tT _opt tT eE rR mM iI nN aA lL sS
+                      | eE tT 
+   export_prefix -> Value
+   export_suffix -> Value
+
+   option ::= extends_parsetable optionWhite
+            | no extends_parsetable optionWhite
+   option ::= extends_parsetable optionWhite '=' optionWhite Value optionWhite
+   extends_parsetable ::= eE xX tT eE nN dD sS _opt pP aA rR sS eE tT aA bB lL eE
+                        | eE pP
+
+   --
+   -- factory
+   -- file_prefix
+   -- filter
+   -- first
+   -- follow
+   --
+   option ::= factory optionWhite '=' optionWhite Value optionWhite
+   factory ::= fF aA cC tT oO rR yY
+
+   option ::= file_prefix optionWhite '=' optionWhite Value optionWhite
+   file_prefix ::= fF iI lL eE _opt pP rR eE fF iI xX
+                 | fF pP
+
+   option ::= filter optionWhite '=' optionWhite Value optionWhite
+   filter ::= fF iI lL tT eE rR
+
+   option ::= first optionWhite
+            | no first optionWhite
+   first ::= fF iI rR sS tT
+
+   option ::= follow optionWhite
+            | no follow optionWhite
+   follow ::= fF oO lL lL oO wW
+   
+
+   --
+   -- goto_default
+   --
+   option ::= goto_default optionWhite
+            | no goto_default optionWhite
+   goto_default ::= gG oO tT oO _opt dD eE fF aA uU lL tT
+                  | gG dD
+
+   --
+   -- Headers
+   --
+   option ::= headers optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite block_begin optionWhite ',' optionWhite block_end optionWhite ')' optionWhite
+   headers ::= hH eE aA dD eE rR sS
+
+   --
+   -- imp_file
+   -- import_terminals
+   -- include_directory/include_directories
+   --
+   option ::= imp_file optionWhite '=' optionWhite Value optionWhite
+   imp_file ::= iI mM pP _opt fF iI lL eE
+              | iI fF 
+
+   option ::= import_terminals optionWhite '=' optionWhite Value optionWhite
+   import_terminals ::= iI mM pP oO rR tT _opt tT eE rR mM iI nN aA lL sS
+                      | iI tT
+
+   option ::= include_directory optionWhite '=' optionWhite Value optionWhite
+   include_directory ::= iI nN cC lL uU dD eE _opt dD iI rR eE cC tT oO rR yY
+                       | iI nN cC lL uU dD eE _opt dD iI rR eE cC tT oO rR iI eE sS 
+                       | iI dD
+
+   --
+   -- lalr_level
+   -- list
+   --
+   option ::= lalr_level optionWhite
+            | no lalr_level optionWhite
+   option ::= lalr_level optionWhite '=' optionWhite number optionWhite
+   lalr_level ::= lL aA lL rR _opt lL eE vV eE lL
+                | lL aA lL rR
+                | lL aA
+                | lL lL
+
+   option ::= list optionWhite
+            | no list optionWhite
+   list ::= lL iI sS tT 
+
+   --
+   -- margin
+   -- max_cases
+   --
+   option ::= margin optionWhite '=' optionWhite number optionWhite
+   margin ::= mM aA rR gG iI nN
+
+   option ::= max_cases optionWhite '=' optionWhite number optionWhite
+   max_cases ::= mM aA xX _opt cC aA sS eE sS
+               | mM cC
+
+   --
+   -- names
+   -- nt_check
+   --
+   option ::= nN aA mM eE sS optionWhite
+            | no nN aA mM eE sS optionWhite
+   option ::= nN aA mM eE sS optionWhite '=' optionWhite names_value optionWhite
+
+   names_value ::= oO pP tT iI mM iI zZ eE dD
+                 | mM aA xX iI mM uU mM
+                 | mM iI nN iI mM uU mM
+   
+
+   option ::= nt_check optionWhite
+            | no nt_check optionWhite
+   nt_check ::= nN tT _opt cC hH eE cC kK
+              | nN cC
+
+   --
+   -- or_marker
+   --
+   option ::= or_marker optionWhite '=' optionWhite anyNonWhiteChar optionWhite
+   or_marker ::= oO rR _opt mM aA rR kK eE rR
+               | oO mM 
+
+   --
+   -- package
+   -- parsetable_interfaces
+   -- prefix
+   -- priority
+   -- programming_language
+   -- prs_file
+   --
+   option ::= package optionWhite '=' optionWhite Value optionWhite
+   package ::= pP aA cC kK aA gG eE
+
+   option ::= parsetable_interfaces optionWhite '=' optionWhite Value optionWhite
+   parsetable_interfaces ::= pP aA rR sS eE tT aA bB lL eE _opt iI nN tT eE rR fF aA cC eE sS
+                           | pP aA rR sS eE tT aA bB lL eE
+                           | pP iI
+
+   option ::= prefix optionWhite '=' optionWhite Value optionWhite
+   prefix ::= pP rR eE fF iI xX
+
+   option ::= priority optionWhite
+            | no priority optionWhite
+   priority ::= pP rR iI oO rR iI tT yY
+
+   option ::= programming_language optionWhite '=' optionWhite programming_language_value optionWhite
+   programming_language ::= pP rR oO gG rR aA mM mM iI nN gG _opt lL aA nN gG uU aA gG eE
+                          | pP lL
+   programming_language_value ::= none
+                                | xX mM lL
+                                | cC
+                                | cC pP pP
+                                | jJ aA vV aA
+                                | pP lL xX
+                                | pP lL xX aA sS mM
+                                | mM lL
+   option ::= prs_file optionWhite '=' optionWhite Value optionWhite
+   prs_file ::= pP rR sS _opt fF iI lL eE
+              | pP fF
+   
+
+   --
+   -- quiet
+   --
+   option ::= quiet optionWhite
+            | no quiet optionWhite
+   quiet ::= qQ uU iI eE tT
+
+   --
+   -- read_reduce
+   -- remap_terminals
+   --
+   option ::= read_reduce optionWhite
+            | no read_reduce optionWhite
+   read_reduce ::= rR eE aA dD _opt rR eE dD uU cC eE
+                 | rR rR
+
+   option ::= remap_terminals optionWhite
+            | no remap_terminals optionWhite
+   remap_terminals ::= rR eE mM aA pP _opt tT eE rR mM iI nN aA lL sS
+                     | rR tT
+
+   --
+   -- scopes
+   -- serialize
+   -- shift_default
+   -- single_productions
+   -- slr
+   -- soft_keywords
+   -- states
+   -- suffix
+   -- sym_file
+   --
+   option ::= scopes optionWhite
+            | no scopes optionWhite
+   scopes ::= sS cC oO pP eE sS
+
+   option ::= serialize optionWhite
+            | no serialize optionWhite
+   serialize ::= sS eE rR iI aA lL iI zZ eE
+
+   option ::= shift_default optionWhite
+            | no shift_default optionWhite
+   shift_default ::= sS hH iI fF tT _opt dD eE fF aA uU lL tT
+                   | sS dD
+
+   option ::= single_productions optionWhite
+            | no single_productions optionWhite
+   single_productions ::= sS iI nN gG lL eE _opt pP rR oO dD uU cC tT iI oO nN sS
+                        | sS pP
+
+   option ::= slr optionWhite
+            | no slr optionWhite
+   slr ::= sS lL rR
+
+   option ::= soft_keywords optionWhite
+            | no soft_keywords optionWhite
+   soft_keywords ::= sS oO fF tT _opt kK eE yY wW oO rR dD sS 
+                   | sS kK
+
+   option ::= states optionWhite
+            | no states optionWhite
+   states ::= sS tT aA tT eE sS
+
+   option ::= suffix optionWhite '=' optionWhite Value optionWhite
+   suffix ::= sS uU fF fF iI xX 
+
+   option ::= sym_file optionWhite '=' optionWhite Value optionWhite
+   sym_file ::= sS yY mM _opt fF iI lL eE
+              | sS fF 
+
+   --
+   -- tab_file
+   -- table
+   -- template
+   -- trace
+   --
+   option ::= tab_file optionWhite '=' optionWhite Value optionWhite
+   tab_file ::= tT aA bB _opt fF iI lL eE
+              | tT fF
+
+   option ::= template optionWhite '=' optionWhite Value optionWhite
+   template ::= tT eE mM pP lL aA tT eE
+   
+
+   option ::= trailers optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite block_begin optionWhite ',' optionWhite block_end optionWhite ')' optionWhite
+   trailers ::= tT rR aA iI lL eE rR sS
+
+   option ::= table optionWhite
+            | no table optionWhite
+   option ::= table optionWhite '=' optionWhite programming_language_value optionWhite
+   table ::= tT aA bB lL eE 
+
+   option ::= trace  optionWhite
+            | no trace optionWhite
+   option ::= trace optionWhite '=' optionWhite trace_value optionWhite
+   trace ::= T rR aA cC eE
+
+   trace_value ::= none
+                 | cC oO nN fF lL iI cC tT sS
+                 | fF uU lL lL
+
+   --
+   -- variables
+   -- verbose
+   -- visitor
+   -- visitor_type
+   --
+   option ::= variables optionWhite '=' optionWhite variables_value optionWhite
+   variables ::= vV aA rR iI aA bB lL eE sS
+   variables_value ::= none
+                     | bB oO tT hH
+                     | tT eE rR mM iI nN aA lL sS
+                     | nN oO nN _opt tT eE rR mM iI nN aA lL sS
+                     | nN tT
+
+   option ::= verbose optionWhite
+            | no verbose optionWhite
+   verbose ::= vV eE rR bB oO sS eE
+
+   option ::= visitor optionWhite
+            | no visitor optionWhite
+   option ::= visitor optionWhite '=' optionWhite visitor_value optionWhite
+   visitor ::= vV iI sS iI tT oO rR
+   visitor_value ::= none
+                   | dD eE fF aA uU lL tT
+                   | pP rR eE oO rR dD eE rR
+
+   option ::= visitor_type optionWhite '=' optionWhite Value optionWhite
+   visitor_type ::= vV iI sS iI tT oO rR _opt tT yY pP eE
+                  | vV tT
+
+   --
+   -- warnings
+   --
+   option ::= warnings optionWhite
+            | no warnings optionWhite
+   warnings ::= wW aA rR nN iI nN gG sS
+
+   --
+   -- xref
+   --
+   option ::= xreference optionWhite
+            | no xreference optionWhite
+   xreference ::= xX rR eE fF
+                | xX rR eE fF eE rR eE nN cC eE
 $End

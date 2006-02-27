@@ -1,5 +1,4 @@
-%options table=java,escape=$,la=3
-%options fp=JikesPGParser,prefix=TK_
+%options fp=JikesPGParser,la=6
 %options package=org.jikespg.uide.parser
 %options automatic_ast,ast_type=ASTNode,visitor=preorder
 %options template=uide/btParserTemplate.gi
@@ -11,21 +10,10 @@ $End
 
 $Define
     $ast_class /.Object./
-    $action_class /.$file_prefix./
     $additional_interfaces /., IParser./
 $End
 
 $Terminals
-    DROPSYMBOLS_KEY DROPRULES_KEY NOTICE_KEY DEFINE_KEY TERMINALS_KEY KEYWORDS_KEY EOL_KEY
-    EOF_KEY ERROR_KEY IDENTIFIER_KEY ALIAS_KEY TITLE_KEY GLOBALS_KEY
-    EMPTY_KEY START_KEY TYPES_KEY RULES_KEY NAMES_KEY END_KEY
-    HEADERS_KEY TRAILERS_KEY EXPORT_KEY IMPORT_KEY INCLUDE_KEY
-    MACRO_NAME SYMBOL BLOCK EQUIVALENCE PRIORITY_EQUIVALENCE
-    ARROW PRIORITY_ARROW OR_MARKER
-    EQUAL OPTIONS_KEY
-
-    EOF_TOKEN ERROR_SYMBOL
-
     EQUAL ::= '='
     EQUIVALENCE ::= '::='
     PRIORITY_EQUIVALENCE ::= '::=?'
@@ -44,7 +32,8 @@ $End
 $Rules
     JikesPG ::= options_segment JikesPG_INPUT
 
-    JikesPG_INPUT ::= $empty | JikesPG_INPUT JikesPG_item END_KEY_OPT
+    JikesPG_INPUT ::= $empty
+                    | JikesPG_INPUT JikesPG_item END_KEY_OPT
 
     JikesPG_item$AliasSeg      ::= alias_segment
     JikesPG_item$DefineSeg     ::= define_segment
@@ -63,20 +52,21 @@ $Rules
     JikesPG_item$RulesSeg      ::= rules_segment
     JikesPG_item$StartSeg      ::= start_segment
     JikesPG_item$TerminalsSeg  ::= terminals_segment
-    JikesPG_item$TitleSeg      ::= title_segment
+    JikesPG_item$AstSeg        ::= ast_segment
     JikesPG_item$TrailersSeg   ::= trailers_segment
     JikesPG_item$TypesSeg      ::= types_segment
 
     options_segment ::= $empty | options_segment option_spec
     option_spec ::= OPTIONS_KEY option_list
-    option_list ::= option | option_list ',' option
+    option_list ::= $empty | option_list ',' option
     option ::= SYMBOL option_value
     option_value ::= $empty | '=' SYMBOL | '=' '(' symbol_list ')'
 
-    symbol_list$$SYMBOL ::= SYMBOL | symbol_list ',' SYMBOL
+    symbol_list$$SYMBOL ::= SYMBOL
+                          | symbol_list ',' SYMBOL
 
-    title_segment ::= TITLE_KEY
-    title_segment ::= TITLE_KEY action_segment
+    ast_segment ::= AST_KEY
+    ast_segment ::= AST_KEY action_segment
 
     globals_segment ::= GLOBALS_KEY
     globals_segment ::= globals_segment action_segment
@@ -173,30 +163,33 @@ $Rules
 
     nonTermList$$nonTerm ::= $empty | nonTermList nonTerm
 
-    nonTerm ::= SYMBOL optMacro produces rhsList
+    nonTerm$nonTerm ::= SYMBOL produces rhsList
+    nonTerm$nonTerm ::= SYMBOL MACRO_NAME$className produces rhsList
+    nonTerm$nonTerm ::= SYMBOL MACRO_NAME$className MACRO_NAME$arrayElement produces rhsList
     rhsList$$rhs ::= rhs | rhsList '|'$ rhs
-    optMacro ::= MACRO_NAME | $empty
 
---    rules$Rule ::= SYMBOL produces rhs
---    rules$Rule ::= SYMBOL MACRO_NAME produces rhs
---    rules$Rule ::= rules '|'$ rhs
+--    rules$$Rule ::= SYMBOL produces rhs
+--    rules$$Rule ::= SYMBOL MACRO_NAME$classname produces rhs
+--    rules$$Rule ::= SYMBOL MACRO_NAME$className MACRO_NAME$arrayName produces rhs
+--    rules$$Rule ::= rules '|'$ rhs
 
     produces ::= '::='
     produces ::= '::=?'
     produces ::= '->'
     produces ::= '->?'
 
---  rhs ::= $empty
---  rhs$rhsSymbol      ::= rhs SYMBOL
---  rhs$emptyRHS       ::= rhs EMPTY_KEY 
---  rhs$rhsAction      ::= rhs action_segment
+--  rhs$RhsList$ ::= $empty
+--  rhs$RhsList  ::= rhs SYMBOL
+--  rhs$RhsList  ::= rhs EMPTY_KEY 
+--  rhs$RhsList  ::= rhs action_segment
 
     rhs ::= symWithAttrsList opt_action_segment
 
-    symWithAttrsList$$symWithAttrs ::= symWithAttrs | symWithAttrsList symWithAttrs
+    symWithAttrsList ::= symWithAttrs | symWithAttrsList symWithAttrs
 
-    symWithAttrs ::= EMPTY_KEY 
-    symWithAttrs ::= SYMBOL optMacro
+    symWithAttrs ::= EMPTY_KEY
+    symWithAttrs ::= SYMBOL
+    symWithAttrs ::= SYMBOL MACRO_NAME
 
     opt_action_segment ::= $empty | action_segment
 

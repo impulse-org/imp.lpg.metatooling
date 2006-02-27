@@ -134,15 +134,12 @@ public class Outliner extends DefaultOutliner {
 	public void endVisit(terminal_symbol1 n) {
 	    createSubItem(n.getLeftIToken().toString(), n);
 	}
-	public boolean visit(TitleSeg n) {
-	    fItemStack.push(createTopItem("Title", n));
+	public boolean visit(AstSeg n) {
+	    fItemStack.push(createTopItem("Ast", n));
 	    return true;
 	}
-	public void endVisit(TitleSeg n) {
+	public void endVisit(AstSeg n) {
 	    fItemStack.pop();
-	}
-	public void endVisit(title_segment1 n) {
-            createSubItem(((action_segment) n.getaction_segment()).getLeftIToken().toString(), n.getaction_segment());
 	}
 	public boolean visit(RulesSeg n) {
 	    fItemStack.push(createTopItem("Rules", n));
@@ -170,6 +167,10 @@ public class Outliner extends DefaultOutliner {
             fRHSLabel.append(n.getIToken().toString());
         }
         public void endVisit(symWithAttrs1 n) {
+            fRHSLabel.append(' ');
+            fRHSLabel.append(n.getIToken().toString());
+        }
+        public void endVisit(symWithAttrs2 n) {
             fRHSLabel.append(' ');
             fRHSLabel.append(n.getSYMBOL().getIToken().toString());
         }

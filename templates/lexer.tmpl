@@ -104,7 +104,7 @@ $Rules
         ./
     Token ::= number
         /.$BeginJava
-                    checkForKeyWord();
+                    makeToken($_NUMBER);
           $EndJava
         ./
     Token ::= white
@@ -191,7 +191,8 @@ $Rules
 
     special ::= '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' |
                 '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
-                '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_' | '/'
+                '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '_' |
+                '/' | '$'
 
     notEOL ::= letter | digit | special | Space | HT | FF
 $End
