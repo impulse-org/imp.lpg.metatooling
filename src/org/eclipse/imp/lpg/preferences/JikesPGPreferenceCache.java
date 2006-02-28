@@ -36,5 +36,11 @@ public class JikesPGPreferenceCache {
      */
     public static String jikesPGTemplateDir;
 
+    /**
+     * If true, the generator will be instructed to create listing files when
+     * processing grammar/lexer specification files.
+     */
+    public static boolean generateListing;
+
     private JikesPGPreferenceCache() {}
 }

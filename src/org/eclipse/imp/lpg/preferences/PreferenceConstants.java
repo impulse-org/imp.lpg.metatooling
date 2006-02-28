@@ -13,4 +13,6 @@ public class PreferenceConstants {
     public static final String P_USE_DEFAULT_TEMPLATE_DIR= "useDefaultTemplateDir";
 
     public static final String P_EMIT_MESSAGES= "emitMessages";
+
+    public static final String P_GEN_LISTINGS= "generateListings";
 }
