@@ -85,9 +85,12 @@ $Rules
     macro_name_symbol ::= SYMBOL -- warning: escape prefix missing...
     macro_segment ::= BLOCK 
 
-    terminals_segment ::= TERMINALS_KEY 
-    terminals_segment ::= terminals_segment terminal_symbol
-    terminals_segment ::= terminals_segment terminal_symbol produces name
+    terminals_segment$$terminal ::= TERMINALS_KEY 
+    terminals_segment$$terminal ::= terminals_segment terminal
+--  terminals_segment ::= terminals_segment terminal_symbol produces name
+
+    terminal ::= terminal_symbol optTerminalAlias
+    optTerminalAlias ::= $empty | produces name
 
     export_segment ::= EXPORT_KEY 
     export_segment ::= export_segment terminal_symbol
