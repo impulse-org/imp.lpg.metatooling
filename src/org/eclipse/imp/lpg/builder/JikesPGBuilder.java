@@ -84,14 +84,17 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 
     protected void compile(final IFile file) {
 	String fileName= file.getLocation().toOSString();
+	String templatePath= getTemplatePath();
+
+	JikesPGPlugin.getInstance().maybeWriteInfoMsg("Using template path '" + templatePath + "'.");
 
 	try {
 	    File parentDir= new File(fileName).getParentFile();
 	    String cmd[]= new String[] {
 		    getLPGExecutable(),
 		    "-quiet",
-		    "-list",
-		    "-include-directory=" + getDefaultTemplatePath(),
+		    (JikesPGPreferenceCache.generateListing ? "-list" : "-nolist"),
+		    "-include-directory=" + templatePath,
 		    // TODO RMF 7/21/05 -- Don't specify -dat-directory; causes performance issues with Eclipse.
 		    // Lexer tables can get quite large, so large that Java as spec'ed can't swallow them
 		    // when translated to a switch statement, or even an array initializer. As a result,
@@ -193,6 +196,14 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	    return true;
 	}
 	return false;
+    }
+
+    public static String getTemplatePath() {
+	if (JikesPGPreferenceCache.jikesPGTemplateDir != null &&
+	    JikesPGPreferenceCache.jikesPGTemplateDir.length() > 0)
+	    return JikesPGPreferenceCache.jikesPGTemplateDir;
+
+	return getDefaultTemplatePath();
     }
 
     public static String getDefaultTemplatePath() {
