@@ -16,7 +16,7 @@
       <wizard
             class="org.jikespg.uide.wizards.NewGrammarWizard"
             icon="icons/sample.gif"
-            category="org.jikespg.uide.wizards/org.jikespg.uide.wizards.grammar"
+            category="org.jikespg.uide.wizards"
             name="JikesPG Grammar and Parser"
             id="org.jikespg.uide.NewJikesPGGrammarWizard"/>
    </extension>
