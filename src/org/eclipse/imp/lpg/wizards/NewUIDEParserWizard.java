@@ -1,35 +1,19 @@
 package org.jikespg.uide.wizards;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
+import org.eclipse.uide.wizards.Wizards.GenericServiceWizard;
 import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.builder.JikesPGBuilder;
 
@@ -51,264 +35,99 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
     }
 
     /**
-     * This method is called when 'Finish' button is pressed in the wizard. We will create
-     * an operation and run it using wizard as execution context.
-     */
-    public boolean performFinish() {
-	super.performFinish();
-	IRunnableWithProgress op= new IRunnableWithProgress() {
-	    public void run(IProgressMonitor monitor) throws InvocationTargetException {
-		try {
-		    doFinish(monitor);
-		} catch (CoreException e) {
-		    throw new InvocationTargetException(e);
-		} finally {
-		    monitor.done();
-		}
-	    }
-	};
-	try {
-	    getContainer().run(true, false, op);
-	} catch (InterruptedException e) {
-	    return false;
-	} catch (InvocationTargetException e) {
-	    Throwable realException= e.getTargetException();
-	    MessageDialog.openError(getShell(), "Error", realException.getMessage());
-	    return false;
-	}
-	return true;
-    }
-
-    /**
      * The worker method. It will find the container, create the
      * file if missing or just replace its contents, and open
      * the editor on the newly created file.
      */
-    private void doFinish(IProgressMonitor monitor) throws CoreException {
+    protected void generateCodeStubs(IProgressMonitor monitor) throws CoreException {
 	NewUIDEParserWizardPage page= (NewUIDEParserWizardPage) pages[0];
 
 	IProject project= page.getProject();
-	boolean hasKeywords= page.hasKeywords();
-	boolean requiresBacktracking= page.requiresBacktracking();
-	boolean autoGenerateASTs= page.autoGenerateASTs();
-	String packageName= page.getPackage();
-	String languageName= page.getLanguage();
-	String templateKind= page.getTemplateKind();
-	String parserTemplateName= page.getTemplateKind() + (requiresBacktracking ? "/bt" : "/dt") +
-		"ParserTemplate.gi";
-	String lexerTemplateName= page.getTemplateKind() + "/LexerTemplate.gi";
-	String kwLexerTemplateName= page.getTemplateKind() + "/KeywordTemplate.gi";
+	GrammarOptions options= page.getOptions();
+	boolean hasKeywords= options.getHasKeywords();
+	boolean requiresBacktracking= options.getRequiresBacktracking();
+	boolean autoGenerateASTs= options.getAutoGenerateASTs();
+	String templateKind= options.getTemplateKind();
+	String packageName= options.getPackageName();
+	String languageName= options.getLanguageName();
+	String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
+	String lexerTemplateName= templateKind + "/LexerTemplate.gi";
+	String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
 	String grammarFileName= "src/" + languageName.toLowerCase() + "Parser.g";
 	String lexerFileName= "src/" + languageName.toLowerCase() + "Lexer.gi";
 	String kwlexerFileName= "src/" + languageName.toLowerCase() + "KWLexer.gi";
 	String controllerFileName= "src/ParseController.java";
 
-	IFile file= createSampleGrammarFile(monitor, project, packageName, languageName,
-			grammarFileName, parserTemplateName, autoGenerateASTs);
+	IFile grammarFile= createGrammarFile(packageName, languageName, grammarFileName, parserTemplateName, autoGenerateASTs, project,
+		monitor);
 
-	createSampleLexerFile(monitor, project, packageName, languageName, lexerFileName, lexerTemplateName, hasKeywords);
+	createSampleLexerFile(packageName, languageName, lexerFileName, lexerTemplateName, hasKeywords, project, monitor);
+	createSampleKWLexerFile(packageName, languageName, kwlexerFileName, kwLexerTemplateName, hasKeywords, project, monitor);
+	createSampleParseControllerFile(packageName, languageName, controllerFileName, kwLexerTemplateName, hasKeywords, project,
+		monitor);
 
-	createSampleKWLexerFile(monitor, project, packageName, languageName, kwlexerFileName, kwLexerTemplateName, hasKeywords);
-
-	createSampleParseControllerFile(monitor, project, packageName, languageName, controllerFileName, kwLexerTemplateName, hasKeywords);
-
-	editSampleGrammarFile(monitor, file);
-	enableBuilders(monitor, file);
+	editFile(monitor, grammarFile);
+	enableBuilders(monitor, project, new String[] { JikesPGBuilder.BUILDER_ID });
     }
 
-    /**
-     * @param monitor
-     * @param file
-     */
-    private void enableBuilders(IProgressMonitor monitor, final IFile file) {
-	monitor.setTaskName("Enabling builders...");
-	Job job= new WorkspaceJob("Enabling builders...") {
-	    public IStatus runInWorkspace(IProgressMonitor monitor) {
-		try {
-		    addBuilder(file.getProject(), JikesPGBuilder.BUILDER_ID);
-		} catch (Throwable e) {
-		    e.printStackTrace();
-		}
-		return Status.OK_STATUS;
-	    }
-	};
-	job.schedule();
-    }
+    static final String astDirectory= "Ast";
 
-    /**
-     * @param monitor
-     * @param file
-     */
-    private void editSampleGrammarFile(IProgressMonitor monitor, final IFile file) {
-	monitor.setTaskName("Opening file for editing...");
-	getShell().getDisplay().asyncExec(new Runnable() {
-	    public void run() {
-		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		try {
-		    IDE.openEditor(page, file, true);
-		} catch (PartInitException e) {
-		}
-	    }
-	});
-	monitor.worked(1);
-    }
+    static final String astNode= "ASTNode";
 
-    static final String astDirectory = "Ast";
-    static final String astNode = "ASTNode";
-    static final String sAutoGenTemplate= "%options automacit_ast=toplevel,visitor,ast_directory=./" +
-                                          astDirectory +
-                                          ",ast_type=" +
-                                          astNode;
+    static final String sAutoGenTemplate= "%options automacit_ast=toplevel,visitor,ast_directory=./" + astDirectory
+	    + ",ast_type=" + astNode;
+
     static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
 
-    private IFile createSampleGrammarFile(IProgressMonitor monitor, IProject project, String packageName, String languageName,
-	    String fileName, String templateName, boolean autoGenerateASTs) throws CoreException {
-	monitor.beginTask("Creating " + fileName, 2);
+    private IFile createGrammarFile(String packageName, String languageName, String fileName, String templateName,
+	    boolean autoGenerateASTs, IProject project, IProgressMonitor monitor) throws CoreException {
 
-	final IFile file= project.getFile(new Path(fileName));
-	StringBuffer buffer= new StringBuffer(new String(getSampleGrammar()));
+	String[][] replacements= new String[][] {
+		{ "$LANG_NAME$", languageName },
+		{ "$PACKAGE$", packageName },
+		{ "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "" },
+		{ "$TEMPLATE$", templateName } };
 
-	replace(buffer, "$LANG_NAME$", languageName);
-	replace(buffer, "$PACKAGE$", packageName);
-	replace(buffer, "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
-    replace(buffer, "$TEMPLATE$", templateName);
-
-	if (file.exists()) {
-	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
-	} else {
-	    file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
-	}
-	monitor.worked(1);
-	return file;
+	return createFileFromTemplate(fileName, "grammar.tmpl", replacements, project, monitor);
     }
 
-    private IFile createSampleLexerFile(IProgressMonitor monitor, IProject project, String packageName,
-	    String languageName, String fileName, String templateName, boolean hasKeywords) throws CoreException {
-	monitor.beginTask("Creating " + fileName, 2);
+    private IFile createSampleLexerFile(String packageName, String languageName, String fileName, String templateName,
+	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
+	String[][] replacements= new String[][] {
+		{ "$LANG_NAME$", languageName },
+		{ "$PACKAGE$", packageName },
+		{ "$TEMPLATE$", templateName },
+		{ "$KEYWORD_FILTER$",
+			hasKeywords ? ("%options filter=" + languageName + "KWLexer.gi") : "" },
+		{ "$KEYWORD_LEXER$", hasKeywords ? ("$" + languageName + "KWLexer") : "Object" },
+		{ "$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap") } };
 
-	final IFile file= project.getFile(new Path(fileName));
-	StringBuffer buffer= new StringBuffer(new String(getSampleLexer()));
-
-	replace(buffer, "$LANG_NAME$", languageName);
-	replace(buffer, "$PACKAGE$", packageName);
-	replace(buffer, "$TEMPLATE$", templateName);
-    replace(buffer, "$KEYWORD_FILTER$",
-            hasKeywords
-                ? ("%options filter=" + languageName + "KWLexer.gi")
-                : "");
-    replace(buffer, "$KEYWORD_LEXER$",
-            hasKeywords
-                ? ("$" + languageName + "KWLexer")
-                : "Object");
-    replace(buffer, "$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
-
-	if (file.exists()) {
-	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
-	} else {
-	    file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
-	}
-	monitor.worked(1);
-	return file;
+	return createFileFromTemplate(fileName, "lexer.tmpl", replacements, project, monitor);
     }
 
-    private IFile createSampleKWLexerFile(IProgressMonitor monitor, IProject project, String packageName,
-            String languageName, String fileName, String templateName, boolean hasKeywords) throws CoreException {
-        monitor.beginTask("Creating " + fileName, 2);
-
-        final IFile file= project.getFile(new Path(fileName));
-        StringBuffer buffer= new StringBuffer(new String(getSampleKWLexer()));
-
-        replace(buffer, "$LANG_NAME$", languageName);
-        replace(buffer, "$PACKAGE$", packageName);
-        replace(buffer, "$TEMPLATE$", templateName);
-
-        if (file.exists()) {
-            file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
-        } else {
-            file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
-        }
-        monitor.worked(1);
-        return file;
-        }
-
-    private IFile createSampleParseControllerFile(IProgressMonitor monitor, IProject project, String packageName,
-            String languageName, String fileName, String templateName, boolean hasKeywords) throws CoreException {
-        monitor.beginTask("Creating " + fileName, 2);
-
-        final IFile file= project.getFile(new Path(fileName));
-        StringBuffer buffer= new StringBuffer(new String(getSampleParseController()));
-
-        replace(buffer, "$AST_NODE$", packageName +
-                                      "." +
-                                      astDirectory +
-                                      "." +
-                                      astNode);
-        replace(buffer, "$PARSER_TYPE$", languageName + "Parser");
-        replace(buffer, "$LEXER_TYPE$", languageName + "Lexer");
-
-        if (file.exists()) {
-            file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
-        } else {
-            file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
-        }
-        monitor.worked(1);
-        return file;
-        }
-
-    private void addBuilder(IProject project, String id) throws CoreException {
-	IProjectDescription desc= project.getDescription();
-	ICommand[] commands= desc.getBuildSpec();
-	for(int i= 0; i < commands.length; ++i)
-	    if (commands[i].getBuilderName().equals(id))
-		return;
-	//add builder to project
-	ICommand command= desc.newCommand();
-	command.setBuilderName(id);
-	ICommand[] nc= new ICommand[commands.length + 1];
-	// Add it before other builders.
-	System.arraycopy(commands, 0, nc, 1, commands.length);
-	nc[0]= command;
-	desc.setBuildSpec(nc);
-	project.setDescription(desc, null);
+    private IFile createSampleKWLexerFile(String packageName, String languageName, String fileName, String templateName,
+	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
+	String[][] replacements= new String[][] {
+		{ "$LANG_NAME$", languageName },
+		{ "$PACKAGE$", packageName },
+		{ "$TEMPLATE$", templateName }
+	};
+	return createFileFromTemplate(fileName, "kwlexer.tmpl", replacements, project, monitor);
     }
 
-    private byte[] getSampleGrammar() {
-	return getSampleFile("grammar.tmpl");
+    private IFile createSampleParseControllerFile(String packageName, String languageName, String fileName,
+	    String templateName, boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
+	String[][] replacements= new String[][] {
+		{ "$AST_NODE$", packageName + "." + astDirectory + "." + astNode },
+		{ "$PARSER_TYPE$", languageName + "Parser" },
+		{ "$LEXER_TYPE$", languageName + "Lexer" }
+	};
+
+	return createFileFromTemplate(fileName, "ParseController.tmpl", replacements, project, monitor);
     }
 
-    private byte[] getSampleLexer() {
-        return getSampleFile("lexer.tmpl");
-        }
-
-    private byte[] getSampleKWLexer() {
-        return getSampleFile("kwlexer.tmpl");
-        }
-
-    private byte[] getSampleParseController() {
-        return getSampleFile("ParseController.tmpl");
-        }
-
-    private byte[] getSampleFile(String fileName) {
-	try {
-//	    DataInputStream is= new DataInputStream(NewGrammarWizard.class.getResourceAsStream(fileName));
-	    URL url= Platform.asLocalURL(Platform.find(JikesPGPlugin.getInstance().getBundle(), new Path("/templates/" + fileName)));
-	    String path= url.getPath();
-	    FileInputStream fis= new FileInputStream(path);
-	    DataInputStream is= new DataInputStream(fis);
-	    byte bytes[]= new byte[fis.available()];
-	    is.readFully(bytes);
-	    is.close();
-	    fis.close();
-	    return bytes;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return ("// missing template file: " + fileName).getBytes();
-	}
-    }
-
-    static void replace(StringBuffer sb, String target, String substitute) {
-	for(int index= sb.indexOf(target); index != -1; index= sb.indexOf(target))
-	    sb.replace(index, index + target.length(), substitute);
+    protected String getTemplateBundleID() {
+        return JikesPGPlugin.kPluginID;
     }
 
     /**
@@ -317,6 +136,6 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
      * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
      */
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-	// this.selection = selection;
+    // this.selection = selection;
     }
 }

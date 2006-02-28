@@ -27,8 +27,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.uide.wizards.Wizards.GenericServiceWizard;
 import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.builder.JikesPGBuilder;
+import org.osgi.framework.Bundle;
 
 /**
  * This wizard creates a set of JikesPG specification files for a new parser, lexer,
@@ -74,39 +76,39 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 
     private void doFinish(IProgressMonitor monitor) {
 	IProject project= fPage.getProject();
-	boolean hasKeywords= fPage.hasKeywords();
-	boolean requiresBacktracking= fPage.requiresBacktracking();
-	boolean autoGenerateASTs= fPage.autoGenerateASTs();
-	String packageName= fPage.getPackage();
-	String languageName= fPage.getLanguage();
-	String templateKind= fPage.getTemplateKind();
+	GrammarOptions options= fPage.getOptions();
+	boolean hasKeywords= options.getHasKeywords();
+	boolean requiresBacktracking= options.getRequiresBacktracking();
+	boolean autoGenerateASTs= options.getAutoGenerateASTs();
+	String packageName= options.getPackageName();
+	String languageName= options.getLanguageName();
+	String templateKind= options.getTemplateKind();
 	String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
 	String lexerTemplateName= templateKind + "/LexerTemplate.gi";
 	String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
 	String grammarFileName= "src/" + languageName.toLowerCase() + "Parser.g";
 	String lexerFileName= "src/" + languageName.toLowerCase() + "Lexer.gi";
 	String kwlexerFileName= "src/" + languageName.toLowerCase() + "KWLexer.gi";
+
 	try {
-	    IFile file= createSampleGrammarFile(monitor, project, packageName, languageName, grammarFileName, parserTemplateName, autoGenerateASTs);
-	    createSampleLexerFile(monitor, project, packageName, languageName, lexerFileName, lexerTemplateName, hasKeywords);
-	    createSampleKWLexerFile(monitor, project, packageName, languageName, kwlexerFileName, kwLexerTemplateName, hasKeywords);
-	    editSampleGrammarFile(monitor, file);
-	    enableBuilders(monitor, file);
+	    IFile grammarFile= createGrammarFile(packageName, languageName, grammarFileName, parserTemplateName, autoGenerateASTs, project, monitor);
+
+	    createSampleLexerFile(packageName, languageName, lexerFileName, lexerTemplateName, hasKeywords, project, monitor);
+	    createSampleKWLexerFile(packageName, languageName, kwlexerFileName, kwLexerTemplateName, hasKeywords, project, monitor);
+
+	    editFile(monitor, grammarFile);
+	    enableBuilders(monitor, project);
 	} catch (CoreException e) {
 	    e.printStackTrace();
 	}
     }
 
-    /**
-     * @param monitor
-     * @param file
-     */
-    private void enableBuilders(IProgressMonitor monitor, final IFile file) {
+    private void enableBuilders(IProgressMonitor monitor, final IProject project) {
 	monitor.setTaskName("Enabling builders...");
 	Job job= new WorkspaceJob("Enabling builders...") {
 	    public IStatus runInWorkspace(IProgressMonitor monitor) {
 		try {
-		    addBuilder(file.getProject(), JikesPGBuilder.BUILDER_ID);
+		    addBuilder(project, JikesPGBuilder.BUILDER_ID);
 		} catch (Throwable e) {
 		    e.printStackTrace();
 		}
@@ -120,7 +122,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
      * @param monitor
      * @param file
      */
-    private void editSampleGrammarFile(IProgressMonitor monitor, final IFile file) {
+    private void editFile(IProgressMonitor monitor, final IFile file) {
 	monitor.setTaskName("Opening file for editing...");
 	getShell().getDisplay().asyncExec(new Runnable() {
 	    public void run() {
@@ -139,59 +141,40 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
     static final String sAutoGenTemplate= "%options automatic_ast=toplevel,visitor,ast_directory=./" + astDirectory + ",ast_type=" + astNode;
     static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
 
-    private IFile createSampleGrammarFile(IProgressMonitor monitor, IProject project, String packageName, String languageName, String fileName,
-	    String templateName, boolean autoGenerateASTs) throws CoreException {
-	monitor.beginTask("Creating " + fileName, 2);
-	final IFile file= project.getFile(new Path(fileName));
-	StringBuffer buffer= new StringBuffer(new String(getSampleGrammar()));
-	replace(buffer, "$LANG_NAME$", languageName);
-	replace(buffer, "$PACKAGE$", packageName);
-	replace(buffer, "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
-	replace(buffer, "$TEMPLATE$", templateName);
-	if (file.exists()) {
-	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
-	} else {
-	    file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
-	}
-	monitor.worked(1);
-	return file;
+    private IFile createGrammarFile(String packageName, String languageName, String fileName, String templateName,
+	    boolean autoGenerateASTs, IProject project, IProgressMonitor monitor) throws CoreException {
+
+	String[][] replacements= new String[][] {
+		{ "$LANG_NAME$", languageName },
+		{ "$PACKAGE$", packageName },
+		{ "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "" },
+		{ "$TEMPLATE$", templateName } };
+
+	return createFileFromTemplate(fileName, "grammar.tmpl", replacements, project, monitor);
     }
 
-    private IFile createSampleLexerFile(IProgressMonitor monitor, IProject project, String packageName, String languageName, String fileName,
-	    String templateName, boolean hasKeywords) throws CoreException {
-	monitor.beginTask("Creating " + fileName, 2);
-	final IFile file= project.getFile(new Path(fileName));
-	StringBuffer buffer= new StringBuffer(new String(getSampleLexer()));
-	replace(buffer, "$LANG_NAME$", languageName);
-	replace(buffer, "$PACKAGE$", packageName);
-	replace(buffer, "$TEMPLATE$", templateName);
-	replace(buffer, "$KEYWORD_FILTER$", hasKeywords ? ("%options filter=" + languageName + "KWLexer.gi") : "");
-	replace(buffer, "$KEYWORD_LEXER$", hasKeywords ? ("$" + languageName + "KWLexer") : "Object");
-	replace(buffer, "$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
-	if (file.exists()) {
-	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
-	} else {
-	    file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
-	}
-	monitor.worked(1);
-	return file;
+    private IFile createSampleLexerFile(String packageName, String languageName, String fileName, String templateName,
+	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
+	String[][] replacements= new String[][] {
+		{ "$LANG_NAME$", languageName },
+		{ "$PACKAGE$", packageName },
+		{ "$TEMPLATE$", templateName },
+		{ "$KEYWORD_FILTER$",
+			hasKeywords ? ("%options filter=" + languageName + "KWLexer.gi") : "" },
+		{ "$KEYWORD_LEXER$", hasKeywords ? ("$" + languageName + "KWLexer") : "Object" },
+		{ "$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap") } };
+
+	return createFileFromTemplate(fileName, "lexer.tmpl", replacements, project, monitor);
     }
 
-    private IFile createSampleKWLexerFile(IProgressMonitor monitor, IProject project, String packageName, String languageName, String fileName,
-	    String templateName, boolean hasKeywords) throws CoreException {
-	monitor.beginTask("Creating " + fileName, 2);
-	final IFile file= project.getFile(new Path(fileName));
-	StringBuffer buffer= new StringBuffer(new String(getSampleKWLexer()));
-	replace(buffer, "$LANG_NAME$", languageName);
-	replace(buffer, "$PACKAGE$", packageName);
-	replace(buffer, "$TEMPLATE$", templateName);
-	if (file.exists()) {
-	    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
-	} else {
-	    file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
-	}
-	monitor.worked(1);
-	return file;
+    private IFile createSampleKWLexerFile(String packageName, String languageName, String fileName, String templateName,
+	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
+	String[][] replacements= new String[][] {
+		{ "$LANG_NAME$", languageName },
+		{ "$PACKAGE$", packageName },
+		{ "$TEMPLATE$", templateName }
+	};
+	return createFileFromTemplate(fileName, "kwlexer.tmpl", replacements, project, monitor);
     }
 
     private void addBuilder(IProject project, String id) throws CoreException {
@@ -211,35 +194,42 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 	project.setDescription(desc, null);
     }
 
-    private byte[] getSampleGrammar() {
-	return getSampleFile("grammar.tmpl");
+    protected IFile createFileFromTemplate(String fileName, String templateName, String[][] replacements, IProject project, IProgressMonitor monitor) throws CoreException {
+        monitor.beginTask("Creating " + fileName, 2);
+    
+        final IFile file= project.getFile(new Path(fileName));
+        StringBuffer buffer= new StringBuffer(new String(getTemplateFile(templateName)));
+    
+        for(int i= 0; i < replacements.length; i++) {
+            GenericServiceWizard.replace(buffer, replacements[i][0], replacements[i][1]);
+        }
+    
+        if (file.exists()) {
+            file.setContents(new ByteArrayInputStream(buffer.toString().getBytes()), true, true, monitor);
+        } else {
+            file.create(new ByteArrayInputStream(buffer.toString().getBytes()), true, monitor);
+        }
+        monitor.worked(1);
+        return file;
     }
 
-    private byte[] getSampleLexer() {
-        return getSampleFile("lexer.tmpl");
+    protected byte[] getTemplateFile(String fileName) {
+        try {
+            Bundle bundle= Platform.getBundle(JikesPGPlugin.kPluginID);
+            URL url= Platform.asLocalURL(Platform.find(bundle, new Path("/templates/" + fileName)));
+            String path= url.getPath();
+            FileInputStream fis= new FileInputStream(path);
+            DataInputStream is= new DataInputStream(fis);
+            byte bytes[]= new byte[fis.available()];
+    
+            is.readFully(bytes);
+            is.close();
+            fis.close();
+            return bytes;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ("// missing template file: " + fileName).getBytes();
         }
-
-    private byte[] getSampleKWLexer() {
-        return getSampleFile("kwlexer.tmpl");
-        }
-
-
-    private byte[] getSampleFile(String fileName) {
-	try {
-//	    DataInputStream is= new DataInputStream(NewGrammarWizard.class.getResourceAsStream(fileName));
-	    URL url= Platform.asLocalURL(Platform.find(JikesPGPlugin.getInstance().getBundle(), new Path("/templates/" + fileName)));
-	    String path= url.getPath();
-	    FileInputStream fis= new FileInputStream(path);
-	    DataInputStream is= new DataInputStream(fis);
-	    byte bytes[]= new byte[fis.available()];
-	    is.readFully(bytes);
-	    is.close();
-	    fis.close();
-	    return bytes;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return ("// missing template file: " + fileName).getBytes();
-	}
     }
 
     static void replace(StringBuffer sb, String target, String substitute) {

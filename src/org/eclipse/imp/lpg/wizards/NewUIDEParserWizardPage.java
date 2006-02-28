@@ -31,17 +31,7 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
     private static final String JIKESPG= "org.jikespg.uide";
 
-    private String fPackageName;
-
-    private String fTemplateKind;
-
-    private String fTargetLanguage;
-
-    private boolean fHasKeywords;
-
-    private boolean fRequiresBacktracking;
-
-    private boolean fAutoGenerateASTs;
+    GrammarOptions fGrammarOptions= new GrammarOptions();
 
     public NewUIDEParserWizardPage(ExtensionPointWizard wizard) {
 	super(wizard, RuntimePlugin.UIDE_RUNTIME, "parser");
@@ -54,107 +44,19 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
     }
 
     protected void createAdditionalControls(Composite parent) {
-	createTemplateField(parent);
-	createLanguageField(parent);
-	createOptionsFields(parent);
-    }
+	GrammarPageHelper helper= new GrammarPageHelper(parent, null, fGrammarOptions, getShell());
 
-    private void createTemplateField(Composite parent) {
-	Label label= new Label(parent, SWT.NULL);
-	label.setText("Template:");
-	label.setToolTipText("Select the parser/lexer template to use");
-	label.setBackground(parent.getBackground());
-
-	final int defaultTemplate= 1;  // UIDE
-	Combo combo= new Combo(parent, SWT.READ_ONLY);
-
-	combo.setFont(parent.getFont());
-	combo.setItems(new String[] { "none", "UIDE" });
-	combo.setLayoutData(new GridData(GridData.BEGINNING));
-	combo.select(defaultTemplate);
-	combo.addSelectionListener(new SelectionListener() {
-	    public void widgetSelected(SelectionEvent e) {
-		fTemplateKind= e.text;
-	    }
-	    public void widgetDefaultSelected(SelectionEvent e) {}
-	});
-	fTemplateKind= combo.getItem(defaultTemplate);
-
-	new Label(parent, SWT.NULL).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    }
-
-    private void createLanguageField(Composite parent) {
-	Label label= new Label(parent, SWT.NULL);
-	label.setText("Implementation:");
-	label.setToolTipText("Select the implementation language for the parser/lexer");
-	label.setBackground(parent.getBackground());
-
-	final int defaultLang= 0;  // Java
-	Combo combo= new Combo(parent, SWT.READ_ONLY);
-
-	combo.setFont(parent.getFont());
-	combo.setItems(new String[] { "java", "c++" });
-	combo.setLayoutData(new GridData(GridData.BEGINNING));
-	combo.select(defaultLang);
-	combo.addSelectionListener(new SelectionListener() {
-	    public void widgetSelected(SelectionEvent e) {
-		fTargetLanguage= e.text;
-	    }
-	    public void widgetDefaultSelected(SelectionEvent e) {}
-	});
-	fTargetLanguage= combo.getItem(defaultLang);
-	combo.setEnabled(false);
-
-	new Label(parent, SWT.NULL).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    }
-
-    private void createOptionsFields(Composite parent) {
-	Label optionsLabel= new Label(parent, SWT.NULL);
-
-	optionsLabel.setText("Options:");
-	optionsLabel.setToolTipText("JikesPG Options");
-
-	final Button cbKeywords= new Button(parent, SWT.CHECK);
-
-	cbKeywords.setText("Language has keywords");
-	cbKeywords.setToolTipText("Check this if your language has both keywords and identifiers.");
-	cbKeywords.addSelectionListener(new SelectionListener() {
-	    public void widgetSelected(SelectionEvent e) {
-		fHasKeywords= cbKeywords.getSelection();
-	    }
-	    public void widgetDefaultSelected(SelectionEvent e) { }
-	});
-
-	final Button cbBacktrack= new Button(parent, SWT.CHECK);
-
-	cbBacktrack.setText("Language requires Backtracking");
-	cbBacktrack.addSelectionListener(new SelectionListener() {
-	    public void widgetSelected(SelectionEvent e) {
-	        fRequiresBacktracking= cbBacktrack.getSelection();
-	    }
-	    public void widgetDefaultSelected(SelectionEvent e) { }
-	});
-
-	final Button cbAutoASTs= new Button(parent, SWT.CHECK);
-
-	cbAutoASTs.setText("JikesPG auto-generated AST classes");
-	cbAutoASTs.setToolTipText("Check this if you want JikesPG to generate a set of AST classes for your grammar's non-terminals.");
-	cbAutoASTs.addSelectionListener(new SelectionListener() {
-	    public void widgetSelected(SelectionEvent e) {
-		fAutoGenerateASTs= cbAutoASTs.getSelection();
-	    }
-	    public void widgetDefaultSelected(SelectionEvent e) { }
-	});
+	helper.createFields();
     }
 
     public void createControl(Composite parent) {
 	super.createControl(parent);
-	setLanguage();
+	setLanguageIfEmpty();
 	try {
 //	    getField("class").setEnabled(false);
 	    projectText.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
-		    setLanguage();
+		    setLanguageIfEmpty();
 		}
 	    });
 	} catch (Exception e) {
@@ -162,7 +64,7 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	}
     }
 
-    public String getLanguage() {
+    public String determineLanguage() {
 	try {
 	    IPluginModel plugin= ExtensionPointEnabler.getPlugin(NewUIDEParserWizardPage.this);
 
@@ -190,47 +92,19 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	return "unknown";
     }
 
-    public String getPackage(String language) {
-	StringBuffer buffer= new StringBuffer("org.");
-	for(int n= 0; n < language.length(); n++) {
-	    char c= Character.toLowerCase(language.charAt(n));
-	    if (Character.isJavaIdentifierPart(c))
-		buffer.append(c);
-	}
-	buffer.append(".parser");
-	fPackageName= buffer.toString();
-	return getPackage();
-    }
-
-    public String getPackage() {
-	return fPackageName;
-    }
-
-    public void setLanguage() {
+    protected void setLanguageIfEmpty() {
 	try {
-	    String language= getLanguage();
+	    String language= determineLanguage();
 	    WizardPageField field= getField("language");
 	    if (field.getText().length() == 0)
 		field.setText(language);
-	    getField("class").setText(getPackage(language) + ".Parser");
+	    getField("class").setText(fGrammarOptions.getPackageForLanguage(language) + ".Parser");
 	} catch (Exception e) {
 	    ErrorHandler.reportError("Cannot set language", e);
 	}
     }
 
-    public String getTemplateKind() {
-        return fTemplateKind;
-    }
-
-    public boolean autoGenerateASTs() {
-        return fAutoGenerateASTs;
-    }
-
-    public boolean hasKeywords() {
-        return fHasKeywords;
-    }
-
-    public boolean requiresBacktracking() {
-        return fRequiresBacktracking;
+    public GrammarOptions getOptions() {
+	return fGrammarOptions;
     }
 }
