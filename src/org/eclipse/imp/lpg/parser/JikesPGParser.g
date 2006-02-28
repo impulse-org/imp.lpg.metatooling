@@ -14,13 +14,13 @@ $Define
 $End
 
 $Terminals
-    EQUAL ::= '='
     EQUIVALENCE ::= '::='
     PRIORITY_EQUIVALENCE ::= '::=?'
     ARROW ::= '->'
-    COMMA ::= ','
     PRIORITY_ARROW ::= '->?'
     OR_MARKER ::= '|'
+    EQUAL ::= '='
+    COMMA ::= ','
     LEFT_PAREN ::= '('
     RIGHT_PAREN ::= ')'
 $End
@@ -57,8 +57,9 @@ $Rules
     JikesPG_item$TypesSeg      ::= types_segment
 
     options_segment ::= $empty | options_segment option_spec
-    option_spec ::= OPTIONS_KEY option_list
-    option_list ::= $empty | option_list ',' option
+    option_spec$option_spec ::= OPTIONS_KEY
+    option_spec$option_spec ::= OPTIONS_KEY option_list
+    option_list ::= option | option_list ',' option
     option ::= SYMBOL option_value
     option_value ::= $empty | '=' SYMBOL | '=' '(' symbol_list ')'
 

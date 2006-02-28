@@ -113,10 +113,10 @@ $Rules
     Token ::= white /.$BeginJava skipToken(); $EndJava./
     Token ::= slc   /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
 
-    Token ::= '%' oO pP tT iI oO nN sS optionWhite Eol /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
-    Token ::= '%' oO pP tT iI oO nN sS optionWhite slc /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
-    Token ::= '%' oO pP tT iI oO nN sS optionWhite optionList Eol /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
-    Token ::= '%' oO pP tT iI oO nN sS optionWhite optionList slc /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+    Token ::= options optionWhite Eol
+    Token ::= options optionWhite slc
+    Token ::= options optionWhite optionList Eol
+    Token ::= options optionWhite optionList slc
     Token ::= MacroSymbol       /.$BeginJava checkForKeyWord();$EndJava./
     Token ::= Symbol            /.$BeginJava makeToken($_SYMBOL);$EndJava./
     Token ::= Block             /.$BeginJava makeToken($_BLOCK);$EndJava./
@@ -366,7 +366,9 @@ $Rules
    --
    -- The following rules are used for processing options.
    --
-   _opt -> $empty
+   options ::= '%' oO pP tT iI oO nN sS /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+ 
+    _opt -> $empty
          | '_'
 
    no ::= nN oO
@@ -391,7 +393,7 @@ $Rules
    optionWhite ::= $empty
                  | optionWhite optionWhiteChar
 
-   optionList ::= option 
+   optionList ::= option
                 | optionList ',' option
 
    --
@@ -518,7 +520,13 @@ $Rules
    option ::= factory optionWhite '=' optionWhite Value optionWhite
    factory ::= fF aA cC tT oO rR yY
 
-   option ::= file_prefix optionWhite '=' optionWhite Value optionWhite
+   option ::= file_prefix$fp optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginAction
+                     makeToken(getRhsFirstTokenIndex($fp), getRhsLastTokenIndex($fp), $_SYMBOL);
+                     makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                     makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndAction
+          ./
    file_prefix ::= fF iI lL eE _opt pP rR eE fF iI xX
                  | fF pP
 
@@ -764,6 +772,8 @@ $Rules
    -- visitor
    -- visitor_type
    --
+   option ::= variables optionWhite
+            | no variables optionWhite
    option ::= variables optionWhite '=' optionWhite variables_value optionWhite
    variables ::= vV aA rR iI aA bB lL eE sS
    variables_value ::= none
