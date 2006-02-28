@@ -124,15 +124,17 @@ public class Outliner extends DefaultOutliner {
 	public void endVisit(TerminalsSeg n) {
 	    fItemStack.pop();
 	}
-	public void endVisit(terminals_segment2 n) {
-	    String label= nameImage(n.getname()) + " " + producesImage(n.getproduces()) + " " + symbolImage(n.getterminal_symbol());
-            createSubItem(label, (ASTNode) n.getterminal_symbol());
-	}
-	public void endVisit(terminal_symbol0 n) {
-	    createSubItem(symbolImage(n), n);
-	}
-	public void endVisit(terminal_symbol1 n) {
-	    createSubItem(n.getLeftIToken().toString(), n);
+	public void endVisit(terminal n) {
+	    Iterminal_symbol symbol= n.getterminal_symbol();
+	    optTerminalAlias alias= n.getoptTerminalAlias();
+	    String label;
+	    if (alias != null) {
+		Iproduces prod= alias.getproduces();
+		Iname name= alias.getname();
+		label= nameImage(name) + " " + producesImage(prod) + " " + symbolImage(symbol);
+	    } else
+		label= symbolImage(symbol);
+            createSubItem(label, (ASTNode) symbol);
 	}
 	public boolean visit(AstSeg n) {
 	    fItemStack.push(createTopItem("Ast", n));
