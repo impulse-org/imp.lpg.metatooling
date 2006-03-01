@@ -113,10 +113,10 @@ $Rules
     Token ::= white /.$BeginJava skipToken(); $EndJava./
     Token ::= slc   /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
 
-    Token ::= options optionWhite Eol
-    Token ::= options optionWhite slc
-    Token ::= options optionWhite optionList Eol
-    Token ::= options optionWhite optionList slc
+    Token ::= options Eol
+    Token ::= options optionList Eol
+    Token ::= options optionWhiteChar slc
+    Token ::= options optionList optionWhiteChar slc
     Token ::= MacroSymbol       /.$BeginJava checkForKeyWord();$EndJava./
     Token ::= Symbol            /.$BeginJava makeToken($_SYMBOL);$EndJava./
     Token ::= Block             /.$BeginJava makeToken($_BLOCK);$EndJava./
@@ -156,7 +156,6 @@ $Rules
     zZ -> z | Z
 
 --  lower ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
-
 --  upper ::= A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
 
     letter -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
@@ -165,17 +164,13 @@ $Rules
 
     special -> specialNoDotOrSlash | '.' | '/'
 
---    special -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
---               '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
---               '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '$'
+    --    special -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
+    --               '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
+    --               '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*' | '$'
 
     specialNoDotDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '/' |
                           '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
                           '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
-
-    specialNoSlashDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' |
-                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
-                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
 
     specialNoColonDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
                             '%' | '&' | '^' | ';' | "'" | '\' | '|' | '{' | '}' |
@@ -189,17 +184,9 @@ $Rules
                                '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
                                '[' | ']' | ',' | '<' | '>' | '=' | '#' | '*'
 
-    specialNoMinusDollar -> '+' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
-                            '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
-                            '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
-
-    specialNoOrDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
-                         '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
-                         '[' | ']' | '?' | ',' | '<' | '>' | '=' | '#' | '*'
-
-    specialNoMinusRightAngle -> '+' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
-                                '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
-                                '[' | ']' | '?' | ',' | '<' | "'" | '=' | '#' | '*' | '$'
+    specialNoMinusRightAngleDollar -> '+' | '(' | ')' | '!' | '@' | '`' | '~' | '.' | '/' |
+                                      '%' | '&' | '^' | ':' | ';' | '"' | '\' | '|' | '{' | '}' |
+                                      '[' | ']' | '?' | ',' | '<' | "'" | '=' | '#' | '*' | '$'
 
     specialNoDollar -> '+' | '-' | '(' | ')' | '"' | '!' | '@' | '`' | '~' | '.' | '/' |
                        '%' | '&' | '^' | ':' | ';' | "'" | '\' | '|' | '{' | '}' |
@@ -271,8 +258,6 @@ $Rules
 
     Block ::= '/' '.' InsideBlock Dots '/'
 
---    Symbol -> delimitedSymbol | normalSymbol | number
-
     Symbol -> delimitedSymbol
             | specialSymbol
             | normalSymbol
@@ -289,15 +274,18 @@ $Rules
     normalSymbol ::= anyNonWhiteNoColonMinusSingleQuoteDoublequoteLeftAngleOrSlashDollarPercent
                    | normalSymbol anyNonWhiteChar
 
---
---    BLOCK            /.  ...
---    EQUIVALENCE      ::=[?]
---    ARROW            ->[?]
---    COMMENT          -- ...
---    OR_MARKER        |
---    OPTIONS_KEY      %options
---    bracketed symbol < ... >
---
+    --
+    -- Below, we write special rules to recognize initial 
+    -- prefixes of these special metasymbols as valid symbols.
+    --
+    --    BLOCK            /.  ...
+    --    EQUIVALENCE      ::=[?]
+    --    ARROW            ->[?]
+    --    COMMENT          -- ...
+    --    OR_MARKER        |
+    --    OPTIONS_KEY      %options
+    --    bracketed symbol < ... >
+    --
 
     letterNoOo -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
     letterNoPp -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
@@ -306,59 +294,56 @@ $Rules
     letterNoNn -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | oO | pP | qQ | rR | sS | tT | uU | vV | wW | xX | yY | zZ
     letterNoSs -> AfterASCII | '_' | aA | bB | cC | dD | eE | fF | gG | hH | iI | jJ | kK | lL | mM | nN | oO | pP | qQ | rR | tT | uU | vV | wW | xX | yY | zZ
 
-
     anyNonWhiteNoLetterDollar -> digit | specialNoDollar
     anyNonWhiteNoDotDollar -> letter | digit | specialNoDotDollar
-    anyNonWhiteNoSlashDollar -> letter | digit | specialNoSlashDollar
     anyNonWhiteNoColonDollar -> letter | digit | specialNoColonDollar
     anyNonWhiteNoEqualDollar -> letter | digit | specialNoEqualDollar
     anyNonWhiteNoQuestionDollar -> letter | digit | specialNoQuestionDollar
-    anyNonWhiteNoMinusDollar -> letter | digit | specialNoMinusDollar
-    anyNonWhiteNoOrDollar -> letter | digit | specialNoOrDollar
-    anyNonWhiteNoMinusRightAngle -> letter | digit | specialNoRightAngle
+    anyNonWhiteNoMinusRightAngleDollar -> letter | digit | specialNoMinusRightAngleDollar
     anyNonWhiteNoDollar -> letter | digit | specialNoDollar
 
-    anyNonWhiteNotOoDollar -> letterNoOo | digit | specialNoDollar
-    anyNonWhiteNotPpDollar -> letterNoPp | digit | specialNoDollar
-    anyNonWhiteNotTtDollar -> letterNoTt | digit | specialNoDollar
-    anyNonWhiteNotIiDollar -> letterNoIi | digit | specialNoDollar
-    anyNonWhiteNotNnDollar -> letterNoNn | digit | specialNoDollar
-    anyNonWhiteNotSsDollar -> letterNoSs | digit | specialNoDollar
+    anyNonWhiteNoOoDollar -> letterNoOo | digit | specialNoDollar
+    anyNonWhiteNoPpDollar -> letterNoPp | digit | specialNoDollar
+    anyNonWhiteNoTtDollar -> letterNoTt | digit | specialNoDollar
+    anyNonWhiteNoIiDollar -> letterNoIi | digit | specialNoDollar
+    anyNonWhiteNoNnDollar -> letterNoNn | digit | specialNoDollar
+    anyNonWhiteNoSsDollar -> letterNoSs | digit | specialNoDollar
 
-    specialSymbol ::= '<'
-                    | '<' anyNonWhiteNoLetterDollar
-                    | '/'
-                    | '/' anyNonWhiteNoDotDollar
-                    | ':'
-                    | ':' anyNonWhiteNoColonDollar
-                    | ':' ':'
-                    | ':' ':' anyNonWhiteNoEqualDollar
-                    | ':' ':' '=' anyNonWhiteNoQuestionDollar
-                    | ':' ':' '=' '?' anyNonWhiteNoDollar
-                    | '-'
-                    | '-' anyNonWhiteNoMinusRightAngleDollar
-                    | '-' '>' anyNonWhiteNoQuestionDollar
-                    | '-' '>' '?' anyNonWhiteNoDollar
-                    | '|' anyNonWhiteNoDollar
-                    | '%'
-                    | '%' anyNonWhiteNotOoDollar
-                    | '%' oO
-                    | '%' oO anyNonWhiteNotPpDollar
-                    | '%' oO pP
-                    | '%' oO pP anyNonWhiteNotTtDollar
-                    | '%' oO pP tT
-                    | '%' oO pP tT anyNonWhiteNotIiDollar
-                    | '%' oO pP tT iI
-                    | '%' oO pP tT iI anyNonWhiteNotOoDollar
-                    | '%' oO pP tT iI oO
-                    | '%' oO pP tT iI oO anyNonWhiteNotNnDollar
-                    | '%' oO pP tT iI oO nN
-                    | '%' oO pP tT iI oO nN anyNonWhiteNotSsDollar
-                    | '%' oO pP tT iI oO nN sS anyNonWhiteNotDollar
-                    | specialSymbol anyNonWhiteNotDollar
+    specialSymbol -> simpleSpecialSymbol
+                   | complexSpecialSymbol
 
+    simpleSpecialSymbol ::= '<'
+                          | '/'
+                          | ':'
+                          | ':' ':'
+                          | '-'
+                          | '%'
+                          | '%' oO
+                          | '%' oO pP
+                          | '%' oO pP tT
+                          | '%' oO pP tT iI
+                          | '%' oO pP tT iI oO
+                          | '%' oO pP tT iI oO nN
 
---    symbolChar -> letter | digit | '_' | '.' | '-' | '/'
+    complexSpecialSymbol ::= '<' anyNonWhiteNoLetterDollar
+                           | '/' anyNonWhiteNoDotDollar
+                           | ':' anyNonWhiteNoColonDollar
+                           | ':' ':' anyNonWhiteNoEqualDollar
+                           | ':' ':' '=' anyNonWhiteNoQuestionDollar
+                           | ':' ':' '=' '?' anyNonWhiteNoDollar
+                           | '-' anyNonWhiteNoMinusRightAngleDollar
+                           | '-' '>' anyNonWhiteNoQuestionDollar
+                           | '-' '>' '?' anyNonWhiteNoDollar
+                           | '|' anyNonWhiteNoDollar
+                           | '%' anyNonWhiteNoOoDollar
+                           | '%' oO anyNonWhiteNoPpDollar
+                           | '%' oO pP anyNonWhiteNoTtDollar
+                           | '%' oO pP tT anyNonWhiteNoIiDollar
+                           | '%' oO pP tT iI anyNonWhiteNoOoDollar
+                           | '%' oO pP tT iI oO anyNonWhiteNoNnDollar
+                           | '%' oO pP tT iI oO nN anyNonWhiteNoSsDollar
+                           | '%' oO pP tT iI oO nN sS anyNonWhiteNoDollar
+                           | complexSpecialSymbol anyNonWhiteNoDollar
 
     number ::= digit
              | number digit
@@ -366,10 +351,15 @@ $Rules
    --
    -- The following rules are used for processing options.
    --
-   options ::= '%' oO pP tT iI oO nN sS /.$BeginJava makeToken($_OPTIONS_KEY);$EndJava./
+   options ::= '%' oO pP tT iI oO nN sS$s optionWhiteChar optionWhite
+          /.$BeginJava
+                      makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_OPTIONS_KEY);
+            $EndJava
+          ./
  
     _opt -> $empty
          | '_'
+         | '-'
 
    no ::= nN oO
 
@@ -387,7 +377,7 @@ $Rules
    Value ::= delimitedSymbol
            | '-'
            | optionSymbol
---           | optionSymbol '-'
+           | optionSymbol '-'
 
    optionWhiteChar -> Space | HT | FF
    optionWhite ::= $empty
@@ -429,7 +419,7 @@ $Rules
                    | aA aA
    automatic_ast_value ::= none
                          | nN eE sS tT eE dD
-                         | tT oO pP lL eE vV eE lL
+                         | tT oO pP _opt lL eE vV eE lL
 
    --
    -- backtrack
@@ -521,11 +511,11 @@ $Rules
    factory ::= fF aA cC tT oO rR yY
 
    option ::= file_prefix$fp optionWhite '='$eq optionWhite Value$val optionWhite
-          /.$BeginAction
-                     makeToken(getRhsFirstTokenIndex($fp), getRhsLastTokenIndex($fp), $_SYMBOL);
-                     makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
-                     makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
-            $EndAction
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($fp), getRhsLastTokenIndex($fp), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
           ./
    file_prefix ::= fF iI lL eE _opt pP rR eE fF iI xX
                  | fF pP
@@ -719,9 +709,10 @@ $Rules
             | no slr optionWhite
    slr ::= sS lL rR
 
-   option ::= soft_keywords optionWhite
-            | no soft_keywords optionWhite
+   option ::= soft_keywords$sk optionWhite /.$BeginJava  makeToken(getRhsFirstTokenIndex($sk), getRhsLastTokenIndex($sk), $_SYMBOL); $EndJava ./
+            | no$no soft_keywords$sk optionWhite /.$BeginJava  makeToken(getRhsFirstTokenIndex($no), getRhsLastTokenIndex($sk), $_SYMBOL); $EndJava ./
    soft_keywords ::= sS oO fF tT _opt kK eE yY wW oO rR dD sS 
+                   | sS oO fF tT
                    | sS kK
 
    option ::= states optionWhite
