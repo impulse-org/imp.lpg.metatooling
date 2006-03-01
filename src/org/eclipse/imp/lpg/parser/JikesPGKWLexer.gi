@@ -36,6 +36,7 @@ $Export
    KEYWORDS_KEY
    NAMES_KEY
    NOTICE_KEY
+   OPTIONS_KEY
    TERMINALS_KEY
    RULES_KEY
    START_KEY
@@ -142,6 +143,11 @@ $Rules
     Keyword ::= '$' n o t i c e
         /.$BeginJava
             $setResult($_NOTICE_KEY);
+          $EndJava
+        ./
+    Keyword ::= '$' o p t i o n -- this rule is used here only to record this keyword!
+        /.$BeginJava
+            $setResult($_OPTIONS_KEY);
           $EndJava
         ./
     Keyword ::= '$' t e r m i n a l s

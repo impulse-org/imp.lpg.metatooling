@@ -30,13 +30,13 @@ public class Outliner extends DefaultOutliner {
 	    System.out.println(s);
 	}
 
-	public boolean visit(JikesPG n) {
-	    fItemStack.push(createTopItem("Options", n));
-	    return true;
-	}
-	public void endVisit(JikesPG n) {
-	    fItemStack.pop();
-	}
+    public boolean visit(JikesPG n) {
+        fItemStack.push(createTopItem("Options", n));
+        return true;
+    }
+    public void endVisit(JikesPG n) {
+        fItemStack.pop();
+    }
 	public boolean visit(option n) {
 	    Ioption_value value= n.getoption_value();
 
@@ -49,6 +49,20 @@ public class Outliner extends DefaultOutliner {
 		createSubItem(symbolImage(n.getSYMBOL()), n);
             return true;
 	}
+    public boolean visit(import_segment1 n) {
+        fItemStack.push(createTopItem("Import", n));
+        return false;
+    }
+    public void endVisit(import_segment1 n) {
+        fItemStack.pop();
+    }
+    public boolean visit(notice_segment1 n) {
+        fItemStack.push(createTopItem("Notice", n));
+        return false;
+    }
+    public void endVisit(notice_segment1 n) {
+        fItemStack.pop();
+    }
 	public boolean visit(AliasSeg n) {
 	    fItemStack.push(createTopItem("Alias", n));
 	    return true;

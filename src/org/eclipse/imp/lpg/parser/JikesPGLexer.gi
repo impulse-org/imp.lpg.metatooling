@@ -29,7 +29,6 @@ $Export
     PRIORITY_ARROW
     OR_MARKER
     EQUAL
-    OPTIONS_KEY
     COMMA
     SINGLE_LINE_COMMENT
     LEFT_PAREN
@@ -384,8 +383,8 @@ $Rules
                  | optionWhite optionWhiteChar
 
    optionList ::= option
-                | optionList ',' option
-
+                | optionList separator option
+   separator ::= ','$comma /.$BeginJava  makeToken(getLeftSpan(), getRightSpan(), $_COMMA); $EndJava./
    --
    -- action_block
    -- ast_directory
@@ -393,28 +392,58 @@ $Rules
    -- automatic_ast
    -- attributes
    --
-   option ::= action_block optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite block_begin optionWhite ',' optionWhite block_end optionWhite ')' optionWhite
+   option ::= action_block$ab optionWhite '='$eq optionWhite '('$lp optionWhite filename$fn optionWhite ','$comma1 optionWhite block_begin$bb optionWhite ','$comma2 optionWhite block_end$be optionWhite ')'$rp optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($ab), getRhsLastTokenIndex($ab), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($lp), getRhsLastTokenIndex($lp), $_LEFT_PAREN);
+                      makeToken(getRhsFirstTokenIndex($fn), getRhsLastTokenIndex($fn), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma1), getRhsLastTokenIndex($comma1), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($bb), getRhsLastTokenIndex($bb), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma2), getRhsLastTokenIndex($comma2), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($be), getRhsLastTokenIndex($be), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($rp), getRhsLastTokenIndex($rp), $_RIGHT_PAREN);
+            $EndJava
+          ./
    action_block ::= aA cC tT iI oO nN _opt bB lL oO cC kK
                   | aA bB
    filename -> Value
    block_begin -> Value
    block_end -> Value
 
-   option ::= ast_directory optionWhite '=' optionWhite Value optionWhite
+   option ::= ast_directory$ad optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($ad), getRhsLastTokenIndex($ad), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    ast_directory ::= aA sS tT _opt dD iI rR eE cC tT oO rR yY
                    | aA dD 
 
-   option ::= ast_type optionWhite '=' optionWhite Value optionWhite
+   option ::= ast_type$at optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($at), getRhsLastTokenIndex($at), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    ast_type ::= aA sS tT _opt tT yY pP eE
               | aA tT 
 
-   option ::= attributes optionWhite
-            | no attributes optionWhite
+   option ::= attributes$a optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($a), $_SYMBOL); $EndJava./
+            | no attributes$a optionWhite  /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($a), $_SYMBOL); $EndJava./
    attributes ::= aA tT tT rR iI bB uU tT eE sS
 
-   option ::= automatic_ast optionWhite
-            | no automatic_ast optionWhite
-   option ::= automatic_ast optionWhite '=' optionWhite automatic_ast_value optionWhite
+   option ::= automatic_ast$a optionWhite  /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($a), $_SYMBOL); $EndJava./
+            | no automatic_ast$a optionWhite  /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($a), $_SYMBOL); $EndJava./
+   option ::= automatic_ast$aa optionWhite '='$eq optionWhite automatic_ast_value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($aa), getRhsLastTokenIndex($aa), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    automatic_ast ::= aA uU tT oO mM aA tT iI cC _opt aA sS tT
                    | aA aA
    automatic_ast_value ::= none
@@ -425,20 +454,20 @@ $Rules
    -- backtrack
    -- byte
    --
-   option ::= backtrack optionWhite
-            | no backtrack optionWhite
+   option ::= backtrack$b optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($b), $_SYMBOL); $EndJava./
+            | no backtrack$b optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($b), $_SYMBOL); $EndJava./
    backtrack ::= bB aA cC kK tT rR aA cC kK
 
-   option ::= byte optionWhite
-            | no byte optionWhite
+   option ::= byte$b optionWhite /.$BeginJava  makeToken(getRhsFirstTokenIndex($b), getRhsLastTokenIndex($b), $_SYMBOL); $EndJava./
+            | no byte$b optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($b), $_SYMBOL); $EndJava./
    byte ::= bB yY tT eE
    
 
    --
    -- conflicts
    --
-   option ::= conflicts optionWhite
-            | no conflicts optionWhite
+   option ::= conflicts$c optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($c), $_SYMBOL); $EndJava./
+            | no conflicts$c optionWhite  /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($c), $_SYMBOL); $EndJava./
    conflicts ::= cC oO nN fF lL iI cC tT sS
 
    --
@@ -448,23 +477,46 @@ $Rules
    -- def_file
    -- debug
    --
-   option ::= dat_directory optionWhite '=' optionWhite Value optionWhite
+   option ::= dat_directory$dd optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($dd), getRhsLastTokenIndex($dd), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    dat_directory ::= dD aA tT _opt dD iI rR eE cC tT oO rR yY 
                    | dD dD
 
-   option ::= dat_file optionWhite '=' optionWhite Value optionWhite
+   option ::= dat_file$df optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($df), getRhsLastTokenIndex($df), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    dat_file ::= dD aA tT _opt fF iI lL eE
 
-   option ::= dcl_file optionWhite '=' optionWhite Value optionWhite
+   option ::= dcl_file$df optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($df), getRhsLastTokenIndex($df), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    dcl_file ::= dD cC lL _opt fF iI lL eE
 
-   option ::= def_file optionWhite '=' optionWhite Value optionWhite
+   option ::= def_file$df optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($df), getRhsLastTokenIndex($df), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    def_file ::= dD eE fF _opt fF iI lL eE
 
-   option ::= debug optionWhite
-            | no debug optionWhite
+   option ::= debug$d optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($d), $_SYMBOL); $EndJava./
+            | no debug$d optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($d), $_SYMBOL); $EndJava./
    debug ::= dD eE bB uU gG
-   
 
    --
    -- edit
@@ -473,30 +525,78 @@ $Rules
    -- export_terminals
    -- extends_parsetable
    --
-   option ::= edit optionWhite
-            | no edit optionWhite
+   option ::= edit$e optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($e), $_SYMBOL); $EndJava./
+            | no edit$e optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($e), $_SYMBOL); $EndJava./
    edit ::= eE dD iI tT
 
-   option ::= error_maps optionWhite
-            | no error_maps optionWhite
+   option ::= error_maps$e optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($e), $_SYMBOL); $EndJava./
+            | no error_maps$e optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($e), $_SYMBOL); $EndJava./
    error_maps ::= eE rR rR oO rR _opt mM aA pP sS
                 | eE mM
 
-   option ::= escape optionWhite '=' optionWhite anyNonWhiteChar optionWhite
+   option ::= escape$e optionWhite '='$eq optionWhite anyNonWhiteChar$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($e), getRhsLastTokenIndex($e), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    escape ::= eE sS cC aA pP eE
 
-   option ::= export_terminals optionWhite '=' optionWhite filename optionWhite
-   option ::= export_terminals optionWhite '=' optionWhite '(' optionWhite filename optionWhite ')' optionWhite
-   option ::= export_terminals optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite export_prefix optionWhite ')' optionWhite
-   option ::= export_terminals optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite export_prefix optionWhite ',' optionWhite export_suffix optionWhite ')' optionWhite
+   option ::= export_terminals$et optionWhite '='$eq optionWhite filename$fn optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($et), getRhsLastTokenIndex($et), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($fn), getRhsLastTokenIndex($fn), $_SYMBOL);
+            $EndJava
+          ./
+   option ::= export_terminals$et optionWhite '='$eq optionWhite '('$lp optionWhite filename$fn optionWhite ')'$rp optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($et), getRhsLastTokenIndex($et), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($lp), getRhsLastTokenIndex($lp), $_LEFT_PAREN);
+                      makeToken(getRhsFirstTokenIndex($fn), getRhsLastTokenIndex($fn), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($rp), getRhsLastTokenIndex($rp), $_RIGHT_PAREN);
+            $EndJava
+          ./
+   option ::= export_terminals$et optionWhite '='$eq optionWhite '('$lp optionWhite filename$fn optionWhite ','$comma optionWhite export_prefix$ep optionWhite ')'$rp optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($et), getRhsLastTokenIndex($et), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($lp), getRhsLastTokenIndex($lp), $_LEFT_PAREN);
+                      makeToken(getRhsFirstTokenIndex($fn), getRhsLastTokenIndex($fn), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma), getRhsLastTokenIndex($comma), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($ep), getRhsLastTokenIndex($ep), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($rp), getRhsLastTokenIndex($rp), $_RIGHT_PAREN);
+            $EndJava
+          ./
+   option ::= export_terminals$et optionWhite '='$eq optionWhite '('$lp optionWhite filename$fn optionWhite ','$comma1 optionWhite export_prefix$ep optionWhite ','$comma2 optionWhite export_suffix$es optionWhite ')'$rp optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($et), getRhsLastTokenIndex($et), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($lp), getRhsLastTokenIndex($lp), $_LEFT_PAREN);
+                      makeToken(getRhsFirstTokenIndex($fn), getRhsLastTokenIndex($fn), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma1), getRhsLastTokenIndex($comma1), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($ep), getRhsLastTokenIndex($ep), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma2), getRhsLastTokenIndex($comma2), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($es), getRhsLastTokenIndex($es), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($rp), getRhsLastTokenIndex($rp), $_RIGHT_PAREN);
+            $EndJava
+          ./
    export_terminals ::= eE xX pP oO rR tT _opt tT eE rR mM iI nN aA lL sS
                       | eE tT 
    export_prefix -> Value
    export_suffix -> Value
 
-   option ::= extends_parsetable optionWhite
-            | no extends_parsetable optionWhite
-   option ::= extends_parsetable optionWhite '=' optionWhite Value optionWhite
+   option ::= extends_parsetable$e optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($e), $_SYMBOL); $EndJava./
+            | no extends_parsetable$e optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($e), $_SYMBOL); $EndJava./
+   option ::= extends_parsetable$ep optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($ep), getRhsLastTokenIndex($ep), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    extends_parsetable ::= eE xX tT eE nN dD sS _opt pP aA rR sS eE tT aA bB lL eE
                         | eE pP
 
@@ -507,7 +607,13 @@ $Rules
    -- first
    -- follow
    --
-   option ::= factory optionWhite '=' optionWhite Value optionWhite
+   option ::= factory$f optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($f), getRhsLastTokenIndex($f), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    factory ::= fF aA cC tT oO rR yY
 
    option ::= file_prefix$fp optionWhite '='$eq optionWhite Value$val optionWhite
@@ -520,30 +626,47 @@ $Rules
    file_prefix ::= fF iI lL eE _opt pP rR eE fF iI xX
                  | fF pP
 
-   option ::= filter optionWhite '=' optionWhite Value optionWhite
+   option ::= filter$f optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($f), getRhsLastTokenIndex($f), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    filter ::= fF iI lL tT eE rR
 
-   option ::= first optionWhite
-            | no first optionWhite
+   option ::= first$f optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($f), $_SYMBOL); $EndJava./
+            | no first$f optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($f), $_SYMBOL); $EndJava./
    first ::= fF iI rR sS tT
 
-   option ::= follow optionWhite
-            | no follow optionWhite
+   option ::= follow$f optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($f), $_SYMBOL); $EndJava./
+            | no follow$f optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($f), $_SYMBOL); $EndJava./
    follow ::= fF oO lL lL oO wW
-   
 
    --
    -- goto_default
    --
-   option ::= goto_default optionWhite
-            | no goto_default optionWhite
+   option ::= goto_default$g optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($g), $_SYMBOL); $EndJava./
+            | no goto_default$g optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($g), $_SYMBOL); $EndJava./
    goto_default ::= gG oO tT oO _opt dD eE fF aA uU lL tT
                   | gG dD
 
    --
    -- Headers
    --
-   option ::= headers optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite block_begin optionWhite ',' optionWhite block_end optionWhite ')' optionWhite
+   option ::= headers$h optionWhite '='$eq optionWhite '('$lp optionWhite filename$fn optionWhite ','$comma1 optionWhite block_begin$bb optionWhite ','$comma2 optionWhite block_end$be optionWhite ')'$rp optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($h), getRhsLastTokenIndex($h), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($lp), getRhsLastTokenIndex($lp), $_LEFT_PAREN);
+                      makeToken(getRhsFirstTokenIndex($fn), getRhsLastTokenIndex($fn), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma1), getRhsLastTokenIndex($comma1), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($bb), getRhsLastTokenIndex($bb), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma2), getRhsLastTokenIndex($comma2), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($be), getRhsLastTokenIndex($be), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($rp), getRhsLastTokenIndex($rp), $_RIGHT_PAREN);
+            $EndJava
+          ./
    headers ::= hH eE aA dD eE rR sS
 
    --
@@ -551,15 +674,33 @@ $Rules
    -- import_terminals
    -- include_directory/include_directories
    --
-   option ::= imp_file optionWhite '=' optionWhite Value optionWhite
+   option ::= imp_file$if optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($if), getRhsLastTokenIndex($if), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    imp_file ::= iI mM pP _opt fF iI lL eE
               | iI fF 
 
-   option ::= import_terminals optionWhite '=' optionWhite Value optionWhite
+   option ::= import_terminals$it optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($it), getRhsLastTokenIndex($it), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    import_terminals ::= iI mM pP oO rR tT _opt tT eE rR mM iI nN aA lL sS
                       | iI tT
 
-   option ::= include_directory optionWhite '=' optionWhite Value optionWhite
+   option ::= include_directory$id optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($id), getRhsLastTokenIndex($id), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    include_directory ::= iI nN cC lL uU dD eE _opt dD iI rR eE cC tT oO rR yY
                        | iI nN cC lL uU dD eE _opt dD iI rR eE cC tT oO rR iI eE sS 
                        | iI dD
@@ -568,26 +709,44 @@ $Rules
    -- lalr_level
    -- list
    --
-   option ::= lalr_level optionWhite
-            | no lalr_level optionWhite
-   option ::= lalr_level optionWhite '=' optionWhite number optionWhite
+   option ::= lalr_level$l optionWhite /.$BeginJava  makeToken(getRhsFirstTokenIndex($l), getRhsLastTokenIndex($l), $_SYMBOL); $EndJava./
+            | no lalr_level$l optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($l), $_SYMBOL); $EndJava./
+   option ::= lalr_level$l optionWhite '='$eq optionWhite number$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($l), getRhsLastTokenIndex($l), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    lalr_level ::= lL aA lL rR _opt lL eE vV eE lL
                 | lL aA lL rR
                 | lL aA
                 | lL lL
 
-   option ::= list optionWhite
-            | no list optionWhite
+   option ::= list$l optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($l), $_SYMBOL); $EndJava./
+            | no list$l optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($l), $_SYMBOL); $EndJava./
    list ::= lL iI sS tT 
 
    --
    -- margin
    -- max_cases
    --
-   option ::= margin optionWhite '=' optionWhite number optionWhite
+   option ::= margin$m optionWhite '='$eq optionWhite number$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($m), getRhsLastTokenIndex($m), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    margin ::= mM aA rR gG iI nN
 
-   option ::= max_cases optionWhite '=' optionWhite number optionWhite
+   option ::= max_cases$mc optionWhite '='$eq optionWhite number$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($mc), getRhsLastTokenIndex($mc), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    max_cases ::= mM aA xX _opt cC aA sS eE sS
                | mM cC
 
@@ -595,24 +754,37 @@ $Rules
    -- names
    -- nt_check
    --
-   option ::= nN aA mM eE sS optionWhite
-            | no nN aA mM eE sS optionWhite
-   option ::= nN aA mM eE sS optionWhite '=' optionWhite names_value optionWhite
+   option ::= names$n optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($n), $_SYMBOL); $EndJava./
+            | no names$n optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($n), $_SYMBOL); $EndJava./
+   option ::= names$n optionWhite '='$eq optionWhite names_value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($n), getRhsLastTokenIndex($n), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
+   names ::= nN aA mM eE sS
 
    names_value ::= oO pP tT iI mM iI zZ eE dD
                  | mM aA xX iI mM uU mM
                  | mM iI nN iI mM uU mM
    
 
-   option ::= nt_check optionWhite
-            | no nt_check optionWhite
+   option ::= nt_check$n optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($n), $_SYMBOL); $EndJava./
+            | no nt_check$n optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($n), $_SYMBOL); $EndJava./
    nt_check ::= nN tT _opt cC hH eE cC kK
               | nN cC
 
    --
    -- or_marker
    --
-   option ::= or_marker optionWhite '=' optionWhite anyNonWhiteChar optionWhite
+   option ::= or_marker$om optionWhite '='$eq optionWhite anyNonWhiteChar$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($om), getRhsLastTokenIndex($om), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    or_marker ::= oO rR _opt mM aA rR kK eE rR
                | oO mM 
 
@@ -624,22 +796,46 @@ $Rules
    -- programming_language
    -- prs_file
    --
-   option ::= package optionWhite '=' optionWhite Value optionWhite
+   option ::= package$p optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($p), getRhsLastTokenIndex($p), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    package ::= pP aA cC kK aA gG eE
 
-   option ::= parsetable_interfaces optionWhite '=' optionWhite Value optionWhite
+   option ::= parsetable_interfaces$pi optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($pi), getRhsLastTokenIndex($pi), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    parsetable_interfaces ::= pP aA rR sS eE tT aA bB lL eE _opt iI nN tT eE rR fF aA cC eE sS
                            | pP aA rR sS eE tT aA bB lL eE
                            | pP iI
 
-   option ::= prefix optionWhite '=' optionWhite Value optionWhite
+   option ::= prefix$p optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($p), getRhsLastTokenIndex($p), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    prefix ::= pP rR eE fF iI xX
 
-   option ::= priority optionWhite
-            | no priority optionWhite
+   option ::= priority$p optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($p), $_SYMBOL); $EndJava./
+            | no priority$p optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($p), $_SYMBOL); $EndJava./
    priority ::= pP rR iI oO rR iI tT yY
 
-   option ::= programming_language optionWhite '=' optionWhite programming_language_value optionWhite
+   option ::= programming_language$pl optionWhite '='$eq optionWhite programming_language_value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($pl), getRhsLastTokenIndex($pl), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    programming_language ::= pP rR oO gG rR aA mM mM iI nN gG _opt lL aA nN gG uU aA gG eE
                           | pP lL
    programming_language_value ::= none
@@ -650,7 +846,13 @@ $Rules
                                 | pP lL xX
                                 | pP lL xX aA sS mM
                                 | mM lL
-   option ::= prs_file optionWhite '=' optionWhite Value optionWhite
+   option ::= prs_file$pf optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($pf), getRhsLastTokenIndex($pf), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    prs_file ::= pP rR sS _opt fF iI lL eE
               | pP fF
    
@@ -658,21 +860,21 @@ $Rules
    --
    -- quiet
    --
-   option ::= quiet optionWhite
-            | no quiet optionWhite
+   option ::= quiet$q optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($q), $_SYMBOL); $EndJava./
+            | no quiet$q optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($q), $_SYMBOL); $EndJava./
    quiet ::= qQ uU iI eE tT
 
    --
    -- read_reduce
    -- remap_terminals
    --
-   option ::= read_reduce optionWhite
-            | no read_reduce optionWhite
+   option ::= read_reduce$r optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($r), $_SYMBOL); $EndJava./
+            | no read_reduce$r optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($r), $_SYMBOL); $EndJava./
    read_reduce ::= rR eE aA dD _opt rR eE dD uU cC eE
                  | rR rR
 
-   option ::= remap_terminals optionWhite
-            | no remap_terminals optionWhite
+   option ::= remap_terminals$r optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($r), $_SYMBOL); $EndJava./
+            | no remap_terminals$r optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($r), $_SYMBOL); $EndJava./
    remap_terminals ::= rR eE mM aA pP _opt tT eE rR mM iI nN aA lL sS
                      | rR tT
 
@@ -687,42 +889,54 @@ $Rules
    -- suffix
    -- sym_file
    --
-   option ::= scopes optionWhite
-            | no scopes optionWhite
+   option ::= scopes$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
+            | no scopes$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
    scopes ::= sS cC oO pP eE sS
 
-   option ::= serialize optionWhite
-            | no serialize optionWhite
+   option ::= serialize$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
+            | no serialize$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
    serialize ::= sS eE rR iI aA lL iI zZ eE
 
-   option ::= shift_default optionWhite
-            | no shift_default optionWhite
+   option ::= shift_default$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
+            | no shift_default$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
    shift_default ::= sS hH iI fF tT _opt dD eE fF aA uU lL tT
                    | sS dD
 
-   option ::= single_productions optionWhite
-            | no single_productions optionWhite
+   option ::= single_productions$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
+            | no single_productions$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
    single_productions ::= sS iI nN gG lL eE _opt pP rR oO dD uU cC tT iI oO nN sS
                         | sS pP
 
-   option ::= slr optionWhite
-            | no slr optionWhite
+   option ::= slr$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
+            | no slr$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
    slr ::= sS lL rR
 
-   option ::= soft_keywords$sk optionWhite /.$BeginJava  makeToken(getRhsFirstTokenIndex($sk), getRhsLastTokenIndex($sk), $_SYMBOL); $EndJava ./
-            | no$no soft_keywords$sk optionWhite /.$BeginJava  makeToken(getRhsFirstTokenIndex($no), getRhsLastTokenIndex($sk), $_SYMBOL); $EndJava ./
+   option ::= soft_keywords$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
+            | no soft_keywords$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
    soft_keywords ::= sS oO fF tT _opt kK eE yY wW oO rR dD sS 
                    | sS oO fF tT
                    | sS kK
 
-   option ::= states optionWhite
-            | no states optionWhite
+   option ::= states$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
+            | no states$s optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_SYMBOL); $EndJava ./
    states ::= sS tT aA tT eE sS
 
-   option ::= suffix optionWhite '=' optionWhite Value optionWhite
+   option ::= suffix$s optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($s), getRhsLastTokenIndex($s), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    suffix ::= sS uU fF fF iI xX 
 
-   option ::= sym_file optionWhite '=' optionWhite Value optionWhite
+   option ::= sym_file$sf optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($sf), getRhsLastTokenIndex($sf), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    sym_file ::= sS yY mM _opt fF iI lL eE
               | sS fF 
 
@@ -732,25 +946,61 @@ $Rules
    -- template
    -- trace
    --
-   option ::= tab_file optionWhite '=' optionWhite Value optionWhite
+   option ::= tab_file$tf optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($tf), getRhsLastTokenIndex($tf), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    tab_file ::= tT aA bB _opt fF iI lL eE
               | tT fF
 
-   option ::= template optionWhite '=' optionWhite Value optionWhite
+   option ::= template$t optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($t), getRhsLastTokenIndex($t), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    template ::= tT eE mM pP lL aA tT eE
    
 
-   option ::= trailers optionWhite '=' optionWhite '(' optionWhite filename optionWhite ',' optionWhite block_begin optionWhite ',' optionWhite block_end optionWhite ')' optionWhite
+   option ::= trailers$t optionWhite '='$eq optionWhite '('$lp optionWhite filename$fn optionWhite ','$comma1 optionWhite block_begin$bb optionWhite ','$comma2 optionWhite block_end$be optionWhite ')'$rp optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($t), getRhsLastTokenIndex($t), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($lp), getRhsLastTokenIndex($lp), $_LEFT_PAREN);
+                      makeToken(getRhsFirstTokenIndex($fn), getRhsLastTokenIndex($fn), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma1), getRhsLastTokenIndex($comma1), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($bb), getRhsLastTokenIndex($bb), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($comma2), getRhsLastTokenIndex($comma2), $_COMMA);
+                      makeToken(getRhsFirstTokenIndex($be), getRhsLastTokenIndex($be), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($rp), getRhsLastTokenIndex($rp), $_RIGHT_PAREN);
+            $EndJava
+          ./
    trailers ::= tT rR aA iI lL eE rR sS
 
-   option ::= table optionWhite
-            | no table optionWhite
-   option ::= table optionWhite '=' optionWhite programming_language_value optionWhite
+   option ::= table$t optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($t), $_SYMBOL); $EndJava ./
+            | no table$t optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($t), $_SYMBOL); $EndJava ./
+   option ::= table$t optionWhite '='$eq optionWhite programming_language_value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($t), getRhsLastTokenIndex($t), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    table ::= tT aA bB lL eE 
 
-   option ::= trace  optionWhite
-            | no trace optionWhite
-   option ::= trace optionWhite '=' optionWhite trace_value optionWhite
+   option ::= trace$t optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($t), $_SYMBOL); $EndJava ./
+            | no trace$t optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($t), $_SYMBOL); $EndJava ./
+   option ::= trace$t optionWhite '='$eq optionWhite trace_value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($t), getRhsLastTokenIndex($t), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    trace ::= T rR aA cC eE
 
    trace_value ::= none
@@ -763,9 +1013,15 @@ $Rules
    -- visitor
    -- visitor_type
    --
-   option ::= variables optionWhite
-            | no variables optionWhite
-   option ::= variables optionWhite '=' optionWhite variables_value optionWhite
+   option ::= variables$v optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($v), $_SYMBOL); $EndJava ./
+            | no variables$v optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($v), $_SYMBOL); $EndJava ./
+   option ::= variables$v optionWhite '='$eq optionWhite variables_value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($v), getRhsLastTokenIndex($v), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    variables ::= vV aA rR iI aA bB lL eE sS
    variables_value ::= none
                      | bB oO tT hH
@@ -773,34 +1029,46 @@ $Rules
                      | nN oO nN _opt tT eE rR mM iI nN aA lL sS
                      | nN tT
 
-   option ::= verbose optionWhite
-            | no verbose optionWhite
+   option ::= verbose$v optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($v), $_SYMBOL); $EndJava ./
+            | no verbose$v optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($v), $_SYMBOL); $EndJava ./
    verbose ::= vV eE rR bB oO sS eE
 
-   option ::= visitor optionWhite
-            | no visitor optionWhite
-   option ::= visitor optionWhite '=' optionWhite visitor_value optionWhite
+   option ::= visitor$v optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($v), $_SYMBOL); $EndJava ./
+            | no visitor$v optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($v), $_SYMBOL); $EndJava ./
+   option ::= visitor$v optionWhite '='$eq optionWhite visitor_value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($v), getRhsLastTokenIndex($v), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    visitor ::= vV iI sS iI tT oO rR
    visitor_value ::= none
                    | dD eE fF aA uU lL tT
                    | pP rR eE oO rR dD eE rR
 
-   option ::= visitor_type optionWhite '=' optionWhite Value optionWhite
+   option ::= visitor_type$vt optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($vt), getRhsLastTokenIndex($vt), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
    visitor_type ::= vV iI sS iI tT oO rR _opt tT yY pP eE
                   | vV tT
 
    --
    -- warnings
    --
-   option ::= warnings optionWhite
-            | no warnings optionWhite
+   option ::= warnings$w optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($w), $_SYMBOL); $EndJava ./
+            | no warnings$w optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($w), $_SYMBOL); $EndJava ./
    warnings ::= wW aA rR nN iI nN gG sS
 
    --
    -- xref
    --
-   option ::= xreference optionWhite
-            | no xreference optionWhite
+   option ::= xreference$x optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($x), $_SYMBOL); $EndJava ./
+            | no xreference$x optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($x), $_SYMBOL); $EndJava ./
    xreference ::= xX rR eE fF
                 | xX rR eE fF eE rR eE nN cC eE
 $End
