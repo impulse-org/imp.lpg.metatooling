@@ -7,7 +7,12 @@
 %options template=uide/KeywordTemplate.gi
 
 $Include
-    uide\KWLexerMap.gi
+    --
+    -- Each upper case letter is mapped into is corresponding
+    -- lower case counterpart. For example, if an 'A' appears
+    -- in the input, it is mapped into Char_a just like 'a'.
+    --
+    uide\KWLexerFoldedCaseMap.gi
 $End
 
 $Export
@@ -44,151 +49,124 @@ $Start
 $End
 
 $Rules
-    Keyword ::= '$' aA lL iI aA sS 
-        /.$BeginAction
+    Keyword ::= '$' a l i a s
+        /.$BeginJava
             $setResult($_ALIAS_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' aA sS tT 
-        /.$BeginAction
+    Keyword ::= '$' a s t
+        /.$BeginJava
             $setResult($_AST_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' dD eE fF iI nN eE 
-        /.$BeginAction
+    Keyword ::= '$' d e f i n e
+        /.$BeginJava
             $setResult($_DEFINE_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' dD rR oO pP rR uU lL eE sS 
-        /.$BeginAction
+    Keyword ::= '$' d r o p r u l e s
+        /.$BeginJava
             $setResult($_DROPRULES_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' dD rR oO pP sS yY mM bB oO lL sS 
-        /.$BeginAction
+    Keyword ::= '$' d r o p s y m b o l s
+        /.$BeginJava
             $setResult($_DROPSYMBOLS_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' eE mM pP tT yY 
-        /.$BeginAction
+    Keyword ::= '$' e m p t y
+        /.$BeginJava
             $setResult($_EMPTY_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' eE nN dD 
-        /.$BeginAction
+    Keyword ::= '$' e n d
+        /.$BeginJava
             $setResult($_END_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' eE rR rR oO rR
-        /.$BeginAction
+    Keyword ::= '$' e r r o r
+        /.$BeginJava
             $setResult($_ERROR_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' eE oO lL
-        /.$BeginAction
+    Keyword ::= '$' e o l
+        /.$BeginJava
             $setResult($_EOL_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' eE oO fF
-        /.$BeginAction
+    Keyword ::= '$' e o f
+        /.$BeginJava
             $setResult($_EOF_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' eE xX pP oO rR tT 
-        /.$BeginAction
+    Keyword ::= '$' e x p o r t
+        /.$BeginJava
             $setResult($_EXPORT_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' gG lL oO bB aA lL sS 
-        /.$BeginAction
+    Keyword ::= '$' g l o b a l s
+        /.$BeginJava
             $setResult($_GLOBALS_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' hH eE aA dD eE rR sS
-        /.$BeginAction
+    Keyword ::= '$' h e a d e r s
+        /.$BeginJava
             $setResult($_HEADERS_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' iI dD eE nN tT iI fF iI eE rR 
-        /.$BeginAction
+    Keyword ::= '$' i d e n t i f i e r
+        /.$BeginJava
             $setResult($_IDENTIFIER_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' iI mM pP oO rR tT 
-        /.$BeginAction
+    Keyword ::= '$' i m p o r t
+        /.$BeginJava
             $setResult($_IMPORT_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' iI nN cC lL uU dD eE 
-        /.$BeginAction
+    Keyword ::= '$' i n c l u d e
+        /.$BeginJava
             $setResult($_INCLUDE_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' kK eE yY wW oO rR dD sS 
-        /.$BeginAction
+    Keyword ::= '$' k e y w o r d s
+        /.$BeginJava
             $setResult($_KEYWORDS_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' nN aA mM eE sS 
-        /.$BeginAction
+    Keyword ::= '$' n a m e s
+        /.$BeginJava
             $setResult($_NAMES_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' nN oO tT iI cC eE 
-        /.$BeginAction
+    Keyword ::= '$' n o t i c e
+        /.$BeginJava
             $setResult($_NOTICE_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' tT eE rR mM iI nN aA lL sS 
-        /.$BeginAction
+    Keyword ::= '$' t e r m i n a l s
+        /.$BeginJava
             $setResult($_TERMINALS_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' rR uU lL eE sS 
-        /.$BeginAction
+    Keyword ::= '$' r u l e s
+        /.$BeginJava
             $setResult($_RULES_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' sS tT aA rR tT 
-        /.$BeginAction
+    Keyword ::= '$' s t a r t 
+        /.$BeginJava
             $setResult($_START_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' tT rR aA iI lL eE rR sS 
-        /.$BeginAction
+    Keyword ::= '$' t r a i l e r s
+        /.$BeginJava
             $setResult($_TRAILERS_KEY);
-          $EndAction
+          $EndJava
         ./
-    Keyword ::= '$' tT yY pP eE sS 
-        /.$BeginAction
+    Keyword ::= '$' t y p e s
+        /.$BeginJava
             $setResult($_TYPES_KEY);
-          $EndAction
+          $EndJava
         ./
-
-    aA -> a | A
-    bB -> b | B
-    cC -> c | C
-    dD -> d | D
-    eE -> e | E
-    fF -> f | F
-    gG -> g | G
-    hH -> h | H
-    iI -> i | I
-    jJ -> j | J
-    kK -> k | K
-    lL -> l | L
-    mM -> m | M
-    nN -> n | N
-    oO -> o | O
-    pP -> p | P
-    qQ -> q | Q
-    rR -> r | R
-    sS -> s | S
-    tT -> t | T
-    uU -> u | U
-    vV -> v | V
-    wW -> w | W
-    xX -> x | X
-    yY -> y | Y
-    zZ -> z | Z
 $End
