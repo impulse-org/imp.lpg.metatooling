@@ -114,10 +114,12 @@ public class GrammarPageHelper {
 	    public void widgetSelected(SelectionEvent e) {
 		fGrammarOptions.setHasKeywords(cbKeywords.getSelection());
 	    }
-
 	    public void widgetDefaultSelected(SelectionEvent e) {}
 	});
-	new Label(parent, SWT.NULL).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        cbKeywords.setSelection(true);
+        fGrammarOptions.setHasKeywords(true);
+
+        new Label(parent, SWT.NULL).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	new Label(parent, SWT.NULL).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	final Button cbBacktrack= new Button(parent, SWT.CHECK);
@@ -145,6 +147,8 @@ public class GrammarPageHelper {
 
 	    public void widgetDefaultSelected(SelectionEvent e) {}
 	});
+        cbAutoASTs.setSelection(true);
+        fGrammarOptions.setAutoGenerateASTs(true);
     }
 
     public void discoverSelectedProject() {
