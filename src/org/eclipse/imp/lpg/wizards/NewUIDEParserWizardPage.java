@@ -54,6 +54,14 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	setLanguageIfEmpty();
 	try {
 //	    getField("class").setEnabled(false);
+            String lang= getField("language").getText();
+            getField("id").setText(lang + ".safari.parser");
+            getField("language").text.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent e) {
+                    setIDIfEmpty();
+                    setClassIfEmpty();
+                }
+            });
 	    projectText.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 		    setLanguageIfEmpty();
@@ -66,14 +74,18 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
     public String determineLanguage() {
 	try {
-	    IPluginModel plugin= ExtensionPointEnabler.getPlugin(NewUIDEParserWizardPage.this);
+	    IPluginModel plugin= ExtensionPointEnabler.getPlugin(this);
 
 	    if (plugin != null) {
 		IPluginExtension[] extensions= plugin.getExtensions().getExtensions();
 
 		for(int n= 0; n < extensions.length; n++) {
 		    IPluginExtension extension= extensions[n];
-		    IPluginObject[] children= extension.getChildren();
+
+                    if (!extension.getPoint().equals("org.eclipse.uide.runtime.languageDescription"))
+                        continue;
+
+                    IPluginObject[] children= extension.getChildren();
 
 		    for(int k= 0; k < children.length; k++) {
 			IPluginObject object= children[k];
@@ -82,26 +94,62 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 			    return ((IPluginElement) object).getAttribute("language").getValue();
 			}
 		    }
-		    System.out.println("No language extension in plugin '" + plugin.getBundleDescription().getName() + "'.");
+		    System.out.println("Unable to determine language for plugin '" + plugin.getBundleDescription().getName() + "': no languageDescription extension.");
 		}
 	    } else if (getProject() != null)
 		System.out.println("Not a plugin project: " + getProject().getName());
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
-	return "unknown";
+	return "";
     }
 
     protected void setLanguageIfEmpty() {
+        try {
+            String pluginLang= determineLanguage(); // if a languageDesc exists
+            if (pluginLang.length() == 0)
+                return;
+
+            WizardPageField field= getField("language");
+
+            if (field.getText().length() == 0)
+                field.setText(pluginLang);
+            getField("class").setText(fGrammarOptions.getPackageForLanguage(pluginLang) + ".Parser");
+        } catch (Exception e) {
+            ErrorHandler.reportError("Cannot set language", e);
+        }
+    }
+
+    protected void setIDIfEmpty() {
 	try {
-	    String language= determineLanguage();
-	    WizardPageField field= getField("language");
-	    if (field.getText().length() == 0)
-		field.setText(language);
-	    getField("class").setText(fGrammarOptions.getPackageForLanguage(language) + ".Parser");
+	    WizardPageField langField= getField("language");
+            String language= langField.getText();
+
+            if (language.length() == 0)
+                return;
+            String langID= lowerCaseFirst(language);
+	    getField("id").setText(langID + ".safari.parser");
 	} catch (Exception e) {
-	    ErrorHandler.reportError("Cannot set language", e);
+	    ErrorHandler.reportError("Cannot set ID", e);
 	}
+    }
+
+    protected void setClassIfEmpty() {
+        try {
+            WizardPageField langField= getField("language");
+            String language= langField.getText();
+
+            if (language.length() == 0)
+                return;
+            String langPkg= lowerCaseFirst(language);
+            getField("class").setText(langPkg + ".safari.parser." + language + "ParseController");
+        } catch (Exception e) {
+            ErrorHandler.reportError("Cannot set class", e);
+        }
+    }
+
+    private String lowerCaseFirst(String s) {
+        return Character.toLowerCase(s.charAt(0)) + s.substring(1);
     }
 
     public GrammarOptions getOptions() {
