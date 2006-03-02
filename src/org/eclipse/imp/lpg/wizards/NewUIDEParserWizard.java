@@ -52,23 +52,28 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
 	String templateKind= fGrammarOptions.getTemplateKind();
 	String packageName= fGrammarOptions.getPackageName();
-        String packageFolder= packageName.replace('.', File.separatorChar);
 	String languageName= fGrammarOptions.getLanguageName();
-	String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
+
+        String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
 	String lexerTemplateName= templateKind + "/LexerTemplate.gi";
 	String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
         String parseCtlrTemplateName= "ParseController.tmpl";
+
+        String packageFolder= packageName.replace('.', File.separatorChar);
         String langClassName= Character.toUpperCase(languageName.charAt(0)) + languageName.substring(1);
-	String grammarFileName= langClassName + "Parser.g";
+
+        String grammarFileName= langClassName + "Parser.g";
 	String lexerFileName= langClassName + "Lexer.gi";
 	String kwlexerFileName= langClassName + "KWLexer.gi";
 	String controllerFileName= langClassName + "ParseController.java";
 
+        // RMF 3/2/2006 - The following would probably be simpler if we just passed in the 
 	IFile grammarFile= createGrammar(packageName, languageName, packageFolder, grammarFileName, parserTemplateName, autoGenerateASTs, fProject,
 		monitor);
 
 	createLexer(packageName, languageName, lexerFileName, packageFolder, lexerTemplateName, hasKeywords, fProject, monitor);
-	createKWLexer(packageName, languageName, kwlexerFileName, packageFolder, kwLexerTemplateName, hasKeywords, fProject, monitor);
+        if (hasKeywords)
+            createKWLexer(packageName, languageName, kwlexerFileName, packageFolder, kwLexerTemplateName, hasKeywords, fProject, monitor);
 	createParseController(packageName, languageName, controllerFileName, packageFolder, parseCtlrTemplateName, hasKeywords, fProject,
 		monitor);
 
@@ -126,7 +131,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	String[][] replacements= new String[][] {
                 { "$LANG_NAME$", languageName },
                 { "$PACKAGE$", packageName },
-		{ "$AST_NODE$", packageName + "." + astDirectory + "." + astNode },
+		{ "$AST_PKG_NODE$", packageName + "." + astDirectory + "." + astNode },
+                { "$AST_NODE$", astNode },
 		{ "$PARSER_TYPE$", languageName + "Parser" },
 		{ "$LEXER_TYPE$", languageName + "Lexer" }
 	};
