@@ -1,4 +1,4 @@
-package org.jikespg.uide.wizards;
+package $PACKAGE$;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,13 +18,13 @@ import org.eclipse.uide.parser.ParseError;
 
 import $AST_NODE$;
 
-public class ParseController implements IParseController
+public class $LANG_NAME$ParseController implements IParseController
 {
     private IProject project;
     private String filePath;
     private $PARSER_TYPE$ parser;
     private $LEXER_TYPE$ lexer;
-    private Node currentAst;
+    private $AST_NODE$ currentAst;
 
     private char keywords[][];
     private boolean isKeyword[];
@@ -52,7 +52,7 @@ public class ParseController implements IParseController
     public boolean hasErrors() { return currentAst == null; }
     public List getErrors() { return Collections.singletonList(new ParseError("parse error", null)); }
     
-    public ParseController()
+    public $LANG_NAME$ParseController()
     {
     }
 
