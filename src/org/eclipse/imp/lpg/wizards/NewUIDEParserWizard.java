@@ -1,19 +1,17 @@
 package org.jikespg.uide.wizards;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
-import org.eclipse.uide.wizards.Wizards.GenericServiceWizard;
 import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.builder.JikesPGBuilder;
 
@@ -25,6 +23,9 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
     //	private NewUIDEParserWizardPage page;
     //	private ISelection selection;
 
+    private IProject fProject;
+    private GrammarOptions fGrammarOptions;
+
     public NewUIDEParserWizard() {
 	super();
 	setNeedsProgressMonitor(true);
@@ -34,52 +35,57 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	addPages(new ExtensionPointWizardPage[] { new NewUIDEParserWizardPage(this), });
     }
 
-    /**
-     * The worker method. It will find the container, create the
-     * file if missing or just replace its contents, and open
-     * the editor on the newly created file.
-     */
-    protected void generateCodeStubs(IProgressMonitor monitor) throws CoreException {
-	NewUIDEParserWizardPage page= (NewUIDEParserWizardPage) pages[0];
+    protected void collectCodeParms() {
+        NewUIDEParserWizardPage page= (NewUIDEParserWizardPage) pages[0];
+        
+        fProject= page.getProject();
+        fGrammarOptions= page.fGrammarOptions;
+        fGrammarOptions.setLanguageName(page.getValue("language"));
+        fGrammarOptions.setProjectName(fProject.getName());
+        String className= page.getValue("class");
+        fGrammarOptions.setPackageName(className.substring(0, className.lastIndexOf('.')));
+    }
 
-	IProject project= page.getProject();
-	GrammarOptions options= page.getOptions();
-	boolean hasKeywords= options.getHasKeywords();
-	boolean requiresBacktracking= options.getRequiresBacktracking();
-	boolean autoGenerateASTs= options.getAutoGenerateASTs();
-	String templateKind= options.getTemplateKind();
-	String packageName= options.getPackageName();
-	String languageName= options.getLanguageName();
+    protected void generateCodeStubs(IProgressMonitor monitor) throws CoreException {
+	boolean hasKeywords= fGrammarOptions.getHasKeywords();
+	boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
+	boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
+	String templateKind= fGrammarOptions.getTemplateKind();
+	String packageName= fGrammarOptions.getPackageName();
+        String packageFolder= packageName.replace('.', File.separatorChar);
+	String languageName= fGrammarOptions.getLanguageName();
 	String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
 	String lexerTemplateName= templateKind + "/LexerTemplate.gi";
 	String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
-	String grammarFileName= "src/" + languageName.toLowerCase() + "Parser.g";
-	String lexerFileName= "src/" + languageName.toLowerCase() + "Lexer.gi";
-	String kwlexerFileName= "src/" + languageName.toLowerCase() + "KWLexer.gi";
-	String controllerFileName= "src/ParseController.java";
+        String parseCtlrTemplateName= "ParseController.tmpl";
+        String langClassName= Character.toUpperCase(languageName.charAt(0)) + languageName.substring(1);
+	String grammarFileName= langClassName + "Parser.g";
+	String lexerFileName= langClassName + "Lexer.gi";
+	String kwlexerFileName= langClassName + "KWLexer.gi";
+	String controllerFileName= langClassName + "ParseController.java";
 
-	IFile grammarFile= createGrammarFile(packageName, languageName, grammarFileName, parserTemplateName, autoGenerateASTs, project,
+	IFile grammarFile= createGrammar(packageName, languageName, packageFolder, grammarFileName, parserTemplateName, autoGenerateASTs, fProject,
 		monitor);
 
-	createSampleLexerFile(packageName, languageName, lexerFileName, lexerTemplateName, hasKeywords, project, monitor);
-	createSampleKWLexerFile(packageName, languageName, kwlexerFileName, kwLexerTemplateName, hasKeywords, project, monitor);
-	createSampleParseControllerFile(packageName, languageName, controllerFileName, kwLexerTemplateName, hasKeywords, project,
+	createLexer(packageName, languageName, lexerFileName, packageFolder, lexerTemplateName, hasKeywords, fProject, monitor);
+	createKWLexer(packageName, languageName, kwlexerFileName, packageFolder, kwLexerTemplateName, hasKeywords, fProject, monitor);
+	createParseController(packageName, languageName, controllerFileName, packageFolder, parseCtlrTemplateName, hasKeywords, fProject,
 		monitor);
 
 	editFile(monitor, grammarFile);
-	enableBuilders(monitor, project, new String[] { JikesPGBuilder.BUILDER_ID });
+	enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
     }
 
     static final String astDirectory= "Ast";
 
     static final String astNode= "ASTNode";
 
-    static final String sAutoGenTemplate= "%options automacit_ast=toplevel,visitor,ast_directory=./" + astDirectory
+    static final String sAutoGenTemplate= "%options automatic_ast=toplevel,visitor,ast_directory=./" + astDirectory
 	    + ",ast_type=" + astNode;
 
     static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
 
-    private IFile createGrammarFile(String packageName, String languageName, String fileName, String templateName,
+    private IFile createGrammar(String packageName, String languageName, String packageFolder, String fileName, String templateName,
 	    boolean autoGenerateASTs, IProject project, IProgressMonitor monitor) throws CoreException {
 
 	String[][] replacements= new String[][] {
@@ -88,10 +94,10 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 		{ "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "" },
 		{ "$TEMPLATE$", templateName } };
 
-	return createFileFromTemplate(fileName, "grammar.tmpl", replacements, project, monitor);
+	return createFileFromTemplate(fileName, "grammar.tmpl", packageFolder, replacements, project, monitor);
     }
 
-    private IFile createSampleLexerFile(String packageName, String languageName, String fileName, String templateName,
+    private IFile createLexer(String packageName, String languageName, String fileName, String packageFolder, String templateName,
 	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
 	String[][] replacements= new String[][] {
 		{ "$LANG_NAME$", languageName },
@@ -102,28 +108,30 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 		{ "$KEYWORD_LEXER$", hasKeywords ? ("$" + languageName + "KWLexer") : "Object" },
 		{ "$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap") } };
 
-	return createFileFromTemplate(fileName, "lexer.tmpl", replacements, project, monitor);
+	return createFileFromTemplate(fileName, "lexer.tmpl", packageFolder, replacements, project, monitor);
     }
 
-    private IFile createSampleKWLexerFile(String packageName, String languageName, String fileName, String templateName,
+    private IFile createKWLexer(String packageName, String languageName, String fileName, String packageFolder, String templateName,
 	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
 	String[][] replacements= new String[][] {
 		{ "$LANG_NAME$", languageName },
 		{ "$PACKAGE$", packageName },
 		{ "$TEMPLATE$", templateName }
 	};
-	return createFileFromTemplate(fileName, "kwlexer.tmpl", replacements, project, monitor);
+	return createFileFromTemplate(fileName, "kwlexer.tmpl", packageFolder, replacements, project, monitor);
     }
 
-    private IFile createSampleParseControllerFile(String packageName, String languageName, String fileName,
+    private IFile createParseController(String packageName, String languageName, String fileName, String packageFolder,
 	    String templateName, boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
 	String[][] replacements= new String[][] {
+                { "$LANG_NAME$", languageName },
+                { "$PACKAGE$", packageName },
 		{ "$AST_NODE$", packageName + "." + astDirectory + "." + astNode },
 		{ "$PARSER_TYPE$", languageName + "Parser" },
 		{ "$LEXER_TYPE$", languageName + "Lexer" }
 	};
 
-	return createFileFromTemplate(fileName, "ParseController.tmpl", replacements, project, monitor);
+	return createFileFromTemplate(fileName, "ParseController.tmpl", packageFolder, replacements, project, monitor);
     }
 
     protected String getTemplateBundleID() {
@@ -136,6 +144,6 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
      * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
      */
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-    // this.selection = selection;
+        // this.selection = selection;
     }
 }
