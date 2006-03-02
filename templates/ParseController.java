@@ -16,7 +16,7 @@ import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
 
-import $AST_NODE$;
+import $AST_PKG_NODE$;
 
 public class $LANG_NAME$ParseController implements IParseController
 {
@@ -94,7 +94,7 @@ public class $LANG_NAME$ParseController implements IParseController
         if (my_monitor.isCancelled())
         	return currentAst; // TODO currentAst might (probably will) be inconsistent wrt the lex stream now
 
-        currentAst = (Node) parser.parser(my_monitor, 0);
+        currentAst = ($AST_NODE$) parser.parser(my_monitor, 0);
 
         cacheKeywordsOnce(); // better place/time to do this?
 
