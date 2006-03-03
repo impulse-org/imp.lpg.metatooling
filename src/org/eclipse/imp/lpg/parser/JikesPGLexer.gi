@@ -1002,7 +1002,7 @@ $Rules
                       makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
             $EndJava
           ./
-   trace ::= T rR aA cC eE
+   trace ::= tT rR aA cC eE
 
    trace_value ::= none
                  | cC oO nN fF lL iI cC tT sS
