@@ -20,6 +20,8 @@ $Include
 $End
 
 $Export
+    SINGLE_LINE_COMMENT
+    
     MACRO_NAME
     SYMBOL
     BLOCK
@@ -30,7 +32,6 @@ $Export
     OR_MARKER
     EQUAL
     COMMA
-    SINGLE_LINE_COMMENT
     LEFT_PAREN
     RIGHT_PAREN
 $End
@@ -110,12 +111,12 @@ $End
 
 $Rules
     Token ::= white /.$BeginJava skipToken(); $EndJava./
-    Token ::= slc   /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
+    Token ::= singleLineComment /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
 
     Token ::= options Eol
     Token ::= options optionList Eol
-    Token ::= options optionWhiteChar slc
-    Token ::= options optionList optionWhiteChar slc
+    Token ::= options optionWhiteChar singleLineComment
+    Token ::= options optionList optionWhiteChar singleLineComment
     Token ::= MacroSymbol       /.$BeginJava checkForKeyWord();$EndJava./
     Token ::= Symbol            /.$BeginJava makeToken($_SYMBOL);$EndJava./
     Token ::= Block             /.$BeginJava makeToken($_BLOCK);$EndJava./
@@ -239,8 +240,8 @@ $Rules
     notEOLOrRightAngles ::= notEOLOrRightAngle
                           | notEOLOrRightAngles notEOLOrRightAngle
 
-    slc ::= '-' '-'
-          | slc notEOL
+    singleLineComment ::= '-' '-'
+                        | singleLineComment notEOL
 
     Equivalence ::= ':' ':' '='
     Arrow       ::= '-' '>'
