@@ -244,8 +244,8 @@ public class NewGrammarWizardPage extends WizardPage {
     }
 
     WizardPageField getUncompletedField() {
-	// for(int n= 0; n < fields.size(); n++) {
-	//     WizardPageField field= (WizardPageField) fields.get(n);
+	// for(int n= 0; n < fFields.size(); n++) {
+	//     WizardPageField field= (WizardPageField) fFields.get(n);
 	//     if (field.required && field.value.length() == 0) {
 	//         return field;
 	//     }
