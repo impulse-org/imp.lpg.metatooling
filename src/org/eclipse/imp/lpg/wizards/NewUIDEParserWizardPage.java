@@ -20,6 +20,7 @@ import org.eclipse.uide.wizards.ExtensionPointEnabler;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
 import org.eclipse.uide.wizards.WizardPageField;
+import org.jikespg.uide.JikesPGPlugin;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well as the
@@ -27,20 +28,16 @@ import org.eclipse.uide.wizards.WizardPageField;
  * extension that matches the expected one (g).
  */
 public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
-    private static final String UIDE= "org.eclipse.uide";
-
-    private static final String JIKESPG= "org.jikespg.uide";
-
     GrammarOptions fGrammarOptions= new GrammarOptions();
 
     public NewUIDEParserWizardPage(ExtensionPointWizard wizard) {
 	super(wizard, RuntimePlugin.UIDE_RUNTIME, "parser");
-	setTitle("LPG Grammar for New Language");
-	setDescription("This wizard creates a new grammar file with *.g extension.");
-	requires.add(UIDE);
-	requires.add(JIKESPG);
-	requires.add("org.eclipse.core.runtime");
-	requires.add("org.eclipse.core.resources");
+	setTitle("JikesPG Grammar");
+	setDescription("This wizard creates a new JikesPG grammar file with a '.g' extension.");
+	fRequiredPlugins.add(RuntimePlugin.UIDE_RUNTIME);
+	fRequiredPlugins.add(JikesPGPlugin.kPluginID);
+	fRequiredPlugins.add("org.eclipse.core.runtime");
+	fRequiredPlugins.add("org.eclipse.core.resources");
     }
 
     protected void createAdditionalControls(Composite parent) {
@@ -62,7 +59,7 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
                     setClassIfEmpty();
                 }
             });
-	    projectText.addModifyListener(new ModifyListener() {
+	    fProjectText.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 		    setLanguageIfEmpty();
 		}
