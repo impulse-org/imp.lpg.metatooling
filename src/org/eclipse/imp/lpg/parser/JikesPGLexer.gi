@@ -1,4 +1,4 @@
-%options fp=JikesPGLexer,trace=full,la=15
+%options la=15
 %options single-productions
 %options package=org.jikespg.uide.parser
 %options template=uide/LexerTemplate.gi
@@ -113,10 +113,7 @@ $Rules
     Token ::= white /.$BeginJava skipToken(); $EndJava./
     Token ::= singleLineComment /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
 
-    Token ::= options Eol
-    Token ::= options optionList Eol
-    Token ::= options optionWhiteChar singleLineComment
-    Token ::= options optionList optionWhiteChar singleLineComment
+    Token ::= OptionLines
     Token ::= MacroSymbol       /.$BeginJava checkForKeyWord();$EndJava./
     Token ::= Symbol            /.$BeginJava makeToken($_SYMBOL);$EndJava./
     Token ::= Block             /.$BeginJava makeToken($_BLOCK);$EndJava./
@@ -351,6 +348,15 @@ $Rules
    --
    -- The following rules are used for processing options.
    --
+   OptionLines ::= OptionLineList
+
+   OptionLineList ::= OptionLine
+                 | OptionLines OptionLine
+   OptionLine ::= options Eol
+                | options optionList Eol
+                | options optionWhiteChar singleLineComment Eol
+                | options optionList optionWhiteChar singleLineComment Eol
+
    options ::= '%' oO pP tT iI oO nN sS$s optionWhiteChar optionWhite
           /.$BeginJava
                       makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_OPTIONS_KEY);
