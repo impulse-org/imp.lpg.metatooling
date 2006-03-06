@@ -38,6 +38,8 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	fRequiredPlugins.add(JikesPGPlugin.kPluginID);
 	fRequiredPlugins.add("org.eclipse.core.runtime");
 	fRequiredPlugins.add("org.eclipse.core.resources");
+	fRequiredPlugins.add("org.eclipse.uide.runtime");
+	fRequiredPlugins.add("lpg");
     }
 
     protected void createAdditionalControls(Composite parent) {
@@ -139,7 +141,9 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
             if (language.length() == 0)
                 return;
             String langPkg= lowerCaseFirst(language);
-            getField("class").setText(langPkg + ".safari.parser." + language + "ParseController");
+            String langClass= upperCaseFirst(language);
+
+            getField("class").setText(langPkg + ".safari.parser." + langClass + "ParseController");
         } catch (Exception e) {
             ErrorHandler.reportError("Cannot set class", e);
         }
@@ -147,6 +151,10 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
     private String lowerCaseFirst(String s) {
         return Character.toLowerCase(s.charAt(0)) + s.substring(1);
+    }
+
+    private String upperCaseFirst(String s) {
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
     public GrammarOptions getOptions() {
