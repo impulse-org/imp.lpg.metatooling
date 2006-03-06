@@ -149,14 +149,6 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
         }
     }
 
-    private String lowerCaseFirst(String s) {
-        return Character.toLowerCase(s.charAt(0)) + s.substring(1);
-    }
-
-    private String upperCaseFirst(String s) {
-        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
-    }
-
     public GrammarOptions getOptions() {
 	return fGrammarOptions;
     }
