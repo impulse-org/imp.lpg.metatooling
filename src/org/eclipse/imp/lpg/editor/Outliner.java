@@ -190,6 +190,24 @@ public class Outliner extends DefaultOutliner {
             fRHSLabel.append(' ');
             fRHSLabel.append(n.getSYMBOL().getIToken().toString());
         }
+        public boolean visit(TypesSeg n) {
+            fItemStack.push(createTopItem("Types", n));
+            return true;
+        }
+        public void endVisit(TypesSeg n) {
+            fItemStack.pop();
+        }
+        public boolean visit(types_segment1 n) {
+            return true;
+        }
+        public boolean visit(type_declarations0 n) {
+            fItemStack.push(createSubItem(symbolImage(n.getSYMBOL3()), n));
+            return true;
+        }
+        public boolean visit(type_declarations1 n) {
+            fItemStack.push(createSubItem(symbolImage(n.getSYMBOL()), n));
+            return true;
+        }
     }
 
     private static final String MESSAGE= "This is the default outliner. Add your own using the UIDE wizard and see class 'org.eclipse.uide.defaults.DefaultOutliner'";
