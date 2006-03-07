@@ -8,6 +8,7 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
@@ -212,6 +213,10 @@ public class Outliner extends DefaultOutliner {
 
     private static final String MESSAGE= "This is the default outliner. Add your own using the UIDE wizard and see class 'org.eclipse.uide.defaults.DefaultOutliner'";
 
+    // FIXME Shouldn't be using JDT images
+    // FIXME Should dispose this image at some point, no?
+    private static final Image sTreeItemImage= JavaPluginImages.DESC_MISC_PUBLIC.createImage();
+
     public String producesImage(Iproduces produces) {
 	if (produces instanceof produces0)
 	    return ((produces0) produces).getLeftIToken().toString();
@@ -269,7 +274,7 @@ public class Outliner extends DefaultOutliner {
     public TreeItem createTopItem(String label, ASTNode n) {
 	TreeItem treeItem= new TreeItem(tree, SWT.NONE);
 	treeItem.setText(label);
-	treeItem.setImage(JavaPluginImages.DESC_MISC_PUBLIC.createImage());
+	treeItem.setImage(sTreeItemImage);
 	if (n != null)
 	    treeItem.setData(n);
 	return treeItem;
@@ -284,7 +289,7 @@ public class Outliner extends DefaultOutliner {
 	treeItem.setText(label);
         if (n != null)
             treeItem.setData(n);
-	treeItem.setImage(JavaPluginImages.DESC_MISC_PUBLIC.createImage());
+	treeItem.setImage(sTreeItemImage);
 	return treeItem;
     }
 
