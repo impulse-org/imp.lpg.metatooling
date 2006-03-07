@@ -34,12 +34,6 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	super(wizard, RuntimePlugin.UIDE_RUNTIME, "parser");
 	setTitle("JikesPG Grammar");
 	setDescription("This wizard creates a new JikesPG grammar file with a '.g' extension.");
-	fRequiredPlugins.add(RuntimePlugin.UIDE_RUNTIME);
-	fRequiredPlugins.add(JikesPGPlugin.kPluginID);
-	fRequiredPlugins.add("org.eclipse.core.runtime");
-	fRequiredPlugins.add("org.eclipse.core.resources");
-	fRequiredPlugins.add("org.eclipse.uide.runtime");
-	fRequiredPlugins.add("lpg");
     }
 
     protected void createAdditionalControls(Composite parent) {
