@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -27,7 +28,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.uide.wizards.Wizards.GenericServiceWizard;
+import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.builder.JikesPGBuilder;
 import org.osgi.framework.Bundle;
@@ -146,7 +147,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 
 	String[][] replacements= new String[][] {
 		{ "$LANG_NAME$", languageName },
-		{ "$PACKAGE$", packageName },
+		{ "$PACKAGE_NAME$", packageName },
 		{ "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "" },
 		{ "$TEMPLATE$", templateName } };
 
@@ -157,7 +158,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
 	String[][] replacements= new String[][] {
 		{ "$LANG_NAME$", languageName },
-		{ "$PACKAGE$", packageName },
+		{ "$PACKAGE_NAME$", packageName },
 		{ "$TEMPLATE$", templateName },
 		{ "$KEYWORD_FILTER$",
 			hasKeywords ? ("%options filter=" + languageName + "KWLexer.gi") : "" },
@@ -171,7 +172,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
 	String[][] replacements= new String[][] {
 		{ "$LANG_NAME$", languageName },
-		{ "$PACKAGE$", packageName },
+		{ "$PACKAGE_NAME$", packageName },
 		{ "$TEMPLATE$", templateName }
 	};
 	return createFileFromTemplate(fileName, "kwlexer.tmpl", replacements, project, monitor);
@@ -201,7 +202,7 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
         StringBuffer buffer= new StringBuffer(new String(getTemplateFile(templateName)));
     
         for(int i= 0; i < replacements.length; i++) {
-            GenericServiceWizard.replace(buffer, replacements[i][0], replacements[i][1]);
+            ExtensionPointWizard.replace(buffer, replacements[i][0], replacements[i][1]);
         }
     
         if (file.exists()) {
@@ -230,11 +231,6 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
             e.printStackTrace();
             return ("// missing template file: " + fileName).getBytes();
         }
-    }
-
-    static void replace(StringBuffer sb, String target, String substitute) {
-	for(int index= sb.indexOf(target); index != -1; index= sb.indexOf(target))
-	    sb.replace(index, index + target.length(), substitute);
     }
 
     public void init(IWorkbench workbench, IStructuredSelection selection) {}

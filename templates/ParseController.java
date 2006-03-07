@@ -1,4 +1,4 @@
-package $PACKAGE$;
+package $PACKAGE_NAME$;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,7 +18,7 @@ import org.eclipse.uide.parser.ParseError;
 
 import $AST_PKG_NODE$;
 
-public class $LANG_NAME$ParseController implements IParseController
+public class $CLASS_NAME_PREFIX$ParseController implements IParseController
 {
     private IProject project;
     private String filePath;
@@ -52,7 +52,7 @@ public class $LANG_NAME$ParseController implements IParseController
     public boolean hasErrors() { return currentAst == null; }
     public List getErrors() { return Collections.singletonList(new ParseError("parse error", null)); }
     
-    public $LANG_NAME$ParseController()
+    public $CLASS_NAME_PREFIX$ParseController()
     {
     }
 
