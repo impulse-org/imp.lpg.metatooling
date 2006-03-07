@@ -124,7 +124,13 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 	while ((line= in2.readLine()) != null) {
 	    if (view != null)
 		JikesPGView.println(line);
-	    JikesPGPlugin.getInstance().writeErrorMsg(line);
+	    if (parseSyntaxMessageCreateMarker(line))
+		;
+	    else if (line.indexOf("Input file ") == 0) {
+		parseMissingFileMessage(line, resource);
+	    } else
+		handleMiscMessage(line, resource);
+//	    JikesPGPlugin.getInstance().writeErrorMsg(line);
 	}
 	is.close();
     }
@@ -157,7 +163,11 @@ public class JikesPGBuilder extends UIDEBuilderBase {
 
     private void handleMiscMessage(String msg, IResource file) {
 	if (msg.length() == 0) return;
-	if (msg.indexOf("Number of ") < 0)
+	if (msg.startsWith("Unable to open"))
+	    createMarker(file, 1, -1, -1, msg, IMarker.SEVERITY_ERROR);
+	if (msg.indexOf("Number of ") < 0 &&
+	    !msg.startsWith("(C) Copyright") &&
+	    !msg.startsWith("IBM LALR Parser"))
 	    createMarker(file, 1, -1, -1, msg, IMarker.SEVERITY_INFO);
     }
 
