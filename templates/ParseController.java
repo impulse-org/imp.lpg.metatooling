@@ -59,7 +59,7 @@ public class $LANG_NAME$ParseController implements IParseController
     private void createLexerAndParser(String filePath) {
         try {
             lexer = new $LEXER_TYPE$(filePath); // Create the lexer
-            parser = new $PARSER_TYPE$(lexer.getLexStream(), project);  // Create the parser
+            parser = new $PARSER_TYPE$(lexer.getLexStream() /*, project*/);  // Create the parser
         } catch (IOException e) {
             throw new Error(e);
         }
