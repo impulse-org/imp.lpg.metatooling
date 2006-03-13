@@ -136,8 +136,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
 	subs.put("$TEMPLATE$", templateName);
 	subs.put("$KEYWORD_FILTER$",
-		hasKeywords ? ("%options filter=" + fLanguageName + "KWLexer.gi") : "");
-	subs.put("$KEYWORD_LEXER$", hasKeywords ? ("$" + fLanguageName + "KWLexer") : "Object");
+		hasKeywords ? ("%options filter=" + fClassName + "KWLexer.gi") : "");
+	subs.put("$KEYWORD_LEXER$", hasKeywords ? ("$" + fClassName + "KWLexer") : "Object");
 	subs.put("$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
 
 	return createFileFromTemplate(fileName, "lexer.tmpl", fPackageFolder, subs, project, monitor);
