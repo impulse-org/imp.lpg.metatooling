@@ -157,8 +157,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
 	subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
 	subs.put("$AST_NODE$", astNode);
-	subs.put("$PARSER_TYPE$", fLanguageName + "Parser");
-	subs.put("$LEXER_TYPE$", fLanguageName + "Lexer");
+	subs.put("$PARSER_TYPE$", fClassName + "Parser");
+	subs.put("$LEXER_TYPE$", fClassName + "Lexer");
 
 	return createFileFromTemplate(fileName, "ParseController.tmpl", fPackageFolder, subs, project, monitor);
     }
