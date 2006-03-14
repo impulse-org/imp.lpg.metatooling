@@ -67,10 +67,10 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
     public String determineLanguage() {
 	try {
-	    IPluginModel plugin= ExtensionPointEnabler.getPlugin(this);
+	    IPluginModel pluginModel= ExtensionPointEnabler.getPluginModel(this);
 
-	    if (plugin != null) {
-		IPluginExtension[] extensions= plugin.getExtensions().getExtensions();
+	    if (pluginModel != null) {
+		IPluginExtension[] extensions= pluginModel.getExtensions().getExtensions();
 
 		for(int n= 0; n < extensions.length; n++) {
 		    IPluginExtension extension= extensions[n];
@@ -87,7 +87,7 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 			    return ((IPluginElement) object).getAttribute("language").getValue();
 			}
 		    }
-		    System.out.println("Unable to determine language for plugin '" + plugin.getBundleDescription().getName() + "': no languageDescription extension.");
+		    System.out.println("Unable to determine language for plugin '" + pluginModel.getBundleDescription().getName() + "': no languageDescription extension.");
 		}
 	    } else if (getProject() != null)
 		System.out.println("Not a plugin project: " + getProject().getName());
