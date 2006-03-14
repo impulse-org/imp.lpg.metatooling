@@ -50,8 +50,8 @@ $Rules
     -- 
     --  Here are some example rules:
     -- 
-        block ::= $empty
-                | block statement
+        stmtList$$statement ::= $empty
+                | stmtList statement
         statement ::= declaration
                     | assignment
         declaration ::= int IDENTIFIER ;
