@@ -28,7 +28,7 @@ public class Outliner extends DefaultOutliner {
     private final class OutlineVisitor extends JikesPGParser.AbstractVisitor {
 	private StringBuffer fRHSLabel;
 	public void unimplementedVisitor(String s) {
-	    System.out.println(s);
+//	    System.out.println(s);
 	}
 
     public boolean visit(JikesPG n) {
