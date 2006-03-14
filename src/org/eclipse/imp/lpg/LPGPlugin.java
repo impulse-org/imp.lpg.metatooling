@@ -1,12 +1,12 @@
 package org.jikespg.uide;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.uide.runtime.UIDEPluginBase;
+import org.eclipse.uide.runtime.SAFARIPluginBase;
 import org.jikespg.uide.preferences.JikesPGPreferenceCache;
 import org.jikespg.uide.preferences.PreferenceConstants;
 import org.osgi.framework.BundleContext;
 
-public class JikesPGPlugin extends UIDEPluginBase {
+public class JikesPGPlugin extends SAFARIPluginBase {
     public static final String kPluginID= "org.jikespg.uide";
 
     /**

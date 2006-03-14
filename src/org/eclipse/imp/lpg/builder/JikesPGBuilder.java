@@ -20,8 +20,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.uide.core.UIDEBuilderBase;
-import org.eclipse.uide.runtime.UIDEPluginBase;
+import org.eclipse.uide.core.SAFARIBuilderBase;
+import org.eclipse.uide.runtime.SAFARIPluginBase;
 import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.preferences.JikesPGPreferenceCache;
 import org.jikespg.uide.views.JikesPGView;
@@ -31,7 +31,7 @@ import org.osgi.framework.Bundle;
  * @author rfuhrer@watson.ibm.com
  * @author CLaffra
  */
-public class JikesPGBuilder extends UIDEBuilderBase {
+public class JikesPGBuilder extends SAFARIBuilderBase {
     /**
      * Extension ID of the JikesPG builder. Must match the ID in the corresponding
      * extension definition in plugin.xml.
@@ -52,7 +52,7 @@ public class JikesPGBuilder extends UIDEBuilderBase {
     private static final String MISSING_MSG_REGEXP= "Input file \"([^\"]+)\" could not be read";
     private static final Pattern MISSING_MSG_PATTERN= Pattern.compile(MISSING_MSG_REGEXP);
 
-    protected UIDEPluginBase getPlugin() {
+    protected SAFARIPluginBase getPlugin() {
 	return JikesPGPlugin.getInstance();
     }
 
