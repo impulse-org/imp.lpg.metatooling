@@ -87,7 +87,7 @@ public class ParseController implements IParseController {
 
         currentAst = (ASTNode) parser.parser(my_monitor, 0);
 
-//        if (currentAst == null)
+        if (currentAst == null)
             parser.dumpTokens();
 
         if (keywords == null)
