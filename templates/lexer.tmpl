@@ -36,7 +36,8 @@ $Export
         PLUS
         MINUS
         ASSIGN
-    
+        LEFTBRACE
+        RIGHTBRACE
 $End
 
 $Terminals
@@ -138,6 +139,18 @@ $Rules
     Token ::= '='
         /.$BeginJava
                     makeToken($_ASSIGN);
+          $EndJava
+        ./
+
+    Token ::= '{'
+        /.$BeginJava
+                    makeToken($_LEFTBRACE);
+          $EndJava
+        ./
+
+    Token ::= '}'
+        /.$BeginJava
+                    makeToken($_RIGHTBRACE);
           $EndJava
         ./
 
