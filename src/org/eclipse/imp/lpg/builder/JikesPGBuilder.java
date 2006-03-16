@@ -94,7 +94,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 		    getLPGExecutable(),
 		    "-quiet",
 		    (JikesPGPreferenceCache.generateListing ? "-list" : "-nolist"),
-		    "-include-directory=" + templatePath,
+		    "-include-directory='" + templatePath + "'",
 		    // TODO RMF 7/21/05 -- Don't specify -dat-directory; causes performance issues with Eclipse.
 		    // Lexer tables can get quite large, so large that Java as spec'ed can't swallow them
 		    // when translated to a switch statement, or even an array initializer. As a result,
