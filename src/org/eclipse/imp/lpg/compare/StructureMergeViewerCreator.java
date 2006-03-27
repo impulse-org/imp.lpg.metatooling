@@ -12,11 +12,8 @@ import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.ui.compare.JavaStructureCreator;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.uide.parser.ILexer;
 import org.eclipse.uide.parser.IParser;
 import org.jikespg.uide.parser.JikesPGLexer;
@@ -30,7 +27,7 @@ public class StructureMergeViewerCreator implements IViewerCreator {
 	    node= n;
 	}
 	public Object[] getChildren() {
-	    return node.getChildren();
+	    return new Object[0]; // node.getChildren();
 	}
     }
     public Viewer createViewer(Composite parent, CompareConfiguration config) {
