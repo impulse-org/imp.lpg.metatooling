@@ -209,7 +209,7 @@ public class NewGrammarWizardPage extends WizardPage {
 	}
 	WizardPageField field= getUncompletedField();
 	if (field != null) {
-	    setErrorMessage("Please provide a value for the required attribute \"" + field.label + "\"");
+	    setErrorMessage("Please provide a value for the required attribute \"" + field.fLabel + "\"");
 	    setPageComplete(false);
 	    return;
 	}

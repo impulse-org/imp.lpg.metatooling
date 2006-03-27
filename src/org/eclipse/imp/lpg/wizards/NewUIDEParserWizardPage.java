@@ -49,7 +49,7 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 //	    getField("class").setEnabled(false);
             String lang= getField("language").getText();
             getField("id").setText(lang + ".safari.parser");
-            getField("language").text.addModifyListener(new ModifyListener() {
+            getField("language").fText.addModifyListener(new ModifyListener() {
                 public void modifyText(ModifyEvent e) {
                     setIDIfEmpty();
                     setClassIfEmpty();
