@@ -144,17 +144,18 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.jikespg.uide.preferences.PreferenceInitializer"/>
    </extension>
-<!-- <extension
+   <extension
          point="org.eclipse.compare.structureCreators">
       <structureCreator
             class="org.jikespg.uide.compare.JikesPGStructureNode"
             extensions="g,gi"
             id="org.jikespg.uide.structureCreator"/>
-      <contentTypeBinding
+<!--      <contentTypeBinding
             contentTypeId="org.jikespg.uide.grammarFile"
             structureCreatorId="org.jikespg.uide.structureCreator"/>
+  -->
    </extension>
-   <extension
+<!--   <extension
          point="org.eclipse.core.runtime.contentTypes">
       <content-type
             file-extensions="g,gi"
@@ -177,6 +178,13 @@
             id="org.jikespg.uide.foldingUpdater"
             language="JikesPG"
             name="JikesPG Source Folding Updater"/>
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.formatter">
+      <formatter
+            class="org.jikespg.uide.editor.JikesPGFormatter"
+            language="jikespg"
+            name="JikesPG Grammar Formatter"/>
    </extension>  
    
 </plugin>
