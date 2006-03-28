@@ -59,6 +59,13 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 buff.append(')');
                 return false;
             }
+            public boolean visit(NoticeSeg n) {
+                buff.append("$Notice\n");
+                return true;
+            }
+            public void endVisit(NoticeSeg n) {
+                buff.append("$End\n\n");
+            }
             public boolean visit(GlobalsSeg n) {
                 buff.append("$Globals\n");
                 return true;
@@ -69,6 +76,33 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             public boolean visit(globals_segment1 n) {
                 buff.append("    ");
                 return true;
+            }
+            public boolean visit(HeadersSeg n) {
+                buff.append("$Headers\n");
+                return true;
+            }
+            public void endVisit(HeadersSeg n) {
+                buff.append("$End\n\n");
+            }
+            public boolean visit(IdentifierSeg n) {
+                buff.append("$Identifier\n");
+                return true;
+            }
+            public void endVisit(IdentifierSeg n) {
+                buff.append("$End\n\n");
+            }
+            public boolean visit(EofSeg n) {
+                buff.append("$EOF\n");
+                return true;
+            }
+            public void endVisit(EofSeg n) {
+                buff.append("$End\n\n");
+            }
+            public boolean visit(terminal_symbol0 n) {
+                buff.append("    ");
+                buff.append(n.getSYMBOL());
+                buff.append('\n');
+                return false;
             }
             public boolean visit(DefineSeg n) {
                 buff.append("$Define\n");
@@ -96,6 +130,23 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 if (n.getoptTerminalAlias() != null)
                     buff.append(" ::= " + n.getoptTerminalAlias().getname());
                 buff.append('\n');
+                return false;
+            }
+            public boolean visit(StartSeg n) {
+                buff.append("$Start\n");
+                return true;
+            }
+            public void endVisit(StartSeg n) {
+                buff.append("$End\n\n");
+            }
+            public boolean visit(start_symbol0 n) {
+                buff.append("    ");
+                buff.append(n.getSYMBOL());
+                buff.append('\n');
+                return false;
+            }
+            public boolean visit(start_symbol1 n) {
+                buff.append(n.getMACRO_NAME());
                 return false;
             }
             public boolean visit(RulesSeg n) {
