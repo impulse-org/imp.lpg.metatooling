@@ -183,7 +183,7 @@
          point="org.eclipse.uide.runtime.formatter">
       <formatter
             class="org.jikespg.uide.editor.JikesPGFormatter"
-            language="jikespg"
+            language="JikesPG"
             name="JikesPG Grammar Formatter"/>
    </extension>  
    
