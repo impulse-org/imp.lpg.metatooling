@@ -10,9 +10,19 @@ import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.*;
 
 public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
+    private int fIndentSize= 6;
+    private String fIndentString;
+
+    private boolean fIndentProducesToWidestNonTerm= false;
 
     public void formatterStarts(String initialIndentation) {
-	// TODO Auto-generated method stub
+        // Should pick up preferences here
+        fIndentSize= 4;
+        StringBuffer buff= new StringBuffer(fIndentSize);
+        for(int i=0; i < fIndentSize; i++)
+            buff.append(' ');
+        fIndentString= buff.toString();
+        fIndentProducesToWidestNonTerm= false;
     }
 
     public String format(IParseController parseController, String content, boolean isLineStart, String indentation, int[] positions) {
@@ -27,11 +37,6 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             }
             public boolean visit(option_spec n) {
                 buff.append("%options ");
-                return true;
-            }
-            public boolean visit(option_list n) {
-//                if (n.getoption_list() != null)
-//                    buff.append(',');
                 return true;
             }
             public void endVisit(option_list n) {
@@ -74,7 +79,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 buff.append("$End\n\n");
             }
             public boolean visit(globals_segment1 n) {
-                buff.append("    ");
+                buff.append(fIndentString);
                 return true;
             }
             public boolean visit(HeadersSeg n) {
@@ -99,7 +104,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 buff.append("$End\n\n");
             }
             public boolean visit(terminal_symbol0 n) {
-                buff.append("    ");
+                buff.append(fIndentString);
                 buff.append(n.getSYMBOL());
                 buff.append('\n');
                 return false;
@@ -112,7 +117,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 buff.append("$End\n\n");
             }
             public void endVisit(define_segment1 n) {
-                buff.append("    ");
+                buff.append(fIndentString);
                 buff.append(n.getmacro_name_symbol());
                 buff.append(' ');
                 buff.append(n.getmacro_segment());
@@ -126,7 +131,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 buff.append("$End\n\n");
             }
             public boolean visit(terminal n) {
-                buff.append("    " + n.getterminal_symbol());
+                buff.append(fIndentString + n.getterminal_symbol());
                 if (n.getoptTerminalAlias() != null)
                     buff.append(" ::= " + n.getoptTerminalAlias().getname());
                 buff.append('\n');
@@ -140,7 +145,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 buff.append("$End\n\n");
             }
             public boolean visit(start_symbol0 n) {
-                buff.append("    ");
+                buff.append(fIndentString);
                 buff.append(n.getSYMBOL());
                 buff.append('\n');
                 return false;
@@ -151,31 +156,37 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             }
             public boolean visit(RulesSeg n) {
                 buff.append("$Rules\n");
-                rules_segment rulesSegment= n.getrules_segment();
-                nonTermList nonTermList= rulesSegment.getnonTermList();
-                int maxLHSSymWid= 0;
-                for(int i=0; i < nonTermList.size(); i++) {
-                    int lhsSymWid= nonTermList.getElementAt(i).getLeftIToken().toString().length();
-                    if (lhsSymWid > maxLHSSymWid) maxLHSSymWid= lhsSymWid;
+                if (fIndentProducesToWidestNonTerm) {
+                    rules_segment rulesSegment= n.getrules_segment();
+                    nonTermList nonTermList= rulesSegment.getnonTermList();
+                    int maxLHSSymWid= 0;
+                    for(int i=0; i < nonTermList.size(); i++) {
+                        int lhsSymWid= nonTermList.getElementAt(i).getLeftIToken().toString().length();
+                        if (lhsSymWid > maxLHSSymWid) maxLHSSymWid= lhsSymWid;
+                    }
+                    prodIndent= fIndentSize + maxLHSSymWid + 1;
                 }
-                prodIndent= 4 + maxLHSSymWid + 1;
                 return true;
             }
             public void endVisit(RulesSeg n) {
                 buff.append("$End\n");
             }
             public boolean visit(nonTerm n) {
-                buff.append("    ");
+                buff.append(fIndentString);
                 buff.append(n.getSYMBOL());
                 if (n.getclassName() != null)
                     buff.append(n.getclassName());
                 if (n.getarrayElement() != null)
                     buff.append(n.getarrayElement());
-                for(int i=n.getSYMBOL().toString().length() + 4 + 1; i <= prodIndent; i++)
+                if (fIndentProducesToWidestNonTerm) {
+                    for(int i=n.getSYMBOL().toString().length() + fIndentSize + 1; i <= prodIndent; i++)
+                        buff.append(' ');
+                } else
                     buff.append(' ');
                 buff.append(n.getproduces());
                 prodCount= 0;
-//                prodIndent= 4 + n.getSYMBOL().toString().length() + 1;
+                if (!fIndentProducesToWidestNonTerm)
+                    prodIndent= fIndentSize + n.getSYMBOL().toString().length() + 1;
                 return true;
             }
             public void endVisit(nonTerm n) {
