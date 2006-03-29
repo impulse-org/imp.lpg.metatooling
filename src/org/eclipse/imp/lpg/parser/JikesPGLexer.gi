@@ -349,9 +349,14 @@ $Rules
    -- The following rules are used for processing options.
    --
    OptionLines ::= OptionLineList
+          /.$BeginJava
+                      // What ever needs to happen after the options have been 
+                      // scanned must happen here.
+            $EndJava
+          ./
 
    OptionLineList ::= OptionLine
-                 | OptionLines OptionLine
+                    | OptionLineList OptionLine
    OptionLine ::= options Eol
                 | options optionList Eol
                 | options optionWhiteChar singleLineComment Eol
