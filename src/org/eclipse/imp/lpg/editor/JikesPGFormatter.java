@@ -32,8 +32,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
 
     public String format(IParseController parseController, String content, boolean isLineStart, String indentation, int[] positions) {
         final StringBuffer buff= new StringBuffer();
-        final Set leftAdjunctTokens= new HashSet();
-        final Set rightAdjunctTokens= new HashSet();
+        final Set adjunctTokens= new HashSet();
         JikesPG root= (JikesPG) parseController.getCurrentAst();
 
         root.accept(new JikesPGParser.AbstractVisitor() {
@@ -44,24 +43,26 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             }
             public void preVisit(ASTNode n) {
                 IToken left= n.getLeftIToken();
-                if (!leftAdjunctTokens.contains(left)) {
-                    IToken[] adjuncts= left.getPrsStream().getPreceedingAdjuncts(left.getTokenIndex());
-                    for(int i= 0; i < adjuncts.length; i++) {
-                        buff.append(adjuncts[i]);
+                IToken[] adjuncts= left.getPrsStream().getPreceedingAdjuncts(left.getTokenIndex());
+                for(int i= 0; i < adjuncts.length; i++) {
+                    IToken adjunct= adjuncts[i];
+                    if (!adjunctTokens.contains(adjunct)) {
+                        buff.append(adjunct);
                         buff.append('\n');
                     }
-                    leftAdjunctTokens.add(left);
+                    adjunctTokens.add(adjunct);
                 }
             }
             public void postVisit(ASTNode n) {
                 IToken right= n.getRightIToken();
-                if (!rightAdjunctTokens.contains(right)) {
-                    IToken[] adjuncts= right.getPrsStream().getFollowingAdjuncts(right.getTokenIndex());
-                    for(int i= 0; i < adjuncts.length; i++) {
-                        buff.append(adjuncts[i]);
+                IToken[] adjuncts= right.getPrsStream().getFollowingAdjuncts(right.getTokenIndex());
+                for(int i= 0; i < adjuncts.length; i++) {
+                    IToken adjunct= adjuncts[i];
+                    if (!adjunctTokens.contains(adjunct)) {
+                        buff.append(adjunct);
                         buff.append('\n');
                     }
-                    rightAdjunctTokens.add(right);
+                    adjunctTokens.add(adjunct);
                 }
             }
             public boolean visit(option_spec n) {
