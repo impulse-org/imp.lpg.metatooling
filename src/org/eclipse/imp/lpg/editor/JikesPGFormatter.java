@@ -3,6 +3,11 @@
  */
 package org.jikespg.uide.editor;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import lpg.lpgjavaruntime.IToken;
+
 import org.eclipse.uide.core.ILanguageService;
 import org.eclipse.uide.editor.ISourceFormatter;
 import org.eclipse.uide.parser.IParseController;
@@ -27,6 +32,8 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
 
     public String format(IParseController parseController, String content, boolean isLineStart, String indentation, int[] positions) {
         final StringBuffer buff= new StringBuffer();
+        final Set leftAdjunctTokens= new HashSet();
+        final Set rightAdjunctTokens= new HashSet();
         JikesPG root= (JikesPG) parseController.getCurrentAst();
 
         root.accept(new JikesPGParser.AbstractVisitor() {
@@ -34,6 +41,28 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             private int prodIndent;
             public void unimplementedVisitor(String s) {
                 System.out.println("Unhandled node type: " + s);
+            }
+            public void preVisit(ASTNode n) {
+                IToken left= n.getLeftIToken();
+                if (!leftAdjunctTokens.contains(left)) {
+                    IToken[] adjuncts= left.getPrsStream().getPreceedingAdjuncts(left.getTokenIndex());
+                    for(int i= 0; i < adjuncts.length; i++) {
+                        buff.append(adjuncts[i]);
+                        buff.append('\n');
+                    }
+                    leftAdjunctTokens.add(left);
+                }
+            }
+            public void postVisit(ASTNode n) {
+                IToken right= n.getRightIToken();
+                if (!rightAdjunctTokens.contains(right)) {
+                    IToken[] adjuncts= right.getPrsStream().getFollowingAdjuncts(right.getTokenIndex());
+                    for(int i= 0; i < adjuncts.length; i++) {
+                        buff.append(adjuncts[i]);
+                        buff.append('\n');
+                    }
+                    rightAdjunctTokens.add(right);
+                }
             }
             public boolean visit(option_spec n) {
                 buff.append("%options ");
