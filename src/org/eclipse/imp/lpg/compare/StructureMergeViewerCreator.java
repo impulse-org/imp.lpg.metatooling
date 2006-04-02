@@ -66,7 +66,7 @@ public class StructureMergeViewerCreator implements IViewerCreator {
                     // We need an IDocument, but how to get that???
                     IDocument doc= docProvider.getDocument(editor.getEditorInput());
 
-                    return new JikesPGStructureNode(parseFile(file), doc, 0, "root", 0, 1);
+                    return new JikesPGStructureNode(parseFile(file), doc, 0, "root");
                 }
             } catch (IOException io) {
             } catch (CoreException ce) {
