@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import javax.print.DocPrintJob;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.IViewerCreator;
@@ -15,7 +13,6 @@ import org.eclipse.compare.structuremergeviewer.IStructureCreator;
 import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
@@ -31,9 +28,6 @@ import org.jikespg.uide.compare.JikesPGStructureNode;
 import org.jikespg.uide.parser.JikesPGLexer;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import org.jikespg.uide.parser.JikesPGParser.AbstractVisitor;
-import org.jikespg.uide.parser.JikesPGParser.JikesPG;
-import org.jikespg.uide.parser.JikesPGParser.Visitor;
 
 public class StructureMergeViewerCreator implements IViewerCreator {
     private static class JikesPGStructureCreator implements IStructureCreator {
@@ -44,6 +38,9 @@ public class StructureMergeViewerCreator implements IViewerCreator {
         }
 
         public String getName() {
+            // This name shows up in the label above the upper RHS.
+            // TODO Broken -- selection changes on the LHS don't reflect in the label on the RHS
+            // So what should we return here?
             return fConfig.getRightLabel(null); // fFile.getName();
         }
 
