@@ -1,27 +1,28 @@
 package org.jikespg.uide;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.IResourceProvider;
+import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.IViewerCreator;
-import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.compare.structuremergeviewer.IStructureCreator;
 import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.uide.parser.ILexer;
 import org.eclipse.uide.parser.IParser;
 import org.jikespg.uide.compare.JikesPGStructureNode;
@@ -38,33 +39,40 @@ public class StructureMergeViewerCreator implements IViewerCreator {
         }
 
         public String getName() {
-            // This name shows up in the label above the upper RHS.
-            // TODO Broken -- selection changes on the LHS don't reflect in the label on the RHS
-            // So what should we return here?
-            return fConfig.getRightLabel(null); // fFile.getName();
+            return "JikesPG Grammar Structure Compare";
         }
 
         public IStructureComparator getStructure(Object input) {
             try {
                 IResource res= null;
-                IFile file= null;
+                IDocument doc= CompareUI.getDocument(input);
+                IStreamContentAccessor sca;
 
-                if (input instanceof ResourceNode) {
-                    res= ((ResourceNode) input).getResource();
-                } else if (input instanceof IResourceProvider) {
+                if (input instanceof IResourceProvider) {
                     res= ((IResourceProvider) input).getResource();
-                }
-                if (res != null && res instanceof IFile)
-                    file= (IFile) res;
-                if (file != null) {
-                    IEditorPart editor= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-                    IDocumentProvider docProvider= ((ITextEditor) editor).getDocumentProvider();
-                    // TODO This is totally bogus: how do we know we got invoked from a text editor???
-                    // We need an IDocument, but how to get that???
-                    IDocument doc= docProvider.getDocument(editor.getEditorInput());
+                } else
+                    return null;
 
-                    return new JikesPGStructureNode(parseFile(file), doc, 0, "root");
+                if (input instanceof IStreamContentAccessor) {
+                    sca= (IStreamContentAccessor) input;
+                } else
+                    return null;
+
+                if (doc == null) { // Set up a document
+                    String contents= readStreamContents(sca);
+                    char[] buffer= null;
+                        
+                    if (contents != null) {
+                        int n= contents.length();
+                        buffer= new char[n];
+                        contents.getChars(0, n, buffer, 0);
+                                
+                        doc= new Document(contents);
+                        CompareUI.registerDocument(input, doc);
+                    }
                 }
+
+                return new JikesPGStructureNode(parseStream(sca, res.getFullPath()), doc, 0, "root");
             } catch (IOException io) {
             } catch (CoreException ce) {
             }
@@ -72,11 +80,19 @@ public class StructureMergeViewerCreator implements IViewerCreator {
         }
 
         private ASTNode parseFile(IFile file) throws IOException, CoreException {
-            return parseStream(file.getContents(), file.getLocation());
+            String contents= readStreamContents(file.getContents(), file.getCharset());
+
+            return parseContents(contents, file.getLocation());
         }
 
-        private ASTNode parseStream(InputStream stream, IPath path) throws IOException {
-            char[] contentsArray= getStreamContents(stream);
+        private ASTNode parseStream(IStreamContentAccessor sca, IPath path) throws IOException, CoreException {
+            String contents= readStreamContents(sca);
+
+            return parseContents(contents, path);
+        }
+
+        private ASTNode parseContents(String contents, IPath path) {
+            char[] contentsArray= contents.toCharArray();
             ILexer lexer= new JikesPGLexer();
             IParser parser= new JikesPGParser(lexer.getLexStream());
 
@@ -86,14 +102,57 @@ public class StructureMergeViewerCreator implements IViewerCreator {
             return (ASTNode) parser.parser(null, 0);
         }
 
-        private char[] getStreamContents(InputStream in) throws IOException {
-            InputStreamReader reader= new InputStreamReader(in);
-            StringBuffer buff= new StringBuffer();
-            int ch;
+        /**
+         * Given an IStreamContentAccessor, determines the appropriate encoding to use
+         * and reads the stream's contents as a String. Specifically, if the IStreamContentAccessor
+         * is also an IEncodedStreamContentAccessor, that encoding is used. Otherwise, the
+         * platform default encoding is used.
+         */
+        public static String readStreamContents(IStreamContentAccessor sca) throws CoreException {
+            InputStream is= sca.getContents();
+            if (is != null) {
+                String encoding= null;
+                if (sca instanceof IEncodedStreamContentAccessor) {
+                    try {
+                        encoding= ((IEncodedStreamContentAccessor) sca).getCharset();
+                    } catch (Exception e) {
+                    }
+                }
+                if (encoding == null)
+                    encoding= ResourcesPlugin.getEncoding();
+                return readStreamContents(is, encoding);
+            }
+            return null;
+        }
 
-            while ((ch = reader.read()) > 0)
-                buff.append((char) ch);
-            return buff.toString().toCharArray();
+        /**
+         * Reads the contents of the given input stream into a string using the given encoding.
+         * Returns null if an error occurred.
+         */
+        private static String readStreamContents(InputStream is, String encoding) {
+            BufferedReader reader= null;
+            try {
+                StringBuffer buffer= new StringBuffer();
+                char[] part= new char[2048];
+                int read= 0;
+                reader= new BufferedReader(new InputStreamReader(is, encoding));
+
+                while ((read= reader.read(part)) != -1)
+                    buffer.append(part, 0, read);
+
+                return buffer.toString();
+            } catch (IOException ex) {
+                // NeedWork
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException ex) {
+                        // silently ignored
+                    }
+                }
+            }
+            return null;
         }
 
         public IStructureComparator locate(Object path, Object input) {
