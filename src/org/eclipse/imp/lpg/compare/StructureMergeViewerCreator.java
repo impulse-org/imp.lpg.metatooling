@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.IStreamContentAccessor;
@@ -158,6 +160,7 @@ public class StructureMergeViewerCreator implements IViewerCreator {
         public IStructureComparator locate(Object path, Object input) {
             JikesPGStructureNode inputAST= (JikesPGStructureNode) input;
 
+            // TODO Figure out when/why this is called and implement :-)
             return null;
         }
 
@@ -168,7 +171,29 @@ public class StructureMergeViewerCreator implements IViewerCreator {
         }
 
         public void save(IStructureComparator node, Object input) {
-            // TODO Auto-generated method stub
+            if (node instanceof JikesPGStructureNode && input instanceof IEditableContent) {
+                IDocument document= ((JikesPGStructureNode) node).getDocument();
+                IEditableContent bca= (IEditableContent) input;
+                String contents= document.get();
+                String encoding= null;
+
+                if (input instanceof IEncodedStreamContentAccessor) {
+                    try {
+                        encoding= ((IEncodedStreamContentAccessor)input).getCharset();
+                    } catch (CoreException e1) {
+                        // ignore
+                    }
+                }
+                if (encoding == null)
+                    encoding= ResourcesPlugin.getEncoding();
+                byte[] bytes;                           
+                try {
+                    bytes= contents.getBytes(encoding);
+                } catch (UnsupportedEncodingException e) {
+                    bytes= contents.getBytes();     
+                }
+                bca.setContent(bytes);
+            }
         }
     }
 
