@@ -1,4 +1,4 @@
-package org.jikespg.uide;
+package org.jikespg.uide.compare;
 
 import java.io.BufferedReader;
 import java.io.IOException;

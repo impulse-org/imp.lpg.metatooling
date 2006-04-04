@@ -167,7 +167,7 @@
    <extension
          point="org.eclipse.compare.structureMergeViewers">
       <viewer
-            class="org.jikespg.uide.StructureMergeViewerCreator"
+            class="org.jikespg.uide.compare.StructureMergeViewerCreator"
             extensions="g,gi"
             id="org.jikespg.uide.viewer"/>
    </extension>
