@@ -56,7 +56,7 @@ class JikesPGSearchResult extends AbstractTextSearchResult implements IFileMatch
     }
 
     public String getLabel() {
-        return "JikesPG grammar matches";
+        return fQuery.getLabel();
     }
 
     public String getTooltip() {
