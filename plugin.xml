@@ -185,6 +185,25 @@
             class="org.jikespg.uide.editor.JikesPGFormatter"
             language="JikesPG"
             name="JikesPG Grammar Formatter"/>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            canSearchEnclosingProjects="true"
+            class="org.jikespg.uide.search.JikesPGSearchPage"
+            enabled="true"
+            extensions="g:100"
+            icon="icons/sample.gif"
+            id="org.jikespg.uide.searchPage"
+            label="JikesPG Search"
+            showScopeSection="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchResultViewPages">
+      <viewPage
+            class="org.jikespg.uide.search.JikesPGSearchResultPage"
+            id="org.jikespg.uide.searchResultViewPage"
+            searchResultClass="org.jikespg.uide.search.JikesPGSearchResult"/>
    </extension>  
    
 </plugin>

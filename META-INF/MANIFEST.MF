@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.core.resources,
  lpg,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
- org.eclipse.compare
+ org.eclipse.compare,
+ org.eclipse.search
 Provide-Package: org.jikespg.uide,
  org.jikespg.uide.builder,
  org.jikespg.uide.editor,
