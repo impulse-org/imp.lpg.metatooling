@@ -82,7 +82,7 @@ public class JikesPGSearchPage extends DialogPage implements ISearchPage {
         typeGroup.setLayout(new GridLayout(2, true));
 
         Label nameLabel= new Label(typeGroup, SWT.LEFT);
-        nameLabel.setText("Name:");
+        nameLabel.setText("Name regexp:");
 
         fEntityName= new Text(typeGroup, SWT.LEFT | SWT.BORDER);
         fEntityName.setText("");

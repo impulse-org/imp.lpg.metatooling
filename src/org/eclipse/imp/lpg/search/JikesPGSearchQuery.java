@@ -1,6 +1,8 @@
 package org.jikespg.uide.search;
 
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -18,7 +20,7 @@ import org.eclipse.search.ui.text.Match;
 import org.jikespg.uide.utils.StreamUtils;
 
 public class JikesPGSearchQuery implements ISearchQuery {
-    private String fEntityName;
+    private String fEntityRegexp;
 
     private boolean fIsNonTerm;
 
@@ -26,14 +28,16 @@ public class JikesPGSearchQuery implements ISearchQuery {
 
     private JikesPGSearchScope fScope;
 
-    public JikesPGSearchQuery(String entityName, boolean isNonTerm, JikesPGSearchScope scope) {
-        fEntityName= entityName;
+    public JikesPGSearchQuery(String entityRegexp, boolean isNonTerm, JikesPGSearchScope scope) {
+        fEntityRegexp= entityRegexp;
         fIsNonTerm= isNonTerm;
         fScope= scope;
         fResult= new JikesPGSearchResult(this);
     }
 
     public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
+        final Pattern pat= Pattern.compile(fEntityRegexp);
+
         for(Iterator iter= fScope.getProjects().iterator(); iter.hasNext(); ) {
             IProject p= (IProject) iter.next();
 
@@ -44,12 +48,13 @@ public class JikesPGSearchQuery implements ISearchQuery {
                             IFile file= (IFile) resource;
                             String exten= file.getFileExtension();
 
-                            if (exten != null && exten.equals("g") || exten.equals("gi")) {
+                            if (exten != null && (exten.equals("g") || exten.equals("gi"))) {
                                 String contents= StreamUtils.readStreamContents(file.getContents(), ResourcesPlugin.getEncoding());
-                                int idx= contents.indexOf(fEntityName);
+                                Matcher matcher= pat.matcher(contents);
 
-                                if (idx >= 0) {
-                                    Match m= new Match(file, idx, fEntityName.length());
+                                while (matcher.find()) {
+                                    Match m= new Match(file, matcher.start(), matcher.end() - matcher.start());
+
                                     fResult.addMatch(m);
                                 }
                             }
@@ -65,7 +70,7 @@ public class JikesPGSearchQuery implements ISearchQuery {
     }
 
     public String getLabel() {
-        return "JikesPG grammar search";
+        return (fIsNonTerm ? "non-terminal '" : "terminal '") + fEntityRegexp + "'";
     }
 
     public boolean canRerun() {
