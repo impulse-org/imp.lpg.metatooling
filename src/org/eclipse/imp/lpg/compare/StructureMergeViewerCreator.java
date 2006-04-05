@@ -1,9 +1,6 @@
 package org.jikespg.uide.compare;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.compare.CompareConfiguration;
@@ -27,10 +24,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.uide.parser.ILexer;
 import org.eclipse.uide.parser.IParser;
-import org.jikespg.uide.compare.JikesPGStructureNode;
 import org.jikespg.uide.parser.JikesPGLexer;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
+import org.jikespg.uide.utils.StreamUtils;
 
 public class StructureMergeViewerCreator implements IViewerCreator {
     private static class JikesPGStructureCreator implements IStructureCreator {
@@ -61,7 +58,7 @@ public class StructureMergeViewerCreator implements IViewerCreator {
                     return null;
 
                 if (doc == null) { // Set up a document
-                    String contents= readStreamContents(sca);
+                    String contents= StreamUtils.readStreamContents(sca);
                     char[] buffer= null;
                         
                     if (contents != null) {
@@ -82,13 +79,13 @@ public class StructureMergeViewerCreator implements IViewerCreator {
         }
 
         private ASTNode parseFile(IFile file) throws IOException, CoreException {
-            String contents= readStreamContents(file.getContents(), file.getCharset());
+            String contents= StreamUtils.readStreamContents(file.getContents(), file.getCharset());
 
             return parseContents(contents, file.getLocation());
         }
 
         private ASTNode parseStream(IStreamContentAccessor sca, IPath path) throws IOException, CoreException {
-            String contents= readStreamContents(sca);
+            String contents= StreamUtils.readStreamContents(sca);
 
             return parseContents(contents, path);
         }
@@ -102,59 +99,6 @@ public class StructureMergeViewerCreator implements IViewerCreator {
             parser.getParseStream().resetTokenStream();
             lexer.lexer(null, parser.getParseStream()); // Lex the stream to produce the token stream
             return (ASTNode) parser.parser(null, 0);
-        }
-
-        /**
-         * Given an IStreamContentAccessor, determines the appropriate encoding to use
-         * and reads the stream's contents as a String. Specifically, if the IStreamContentAccessor
-         * is also an IEncodedStreamContentAccessor, that encoding is used. Otherwise, the
-         * platform default encoding is used.
-         */
-        public static String readStreamContents(IStreamContentAccessor sca) throws CoreException {
-            InputStream is= sca.getContents();
-            if (is != null) {
-                String encoding= null;
-                if (sca instanceof IEncodedStreamContentAccessor) {
-                    try {
-                        encoding= ((IEncodedStreamContentAccessor) sca).getCharset();
-                    } catch (Exception e) {
-                    }
-                }
-                if (encoding == null)
-                    encoding= ResourcesPlugin.getEncoding();
-                return readStreamContents(is, encoding);
-            }
-            return null;
-        }
-
-        /**
-         * Reads the contents of the given input stream into a string using the given encoding.
-         * Returns null if an error occurred.
-         */
-        private static String readStreamContents(InputStream is, String encoding) {
-            BufferedReader reader= null;
-            try {
-                StringBuffer buffer= new StringBuffer();
-                char[] part= new char[2048];
-                int read= 0;
-                reader= new BufferedReader(new InputStreamReader(is, encoding));
-
-                while ((read= reader.read(part)) != -1)
-                    buffer.append(part, 0, read);
-
-                return buffer.toString();
-            } catch (IOException ex) {
-                // NeedWork
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException ex) {
-                        // silently ignored
-                    }
-                }
-            }
-            return null;
         }
 
         public IStructureComparator locate(Object path, Object input) {
