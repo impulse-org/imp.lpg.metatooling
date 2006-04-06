@@ -3,7 +3,6 @@ package org.jikespg.uide.search;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -17,7 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.Match;
-import org.jikespg.uide.utils.StreamUtils;
+import org.eclipse.uide.utils.StreamUtils;
 
 public class JikesPGSearchQuery implements ISearchQuery {
     private String fEntityRegexp;

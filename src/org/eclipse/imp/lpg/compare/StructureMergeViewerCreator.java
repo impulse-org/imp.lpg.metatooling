@@ -24,10 +24,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.uide.parser.ILexer;
 import org.eclipse.uide.parser.IParser;
+import org.eclipse.uide.utils.StreamUtils;
 import org.jikespg.uide.parser.JikesPGLexer;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import org.jikespg.uide.utils.StreamUtils;
 
 public class StructureMergeViewerCreator implements IViewerCreator {
     private static class JikesPGStructureCreator implements IStructureCreator {
