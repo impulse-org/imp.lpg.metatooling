@@ -43,7 +43,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             }
             public void preVisit(ASTNode n) {
                 IToken left= n.getLeftIToken();
-                IToken[] adjuncts= left.getPrsStream().getPreceedingAdjuncts(left.getTokenIndex());
+                IToken[] adjuncts= left.getPrsStream().getPrecedingAdjuncts(left.getTokenIndex());
                 for(int i= 0; i < adjuncts.length; i++) {
                     IToken adjunct= adjuncts[i];
                     if (!adjunctTokens.contains(adjunct)) {

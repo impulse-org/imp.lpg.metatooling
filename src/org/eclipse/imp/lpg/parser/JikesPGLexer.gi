@@ -802,12 +802,18 @@ $Rules
 
    --
    -- package
+   -- parent_saved
    -- parsetable_interfaces
    -- prefix
    -- priority
    -- programming_language
    -- prs_file
    --
+   option ::= parent_saved$ps optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($ps), $_SYMBOL); $EndJava ./
+            | no parent_saved$ps optionWhite /.$BeginJava  makeToken(getLeftSpan(), getRhsLastTokenIndex($ps), $_SYMBOL); $EndJava ./
+   parent_saved ::= pP aA rR eE nN tT _opt sS aA vV eE dD
+                  | pP sS
+
    option ::= package$p optionWhite '='$eq optionWhite Value$val optionWhite
           /.$BeginJava
                       makeToken(getRhsFirstTokenIndex($p), getRhsLastTokenIndex($p), $_SYMBOL);
