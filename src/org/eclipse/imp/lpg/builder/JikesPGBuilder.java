@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.uide.core.SAFARIBuilderBase;
@@ -82,7 +83,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	return resource.getFullPath().lastSegment().equals("bin");
     }
 
-    protected void compile(final IFile file) {
+    protected void compile(final IFile file, IProgressMonitor monitor) {
 	String fileName= file.getLocation().toOSString();
 	String templatePath= getTemplatePath();
 
