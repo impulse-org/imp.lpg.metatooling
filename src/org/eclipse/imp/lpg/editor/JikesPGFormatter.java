@@ -3,11 +3,12 @@
  */
 package org.jikespg.uide.editor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-
 import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.uide.core.ILanguageService;
 import org.eclipse.uide.editor.ISourceFormatter;
 import org.eclipse.uide.parser.IParseController;
@@ -31,8 +32,10 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
     }
 
     public String format(IParseController parseController, String content, boolean isLineStart, String indentation, int[] positions) {
-        final StringBuffer buff= new StringBuffer();
-        final Set adjunctTokens= new HashSet();
+        final StringBuffer fBuff= new StringBuffer();
+        final Set fAdjunctTokens= new HashSet();
+        final ASTNode[] fAdjunctNode= new ASTNode[1];
+        final List/*<IToken>*/ fFollowingAdjuncts= new ArrayList();
         JikesPG root= (JikesPG) parseController.getCurrentAst();
 
         root.accept(new JikesPGParser.AbstractVisitor() {
@@ -43,149 +46,168 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             }
             public void preVisit(ASTNode n) {
                 IToken left= n.getLeftIToken();
-                IToken[] adjuncts= left.getPrsStream().getPrecedingAdjuncts(left.getTokenIndex());
-                for(int i= 0; i < adjuncts.length; i++) {
-                    IToken adjunct= adjuncts[i];
-                    if (!adjunctTokens.contains(adjunct)) {
-                        buff.append(adjunct);
-                        buff.append('\n');
+                IToken[] precAdjuncts= left.getPrecedingAdjuncts();
+
+                for(int i= 0; i < precAdjuncts.length; i++) {
+                    IToken adjunct= precAdjuncts[i];
+                    if (!fAdjunctTokens.contains(adjunct)) {
+                        fBuff.append(adjunct);
+                        fBuff.append('\n');
                     }
-                    adjunctTokens.add(adjunct);
+                    fAdjunctTokens.add(adjunct);
+                }
+
+                if (fFollowingAdjuncts.size() == 0) {
+                    IToken right= n.getRightIToken();
+                    IToken[] follAdjuncts= right.getFollowingAdjuncts();
+
+                    for(int i= 0; i < follAdjuncts.length; i++) {
+                	IToken adjunct= follAdjuncts[i];
+
+                	if (!fAdjunctTokens.contains(adjunct)) {
+                	    fFollowingAdjuncts.add(adjunct);
+                	    fAdjunctTokens.add(adjunct);
+                	}
+                    }
+                    fAdjunctNode[0]= n;
                 }
             }
             public void postVisit(ASTNode n) {
-                IToken right= n.getRightIToken();
-                IToken[] adjuncts= right.getPrsStream().getFollowingAdjuncts(right.getTokenIndex());
-                for(int i= 0; i < adjuncts.length; i++) {
-                    IToken adjunct= adjuncts[i];
-                    if (!adjunctTokens.contains(adjunct)) {
-                        buff.append(adjunct);
-                        buff.append('\n');
-                    }
-                    adjunctTokens.add(adjunct);
-                }
+        	if (n == fAdjunctNode[0]) {
+        	    for(Iterator iter= fFollowingAdjuncts.iterator(); iter.hasNext(); ) {
+        		IToken adjunct= (IToken) iter.next();
+		    
+        		fBuff.append(adjunct);
+        		fBuff.append('\n');
+        	    }
+        	    fFollowingAdjuncts.clear();
+        	}
             }
             public boolean visit(option_spec n) {
-                buff.append("%options ");
+                fBuff.append("%options ");
                 return true;
             }
-            public void endVisit(option_list n) {
-                if (n.getoption_list() != null)
-                    buff.append(',');
+            public boolean visit(option_list n) {
+        	if (n.getoption_list() != null) {
+        	    n.getoption_list().accept(this);
+        	    fBuff.append(',');
+        	}
+        	n.getoption().accept(this);
+        	return false;
             }
             public void endVisit(option_spec n) {
-                buff.append('\n');
+                fBuff.append('\n');
             }
             public boolean visit(option n) {
-                buff.append(n.getSYMBOL());
+                fBuff.append(n.getSYMBOL());
                 return true;
             }
             public boolean visit(option_value0 n) {
-                buff.append("=" + n.getSYMBOL());
+                fBuff.append("=" + n.getSYMBOL());
                 return false;
             }
             public boolean visit(option_value1 n) {
-                buff.append('(');
+                fBuff.append('(');
                 SYMBOLList symList= n.getsymbol_list();
                 for(int i=0; i < symList.size(); i++) {
-                    if (i > 0) buff.append(',');
-                    buff.append(symList.getSYMBOLAt(i));
+                    if (i > 0) fBuff.append(',');
+                    fBuff.append(symList.getSYMBOLAt(i));
                 }
-                buff.append(')');
+                fBuff.append(')');
                 return false;
             }
             public boolean visit(NoticeSeg n) {
-                buff.append("$Notice\n");
+                fBuff.append("$Notice\n");
                 return true;
             }
             public void endVisit(NoticeSeg n) {
-                buff.append("$End\n\n");
+                fBuff.append("$End\n\n");
             }
             public boolean visit(GlobalsSeg n) {
-                buff.append("$Globals\n");
+                fBuff.append("$Globals\n");
                 return true;
             }
             public void endVisit(GlobalsSeg n) {
-                buff.append("$End\n\n");
+                fBuff.append("$End\n\n");
             }
             public boolean visit(globals_segment1 n) {
-                buff.append(fIndentString);
+                fBuff.append(fIndentString);
                 return true;
             }
             public boolean visit(HeadersSeg n) {
-                buff.append("$Headers\n");
+                fBuff.append("$Headers\n");
                 return true;
             }
             public void endVisit(HeadersSeg n) {
-                buff.append("$End\n\n");
+                fBuff.append("$End\n\n");
             }
             public boolean visit(IdentifierSeg n) {
-                buff.append("$Identifier\n");
+                fBuff.append("$Identifier\n");
                 return true;
             }
             public void endVisit(IdentifierSeg n) {
-                buff.append("$End\n\n");
+                fBuff.append("$End\n\n");
             }
             public boolean visit(EofSeg n) {
-                buff.append("$EOF\n");
+                fBuff.append("$EOF\n");
                 return true;
             }
             public void endVisit(EofSeg n) {
-                buff.append("$End\n\n");
+                fBuff.append("$End\n\n");
             }
             public boolean visit(terminal_symbol0 n) {
-                buff.append(fIndentString);
-                buff.append(n.getSYMBOL());
-                buff.append('\n');
+                fBuff.append(fIndentString);
+                fBuff.append(n.getSYMBOL());
+                fBuff.append('\n');
                 return false;
             }
             public boolean visit(DefineSeg n) {
-                buff.append("$Define\n");
+                fBuff.append("$Define\n");
                 return true;
             }
             public void endVisit(DefineSeg n) {
-                buff.append("$End\n\n");
+                fBuff.append("$End\n\n");
             }
             public void endVisit(define_segment1 n) {
-                buff.append(fIndentString);
-                buff.append(n.getmacro_name_symbol());
-                buff.append(' ');
-                buff.append(n.getmacro_segment());
-                buff.append('\n');
+                fBuff.append(fIndentString);
+                fBuff.append(n.getmacro_name_symbol());
+                fBuff.append(' ');
+                fBuff.append(n.getmacro_segment());
+                fBuff.append('\n');
             }
             public boolean visit(TerminalsSeg n) {
-                buff.append("$Terminals\n");
+                fBuff.append("$Terminals\n");
                 return true;
             }
             public void endVisit(TerminalsSeg n) {
-                buff.append("$End\n\n");
+                fBuff.append("$End\n\n");
             }
             public boolean visit(terminal n) {
-                buff.append(fIndentString + n.getterminal_symbol());
+                fBuff.append(fIndentString + n.getterminal_symbol());
                 if (n.getoptTerminalAlias() != null)
-                    buff.append(" ::= " + n.getoptTerminalAlias().getname());
-                buff.append('\n');
+                    fBuff.append(" ::= " + n.getoptTerminalAlias().getname());
+                fBuff.append('\n');
                 return false;
             }
             public boolean visit(StartSeg n) {
-                buff.append("$Start\n");
+                fBuff.append("$Start\n");
                 return true;
             }
             public void endVisit(StartSeg n) {
-                buff.append("$End\n\n");
+                fBuff.append("$End\n\n");
             }
             public boolean visit(start_symbol0 n) {
-                buff.append(fIndentString);
-                buff.append(n.getSYMBOL());
-                buff.append('\n');
+                fBuff.append(fIndentString);
+                fBuff.append(n.getSYMBOL());
+                fBuff.append('\n');
                 return false;
             }
             public boolean visit(start_symbol1 n) {
-                buff.append(n.getMACRO_NAME());
+                fBuff.append(n.getMACRO_NAME());
                 return false;
             }
             public boolean visit(RulesSeg n) {
-                buff.append("$Rules\n");
+                fBuff.append("$Rules\n");
                 if (fIndentProducesToWidestNonTerm) {
                     rules_segment rulesSegment= n.getrules_segment();
                     nonTermList nonTermList= rulesSegment.getnonTermList();
@@ -199,63 +221,63 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 return true;
             }
             public void endVisit(RulesSeg n) {
-                buff.append("$End\n");
+                fBuff.append("$End\n");
             }
             public boolean visit(nonTerm n) {
-                buff.append(fIndentString);
-                buff.append(n.getSYMBOL());
+                fBuff.append(fIndentString);
+                fBuff.append(n.getSYMBOL());
                 if (n.getclassName() != null)
-                    buff.append(n.getclassName());
+                    fBuff.append(n.getclassName());
                 if (n.getarrayElement() != null)
-                    buff.append(n.getarrayElement());
+                    fBuff.append(n.getarrayElement());
                 if (fIndentProducesToWidestNonTerm) {
                     for(int i=n.getSYMBOL().toString().length() + fIndentSize + 1; i <= prodIndent; i++)
-                        buff.append(' ');
+                        fBuff.append(' ');
                 } else
-                    buff.append(' ');
-                buff.append(n.getproduces());
+                    fBuff.append(' ');
+                fBuff.append(n.getproduces());
                 prodCount= 0;
                 if (!fIndentProducesToWidestNonTerm)
                     prodIndent= fIndentSize + n.getSYMBOL().toString().length() + 1;
                 return true;
             }
             public void endVisit(nonTerm n) {
-                buff.append('\n');
+                fBuff.append('\n');
             }
             public boolean visit(rhs n) {
                 if (prodCount > 0) {
-                    buff.append('\n');
+                    fBuff.append('\n');
                     for(int i=0; i < prodIndent; i++)
-                        buff.append(' ');
-                    buff.append("|  ");
+                        fBuff.append(' ');
+                    fBuff.append("|  ");
                 }
                 prodCount++;
                 return true;
             }
             public boolean visit(action_segment n) {
-                buff.append(n.getBLOCK());
-                buff.append('\n');
+                fBuff.append(n.getBLOCK());
+                fBuff.append('\n');
                 return false;
             }
             public boolean visit(symWithAttrs0 n) {
-                buff.append(' ');
-                buff.append(n.getEMPTY_KEY());
+                fBuff.append(' ');
+                fBuff.append(n.getEMPTY_KEY());
                 return false;
             }
             public boolean visit(symWithAttrs1 n) {
-                buff.append(' ');
-                buff.append(n.getSYMBOL());
+                fBuff.append(' ');
+                fBuff.append(n.getSYMBOL());
                 return false;
             }
             public boolean visit(symWithAttrs2 n) {
-                buff.append(' ');
-                buff.append(n.getSYMBOL());
-                buff.append(n.getMACRO_NAME());
+                fBuff.append(' ');
+                fBuff.append(n.getSYMBOL());
+                fBuff.append(n.getMACRO_NAME());
                 return false;
             }
         });
 
-	return buff.toString();
+	return fBuff.toString();
     }
 
     public void formatterStops() {
