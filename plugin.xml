@@ -72,7 +72,7 @@
          point="org.eclipse.uide.runtime.languageDescription">
       <language
             description="JikesPG Grammar Specification"
-            extensions="g,gi"
+            extensions="g,gi,lpg"
             icon="grammarfile.gif"
             language="JikesPG"/>
    </extension>
