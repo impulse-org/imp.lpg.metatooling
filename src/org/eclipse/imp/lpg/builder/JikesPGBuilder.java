@@ -76,7 +76,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 
 	String fileName= path.toString();
 
-	return (fileName.indexOf("/bin/") == -1 && "g".equals(path.getFileExtension()));
+	return (fileName.indexOf("/bin/") == -1 && JikesPGPreferenceCache.extensionList.contains(path.getFileExtension()));
     }
 
     protected boolean isOutputFolder(IResource resource) {
@@ -85,9 +85,9 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 
     protected void compile(final IFile file, IProgressMonitor monitor) {
 	String fileName= file.getLocation().toOSString();
-	String templatePath= getTemplatePath();
+	String includePath= getIncludePath();
 
-	JikesPGPlugin.getInstance().maybeWriteInfoMsg("Using template path '" + templatePath + "'.");
+	JikesPGPlugin.getInstance().maybeWriteInfoMsg("Using template path '" + includePath + "'.");
 
 	try {
 	    File parentDir= new File(fileName).getParentFile();
@@ -95,7 +95,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 		    getLPGExecutable(),
 		    "-quiet",
 		    (JikesPGPreferenceCache.generateListing ? "-list" : "-nolist"),
-		    "-include-directory='" + templatePath + "'",
+		    "-include-directory='" + includePath + "'",
 		    // TODO RMF 7/21/05 -- Don't specify -dat-directory; causes performance issues with Eclipse.
 		    // Lexer tables can get quite large, so large that Java as spec'ed can't swallow them
 		    // when translated to a switch statement, or even an array initializer. As a result,
@@ -209,21 +209,22 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	return false;
     }
 
-    public static String getTemplatePath() {
-	if (JikesPGPreferenceCache.jikesPGTemplateDir != null &&
-	    JikesPGPreferenceCache.jikesPGTemplateDir.length() > 0)
-	    return JikesPGPreferenceCache.jikesPGTemplateDir;
+    public static String getIncludePath() {
+	if (JikesPGPreferenceCache.jikesPGIncludeDirs != null &&
+	    JikesPGPreferenceCache.jikesPGIncludeDirs.length() > 0)
+	    return JikesPGPreferenceCache.jikesPGIncludeDirs;
 
-	return getDefaultTemplatePath();
+	return getDefaultIncludePath();
     }
 
-    public static String getDefaultTemplatePath() {
+    public static String getDefaultIncludePath() {
 	Bundle bundle= Platform.getBundle(LPG_PLUGIN_ID);
 
 	try {
 	    // Use getEntry() rather than getResource(), since the "templates" folder is
 	    // no longer inside the plugin jar (which is now expanded upon installation).
 	    String tmplPath= Platform.asLocalURL(bundle.getEntry("templates")).getFile();
+
 	    if (Platform.getOS().equals("win32"))
 		tmplPath= tmplPath.substring(1);
 	    return tmplPath;

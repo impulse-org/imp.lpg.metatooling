@@ -3,6 +3,8 @@
  */
 package org.jikespg.uide.preferences;
 
+import java.util.Set;
+
 /**
  * Caches the values of various JikesPG preferences from the preference store
  * for convenience and efficiency.<br>
@@ -25,16 +27,23 @@ public class JikesPGPreferenceCache {
     public static String jikesPGExecutableFile;
 
     /**
-     * If true, the builder will specify the "templates" folder from the "LPG" plugin
-     * as the "-include-directory" option.
+     * If true, the builder will use the "templates" folder from the "LPG" plugin
+     * as the sole "-include-directory" option.
      */
-    public static boolean useDefaultTemplates;
+    public static boolean useDefaultIncludeDir;
 
     /**
-     * Absolute path of the directory containing the JikesPG templates. If useDefaultTemplates
-     * is true, this is automatically set to point at the "templates" folder in the "LPG" plugin.
+     * Semicolon-separated list of absolute paths of the directory containing included
+     * grammar files (via template, include, or import). If useDefaultInclude is true,
+     * this is automatically set to point at the "templates" folder in the "LPG" plugin.
      */
-    public static String jikesPGTemplateDir;
+    public static String jikesPGIncludeDirs;
+
+    /**
+     * Set of Strings identifying the list of file-name extensions that will be processed by
+     * the JikesPG generator.
+     */
+    public static Set/*<String>*/ extensionList;
 
     /**
      * If true, the generator will be instructed to create listing files when

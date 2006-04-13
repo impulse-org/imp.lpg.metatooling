@@ -1,6 +1,8 @@
 package org.jikespg.uide;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -40,8 +42,10 @@ public class JikesPGPlugin extends SAFARIPluginBase {
         JikesPGPreferenceCache.builderEmitMessages= prefStore.getBoolean(PreferenceConstants.P_EMIT_MESSAGES);
         JikesPGPreferenceCache.useDefaultExecutable= prefStore.getBoolean(PreferenceConstants.P_USE_DEFAULT_EXEC);
         JikesPGPreferenceCache.jikesPGExecutableFile= prefStore.getString(PreferenceConstants.P_JIKESPG_EXEC_PATH);
-        JikesPGPreferenceCache.useDefaultTemplates= prefStore.getBoolean(PreferenceConstants.P_USE_DEFAULT_TEMPLATE_DIR);
-        JikesPGPreferenceCache.jikesPGTemplateDir= prefStore.getString(PreferenceConstants.P_JIKESPG_TEMPLATE_DIR);
+        JikesPGPreferenceCache.useDefaultIncludeDir= prefStore.getBoolean(PreferenceConstants.P_USE_DEFAULT_INCLUDE_DIR);
+        JikesPGPreferenceCache.jikesPGIncludeDirs= prefStore.getString(PreferenceConstants.P_JIKESPG_INCLUDE_DIRS);
+        JikesPGPreferenceCache.extensionList= new HashSet();
+        JikesPGPreferenceCache.extensionList.addAll(Arrays.asList(prefStore.getString(PreferenceConstants.P_EXTENSION_LIST).split(",")));
 
         fEmitInfoMessages= JikesPGPreferenceCache.builderEmitMessages;
     }

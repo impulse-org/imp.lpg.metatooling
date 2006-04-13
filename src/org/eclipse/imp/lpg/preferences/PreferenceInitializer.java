@@ -20,7 +20,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	store.setDefault(PreferenceConstants.P_GEN_LISTINGS, false);
 	store.setDefault(PreferenceConstants.P_USE_DEFAULT_EXEC, true);
 	store.setDefault(PreferenceConstants.P_JIKESPG_EXEC_PATH, JikesPGBuilder.getDefaultExecutablePath());
-	store.setDefault(PreferenceConstants.P_USE_DEFAULT_TEMPLATE_DIR, true);
-	store.setDefault(PreferenceConstants.P_JIKESPG_TEMPLATE_DIR, JikesPGBuilder.getDefaultTemplatePath());
+	store.setDefault(PreferenceConstants.P_USE_DEFAULT_INCLUDE_DIR, true);
+	store.setDefault(PreferenceConstants.P_JIKESPG_INCLUDE_DIRS, JikesPGBuilder.getDefaultIncludePath());
+	store.setDefault(PreferenceConstants.P_EXTENSION_LIST, "g,lpg,gra");
     }
 }
