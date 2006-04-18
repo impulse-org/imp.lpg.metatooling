@@ -21,12 +21,15 @@ public class FoldingUpdater implements IFoldingUpdater {
 	final HashMap newAnnotations= new HashMap();
 	ASTNode ast= (ASTNode) parseController.getCurrentAst();
 
+	if (ast == null)
+	    return;
+
 	ast.accept(new JikesPGParser.AbstractVisitor() {
 	    public void unimplementedVisitor(String s) { }
 	    private void makeAnnotation(ASTNode n) {
 		ProjectionAnnotation annotation= new ProjectionAnnotation();
 		int start= n.getLeftIToken().getStartOffset();
-		int len= n.getRightIToken().getEndOffset() - start;
+		int len= n.getRightIToken().getEndOffset() - start + 1;
 
 		newAnnotations.put(annotation, new Position(start, len));
 		annotations.add(annotation);
@@ -79,7 +82,8 @@ public class FoldingUpdater implements IFoldingUpdater {
 
 	dumpAnnotations(annotations, newAnnotations);
 
-	annotationModel.modifyAnnotations(fOldAnnotations, newAnnotations, null);
+	if (fOldAnnotations == null || annotations.size() != fOldAnnotations.length)
+	    annotationModel.modifyAnnotations(fOldAnnotations, newAnnotations, null);
 	fOldAnnotations= (Annotation[]) annotations.toArray(new Annotation[annotations.size()]);
     }
 
