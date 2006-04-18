@@ -33,28 +33,28 @@ $Rules
     JikesPG ::= options_segment JikesPG_INPUT
 
     JikesPG_INPUT ::= $empty
-                    | JikesPG_INPUT JikesPG_item END_KEY_OPT
+                    | JikesPG_INPUT JikesPG_item
 
-    JikesPG_item$AliasSeg      ::= alias_segment
-    JikesPG_item$DefineSeg     ::= define_segment
-    JikesPG_item$EofSeg        ::= eof_segment
-    JikesPG_item$EolSeg        ::= eol_segment
-    JikesPG_item$ErrorSeg      ::= error_segment
-    JikesPG_item$ExportSeg     ::= export_segment
-    JikesPG_item$GlobalsSeg    ::= globals_segment
-    JikesPG_item$HeadersSeg    ::= headers_segment
-    JikesPG_item$ImportSeg     ::= import_segment
-    JikesPG_item$IdentifierSeg ::= identifier_segment
-    JikesPG_item$IncludeSeg    ::= include_segment
-    JikesPG_item$KeywordsSeg   ::= keywords_segment
-    JikesPG_item$NamesSeg      ::= names_segment
-    JikesPG_item$NoticeSeg     ::= notice_segment
-    JikesPG_item$RulesSeg      ::= rules_segment
-    JikesPG_item$StartSeg      ::= start_segment
-    JikesPG_item$TerminalsSeg  ::= terminals_segment
-    JikesPG_item$AstSeg        ::= ast_segment
-    JikesPG_item$TrailersSeg   ::= trailers_segment
-    JikesPG_item$TypesSeg      ::= types_segment
+    JikesPG_item$AliasSeg      ::= alias_segment      END_KEY_OPT
+    JikesPG_item$DefineSeg     ::= define_segment     END_KEY_OPT
+    JikesPG_item$EofSeg        ::= eof_segment        END_KEY_OPT
+    JikesPG_item$EolSeg        ::= eol_segment        END_KEY_OPT
+    JikesPG_item$ErrorSeg      ::= error_segment      END_KEY_OPT
+    JikesPG_item$ExportSeg     ::= export_segment     END_KEY_OPT
+    JikesPG_item$GlobalsSeg    ::= globals_segment    END_KEY_OPT
+    JikesPG_item$HeadersSeg    ::= headers_segment    END_KEY_OPT
+    JikesPG_item$ImportSeg     ::= import_segment     END_KEY_OPT
+    JikesPG_item$IdentifierSeg ::= identifier_segment END_KEY_OPT
+    JikesPG_item$IncludeSeg    ::= include_segment    END_KEY_OPT
+    JikesPG_item$KeywordsSeg   ::= keywords_segment   END_KEY_OPT
+    JikesPG_item$NamesSeg      ::= names_segment      END_KEY_OPT
+    JikesPG_item$NoticeSeg     ::= notice_segment     END_KEY_OPT
+    JikesPG_item$RulesSeg      ::= rules_segment      END_KEY_OPT
+    JikesPG_item$StartSeg      ::= start_segment      END_KEY_OPT
+    JikesPG_item$TerminalsSeg  ::= terminals_segment  END_KEY_OPT
+    JikesPG_item$AstSeg        ::= ast_segment        END_KEY_OPT
+    JikesPG_item$TrailersSeg   ::= trailers_segment   END_KEY_OPT
+    JikesPG_item$TypesSeg      ::= types_segment      END_KEY_OPT
 
     options_segment ::= $empty | options_segment option_spec
     option_spec$option_spec ::= OPTIONS_KEY
