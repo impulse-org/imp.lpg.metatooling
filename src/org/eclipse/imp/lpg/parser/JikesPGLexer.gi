@@ -358,17 +358,22 @@ $Rules
    OptionLineList ::= OptionLine
                     | OptionLineList OptionLine
    OptionLine ::= options Eol
-                | options optionList Eol
-                | options optionWhiteChar singleLineComment Eol
-                | options optionList optionWhiteChar singleLineComment Eol
+                | OptionsHeader Eol
+                | OptionsHeader optionList Eol
+                | OptionsHeader OptionComment Eol
+                | OptionsHeader optionList optionWhiteChar OptionComment Eol
 
-   options ::= '%' oO pP tT iI oO nN sS$s optionWhiteChar optionWhite
+   OptionsHeader ::= options optionWhiteChar optionWhite
+   
+   options ::= '%' oO pP tT iI oO nN sS$s
           /.$BeginJava
-                      makeToken(getLeftSpan(), getRhsLastTokenIndex($s), $_OPTIONS_KEY);
+                      makeToken(getLeftSpan(), getRightSpan(), $_OPTIONS_KEY);
             $EndJava
           ./
- 
-    _opt -> $empty
+
+   OptionComment ::= singleLineComment /.$BeginJava makeComment($_SINGLE_LINE_COMMENT); $EndJava./
+   
+   _opt -> $empty
          | '_'
          | '-'
 
