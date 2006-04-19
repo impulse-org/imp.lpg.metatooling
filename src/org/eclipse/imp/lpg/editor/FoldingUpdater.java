@@ -70,6 +70,10 @@ public class FoldingUpdater implements IFoldingUpdater {
 		makeAnnotation(n);
 		return false;
 	    }
+	    public boolean visit(NoticeSeg n) {
+		makeAnnotation(n);
+		return false;
+	    }
 	    public boolean visit(RulesSeg n) {
 		makeAnnotation(n);
 		return false;
@@ -78,9 +82,13 @@ public class FoldingUpdater implements IFoldingUpdater {
 		makeAnnotation(n);
 		return false;
 	    }
+	    public boolean visit(TypesSeg n) {
+		makeAnnotation(n);
+		return false;
+	    }
 	});
 
-	dumpAnnotations(annotations, newAnnotations);
+//	dumpAnnotations(annotations, newAnnotations);
 
 	if (fOldAnnotations == null || annotations.size() != fOldAnnotations.length)
 	    annotationModel.modifyAnnotations(fOldAnnotations, newAnnotations, null);
