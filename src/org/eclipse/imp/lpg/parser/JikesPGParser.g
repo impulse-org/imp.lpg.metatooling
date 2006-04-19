@@ -5,7 +5,9 @@
 %options import_terminals=JikesPGLexer.gi
 
 $Globals
-    /.import org.eclipse.uide.parser.IParser;./
+    /.import org.eclipse.uide.parser.IParser;
+import org.eclipse.uide.editor.IMessageHandler;
+     ./
 $End
 
 $Define
@@ -29,11 +31,27 @@ $Start
     JikesPG
 $End
 
+$Headers
+    /.
+    private IMessageHandler msgHandler;
+
+    public void setMessageHandler(IMessageHandler handler) {
+        msgHandler= handler;
+    }
+
+    public void reportError(int errorCode, String locationInfo, int leftToken, int rightToken, String tokenText)
+    {
+        int len= getEndOffset(rightToken) - getStartOffset(leftToken) + 1;
+        msgHandler.handleMessage(getStartOffset(leftToken), len, errorMsgText[errorCode]);
+    }
+     ./
+$End
+
 $Rules
     JikesPG ::= options_segment JikesPG_INPUT
 
-    JikesPG_INPUT ::= $empty
-                    | JikesPG_INPUT JikesPG_item
+    JikesPG_INPUT$$JikesPG_item ::= $empty
+                                |   JikesPG_INPUT JikesPG_item
 
     JikesPG_item$AliasSeg      ::= alias_segment      END_KEY_OPT
     JikesPG_item$DefineSeg     ::= define_segment     END_KEY_OPT
