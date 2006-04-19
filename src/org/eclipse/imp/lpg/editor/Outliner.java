@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import lpg.lpgjavaruntime.IToken;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -19,6 +18,8 @@ import org.eclipse.uide.defaults.DefaultOutliner;
 import org.eclipse.uide.editor.UniversalEditor;
 import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.ParseError;
+import org.jikespg.uide.IJikesPGResources;
+import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.*;
 
@@ -202,20 +203,17 @@ public class Outliner extends DefaultOutliner {
             return true;
         }
         public boolean visit(type_declarations0 n) {
-            fItemStack.push(createSubItem(symbolImage(n.getSYMBOL3()), n));
+            createSubItem(symbolImage(n.getSYMBOL3()), n);
             return true;
         }
         public boolean visit(type_declarations1 n) {
-            fItemStack.push(createSubItem(symbolImage(n.getSYMBOL()), n));
+            createSubItem(symbolImage(n.getSYMBOL()), n);
             return true;
         }
     }
 
-    private static final String MESSAGE= "This is the default outliner. Add your own using the UIDE wizard and see class 'org.eclipse.uide.defaults.DefaultOutliner'";
-
-    // FIXME Shouldn't be using JDT images
-    // FIXME Should dispose this image at some point, no?
-    private static final Image sTreeItemImage= JavaPluginImages.DESC_MISC_PUBLIC.createImage();
+    // FIXME Should dispose() this image at some point, no?
+    private static final Image sTreeItemImage= JikesPGPlugin.getInstance().getImageRegistry().get(IJikesPGResources.OUTLINE_ITEM);
 
     public String producesImage(Iproduces produces) {
 	if (produces instanceof produces0)
@@ -273,6 +271,7 @@ public class Outliner extends DefaultOutliner {
 
     public TreeItem createTopItem(String label, ASTNode n) {
 	TreeItem treeItem= new TreeItem(tree, SWT.NONE);
+
 	treeItem.setText(label);
 	treeItem.setImage(sTreeItemImage);
 	if (n != null)
@@ -286,10 +285,11 @@ public class Outliner extends DefaultOutliner {
 
     public TreeItem createSubItem(String label, ASTNode n) {
 	TreeItem treeItem= new TreeItem((TreeItem) fItemStack.peek(), SWT.NONE);
+
 	treeItem.setText(label);
+	treeItem.setImage(sTreeItemImage);
         if (n != null)
             treeItem.setData(n);
-	treeItem.setImage(sTreeItemImage);
 	return treeItem;
     }
 
@@ -307,7 +307,8 @@ public class Outliner extends DefaultOutliner {
 			tree.removeAll();
 			fItemStack.clear();
 			jpg.accept(new OutlineVisitor());
-		    }
+		    } else
+			System.err.println("Couldn't form outline for null AST.");
 		}
 //		tree.setSelection(new TreeItem[] { tree.getItem(new Point(0, 0)) });
 	    }
@@ -319,6 +320,34 @@ public class Outliner extends DefaultOutliner {
 		tree.setRedraw(true);
 	}
     }
+
+    public void setEditor(UniversalEditor editor) {
+        System.out.println(editor.getTitle());
+    }
+
+    public void setTree(Tree tree) {
+        super.setTree(tree);
+	this.tree.addSelectionListener(new SelectionListener() {
+	    public void widgetSelected(SelectionEvent e) {
+		TreeItem ti= (TreeItem) e.item;
+		Object data= ti.getData();
+
+		if (data instanceof ASTNode) {
+		    ASTNode node= (ASTNode) data;
+		    IToken token= node.getLeftIToken();
+
+		    IEditorPart activeEditor= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		    AbstractTextEditor textEditor= (AbstractTextEditor) activeEditor;
+
+		    textEditor.selectAndReveal(token.getStartOffset(), token.getEndOffset()-token.getStartOffset()+1);
+//		    textEditor.setFocus();
+		}
+	    }
+	    public void widgetDefaultSelected(SelectionEvent e) { }
+	});
+    }
+
+    private static final String MESSAGE= "This is the default outliner. Add your own using the UIDE wizard and see class 'org.eclipse.uide.defaults.DefaultOutliner'";
 
     private void createDebugContents(IParseController controller) {
 	createTopItem(MESSAGE);
@@ -341,31 +370,5 @@ public class Outliner extends DefaultOutliner {
 	if (count >= 100)
 	    createTopItem("rest of outline truncated...");
 	}
-    }
-
-    public void setEditor(UniversalEditor editor) {
-        System.out.println(editor.getTitle());
-    }
-
-    public void setTree(Tree tree) {
-        super.setTree(tree);
-	this.tree.addSelectionListener(new SelectionListener() {
-	    public void widgetSelected(SelectionEvent e) {
-		TreeItem ti= (TreeItem) e.item;
-		Object data= ti.getData();
-
-		if (data instanceof ASTNode) {
-		    ASTNode node= (ASTNode) ti.getData();
-		    IToken token= node.getLeftIToken();
-
-		    IEditorPart activeEditor= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		    AbstractTextEditor textEditor= (AbstractTextEditor) activeEditor;
-
-		    textEditor.selectAndReveal(token.getStartOffset(), token.getEndOffset()-token.getStartOffset()+1);
-//		    textEditor.setFocus();
-		}
-	    }
-	    public void widgetDefaultSelected(SelectionEvent e) { }
-	});
     }
 }
