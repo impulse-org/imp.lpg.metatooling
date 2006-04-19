@@ -62,19 +62,16 @@ public class JikesPGStructureNode extends DocumentRangeNode implements ITypedEle
 
         public boolean visit(JikesPG n) {
             options_segment options= n.getoptions_segment();
-            JikesPG_INPUT input= n.getJikesPG_INPUT();
+            JikesPG_itemList itemList= n.getJikesPG_INPUT();
+            int count= 1 + itemList.size();
 
-            int count=1;
-            for(JikesPG_INPUT in= input; in != null; in= in.getJikesPG_INPUT()) {
-                count++;
-            }
             fChildren= new Object[count];
             fChildren[0]= new JikesPGStructureNode(options, fStructureNode, OPTION, "options");
-            int i=1;
-            for(JikesPG_INPUT in= input; in != null; in= in.getJikesPG_INPUT(), i++) {
-                // HACK Shouldn't need the following cast, but IJikesPG_item doesn't derive from ASTNode...
-                IJikesPG_item item= in.getJikesPG_item();
-                fChildren[i]= new JikesPGStructureNode((ASTNode) item, fStructureNode, BODY, item.getLeftIToken().toString());
+
+            for(int i= 0; i < itemList.size(); i++) {
+                IJikesPG_item item= itemList.getJikesPG_itemAt(i);
+
+                fChildren[i+1]= new JikesPGStructureNode((ASTNode) item, fStructureNode, BODY, item.getLeftIToken().toString());
             }
             return false;
         }
