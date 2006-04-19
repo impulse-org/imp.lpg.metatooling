@@ -17,13 +17,21 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.uide.core.SAFARIBuilderBase;
 import org.eclipse.uide.runtime.SAFARIPluginBase;
+import org.eclipse.uide.utils.StreamUtils;
 import org.jikespg.uide.JikesPGPlugin;
+import org.jikespg.uide.parser.JikesPGLexer;
+import org.jikespg.uide.parser.JikesPGParser;
+import org.jikespg.uide.parser.JikesPGParser.ASTNode;
+import org.jikespg.uide.parser.JikesPGParser.import_segment1;
+import org.jikespg.uide.parser.JikesPGParser.include_segment1;
+import org.jikespg.uide.parser.JikesPGParser.option;
 import org.jikespg.uide.preferences.JikesPGPreferenceCache;
 import org.jikespg.uide.views.JikesPGView;
 import org.osgi.framework.Bundle;
@@ -111,10 +119,56 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	    processJikesPGOutput(file, process, consoleView);
 	    processJikesPGErrors(file, process, consoleView);
 	    doRefresh(file);
+//	    collectDependencies(file);
 	} catch (Exception e) {
 	    JikesPGPlugin.getInstance().writeErrorMsg(e.getMessage());
 	    e.printStackTrace();
 	}
+    }
+
+    private void collectDependencies(IFile file) throws CoreException {
+        JikesPGLexer lexer= new JikesPGLexer(); // Create the lexer
+        JikesPGParser parser= new JikesPGParser(lexer.getLexStream()); // Create the parser
+        String filePath= file.getLocation().toOSString();
+
+        lexer.initialize(StreamUtils.readStreamContents(file.getContents()).toCharArray(), filePath);
+
+        ASTNode ast= (ASTNode) parser.parser();
+
+        // Not sure the following does the right thing: although it adds .g files to the
+        // to-build list when included/imported .gi files are modified, does that assume
+        // the .gi files get passed to the builder? Also, don't we want to scan .gi files
+        // for *their* dependencies?
+        findDependencies(ast, filePath);
+    }
+
+    /**
+     * @param root
+     * @param filePath 
+     */
+    private void findDependencies(ASTNode root, final String filePath) {
+        root.accept(new JikesPGParser.AbstractVisitor() {
+            public void unimplementedVisitor(String s) { }
+            public boolean visit(option n) {
+                if (n.getSYMBOL().equals("import_terminals"))
+                    fDependencyInfo.addDependency(filePath, n.getoption_value().toString());
+                return false;
+            }
+            /* (non-Javadoc)
+             * @see org.jikespg.uide.parser.JikesPGParser.AbstractVisitor#visit(org.jikespg.uide.parser.JikesPGParser.ImportSeg)
+             */
+            public boolean visit(import_segment1 n) {
+                fDependencyInfo.addDependency(filePath, n.getSYMBOL().toString());
+                return false;
+            }
+            /* (non-Javadoc)
+             * @see org.jikespg.uide.parser.JikesPGParser.AbstractVisitor#visit(org.jikespg.uide.parser.JikesPGParser.include_segment1)
+             */
+            public boolean visit(include_segment1 n) {
+                fDependencyInfo.addDependency(filePath, n.getSYMBOL().toString());
+                return false;
+            }
+        });
     }
 
     private void processJikesPGErrors(IResource resource, Process process, JikesPGView view) throws IOException {
