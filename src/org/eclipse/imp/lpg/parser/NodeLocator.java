@@ -4,6 +4,8 @@ import org.eclipse.uide.parser.IASTNodeLocator;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG;
+import org.jikespg.uide.parser.JikesPGParser.nonTerm;
+import org.jikespg.uide.parser.JikesPGParser.symWithAttrs1;
 import org.jikespg.uide.parser.JikesPGParser.terminal_symbol1;
 import lpg.lpgjavaruntime.IToken;
 import lpg.lpgjavaruntime.PrsStream;
@@ -47,7 +49,7 @@ public class NodeLocator implements IASTNodeLocator {
         public ASTNode getResult() { return fResult; }
 
         public void unimplementedVisitor(String s) {
-            System.out.println(s);
+//            System.out.println(s);
         }
 
         public void endVisit(JikesPG n) {
@@ -121,17 +123,11 @@ public class NodeLocator implements IASTNodeLocator {
 //            }
 //            return null;
 //        }
-//        public Object visit(nonTerm n) {
-//            Object ret= null;
-//            ret= n.getSYMBOL().accept(this);
-//            if (ret == null && n.getoptMacro() != null)
-//                ret= n.getoptMacro().accept(this);
-//            if (ret == null)
-//                ret= n.getproduces().accept(this);
-//            if (ret == null)
-//                ret= n.getrhsList().accept(this);
-//            return ret;
-//        }
+        public void endVisit(nonTerm n) {
+            IToken tok= n.getSYMBOL().getIToken();
+            if (fStartOffset >= tok.getStartOffset() && fEndOffset <= tok.getEndOffset())
+        	fResult= n;
+        }
 //        public Object visit(rhsSymbol n) {
 //            Object o= null;
 //            if (n.getrhs() != null)
@@ -148,6 +144,11 @@ public class NodeLocator implements IASTNodeLocator {
 //                o= n.getrhs().accept(this);
 //            return o;
 //        }
+        public void endVisit(symWithAttrs1 n) {
+            IToken sym= n.getSYMBOL();
+            if (fStartOffset >= sym.getStartOffset() && fEndOffset <= sym.getEndOffset()+1)
+        	fResult= n;
+        }
         public void endVisit(ASTNodeToken n) {
             IToken lt= n.getLeftIToken();
             IToken rt= n.getRightIToken();
