@@ -56,6 +56,10 @@ public class JikesPGPlugin extends SAFARIPluginBase {
         IPath path= ICONS_PATH.append("default.gif");//$NON-NLS-1$
         ImageDescriptor imageDescriptor= createImageDescriptor(getInstance().getBundle(), path);
         reg.put(IJikesPGResources.DEFAULT_AST, imageDescriptor);
+
+        path= ICONS_PATH.append("outline_item.gif");//$NON-NLS-1$
+        imageDescriptor= createImageDescriptor(getInstance().getBundle(), path);
+        reg.put(IJikesPGResources.OUTLINE_ITEM, imageDescriptor);
     }
 
     public static ImageDescriptor createImageDescriptor(Bundle bundle, IPath path) {
