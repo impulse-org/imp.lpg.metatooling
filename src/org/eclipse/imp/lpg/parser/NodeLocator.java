@@ -38,7 +38,7 @@ public class NodeLocator implements IASTNodeLocator {
         private final PrsStream fParseStream= fController.getParser().getParseStream();
 
         public LocatingVisitor(int offset) {
-            this(offset, offset+1);
+            this(offset, offset);
         }
 
         public LocatingVisitor(int startOffset, int endOffset) {
