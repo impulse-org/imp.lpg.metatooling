@@ -43,15 +43,15 @@ public class HoverHelper implements IHoverHelper {
         return getSubstring(parseController, token);
     }
 
-    private String getSubstring(IParseController parseController, int start, int end) {
+    public static String getSubstring(IParseController parseController, int start, int end) {
         return new String(parseController.getLexer().getLexStream().getInputChars(), start, end-start+1);
     }
 
-    private String getSubstring(IParseController parseController, IToken token) {
+    public static String getSubstring(IParseController parseController, IToken token) {
         return getSubstring(parseController, token.getStartOffset(), token.getEndOffset());
     }
 
-    private nonTerm findDefOf(IASTNodeToken s, JikesPG root) {
+    public static nonTerm findDefOf(IASTNodeToken s, JikesPG root) {
 	// This would use the auto-generated bindings if they were implemented already...
 	String id= stripName(s.toString());
 	JikesPG_itemList itemList= root.getJikesPG_INPUT();
@@ -76,7 +76,7 @@ public class HoverHelper implements IHoverHelper {
 	return null;
     }
 
-    private String stripName(String rawId) {
+    public static String stripName(String rawId) {
 	int idx= rawId.indexOf('$');
 
 	return (idx >= 0) ? rawId.substring(0, idx) : rawId;
