@@ -117,6 +117,11 @@
    </extension>
    <extension
          point="org.eclipse.uide.runtime.hyperLink">
+      <hyperlinkDetector
+            class="org.jikespg.uide.editor.HyperlinkDetector"
+            id="org.jikespg.uide.hyperlinkDetector"
+            language="JikesPG"
+            name="JikesPG Hyperlink Detector"/>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
