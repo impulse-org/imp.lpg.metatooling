@@ -1,5 +1,7 @@
 package org.jikespg.uide.parser;
 
+import lpg.lpgjavaruntime.IToken;
+
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
@@ -7,19 +9,20 @@ import org.jikespg.uide.parser.JikesPGParser.JikesPG;
 import org.jikespg.uide.parser.JikesPGParser.nonTerm;
 import org.jikespg.uide.parser.JikesPGParser.symWithAttrs1;
 import org.jikespg.uide.parser.JikesPGParser.terminal_symbol1;
-import lpg.lpgjavaruntime.IToken;
-import lpg.lpgjavaruntime.PrsStream;
 
 public class NodeLocator implements IASTNodeLocator {
-    private final ParseController fController;
+//  private final ParseController fController;
     private ASTNode fResult= null;
 
     public NodeLocator(ParseController controller) {
-        fController= controller;
+//      fController= controller;
     }
 
     public Object findNode(Object ast, int offset) {
         ASTNode root= (ASTNode) ast;
+
+        if (root == null)
+            return null;
 
         root.accept(new LocatingVisitor(offset));
         return fResult;
@@ -35,7 +38,7 @@ public class NodeLocator implements IASTNodeLocator {
     private class LocatingVisitor extends JikesPGParser.AbstractVisitor {
         private final int fStartOffset;
         private final int fEndOffset;
-        private final PrsStream fParseStream= fController.getParser().getParseStream();
+//      private final PrsStream fParseStream= fController.getParser().getParseStream();
 
         public LocatingVisitor(int offset) {
             this(offset, offset);
