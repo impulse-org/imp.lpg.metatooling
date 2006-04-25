@@ -2,7 +2,6 @@ package org.jikespg.uide.editor;
 
 import lpg.lpgjavaruntime.IToken;
 import lpg.lpgjavaruntime.PrsStream;
-
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
@@ -11,10 +10,13 @@ import org.eclipse.uide.core.ILanguageService;
 import org.eclipse.uide.editor.ISourceHyperlinkDetector;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.IParseController;
+import org.jikespg.uide.parser.ASTUtils;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
+import org.jikespg.uide.parser.JikesPGParser.Imacro_name_symbol;
 import org.jikespg.uide.parser.JikesPGParser.JikesPG;
 import org.jikespg.uide.parser.JikesPGParser.nonTerm;
+import org.jikespg.uide.parser.JikesPGParser.terminal;
 
 public class HyperlinkDetector implements ISourceHyperlinkDetector, ILanguageService {
     public HyperlinkDetector() { }
@@ -38,13 +40,13 @@ public class HyperlinkDetector implements ISourceHyperlinkDetector, ILanguageSer
             return null;
 
         if (node instanceof IASTNodeToken) {
-            final nonTerm def= HoverHelper.findDefOf((IASTNodeToken) node, (JikesPG) ast);
+            final ASTNode def= ASTUtils.findDefOf((IASTNodeToken) node, (JikesPG) ast);
 
             if (def != null) {
                 final int srcStart= node.getLeftIToken().getStartOffset();
                 final int srcLength= node.getRightIToken().getEndOffset() - srcStart + 1;
                 final int targetStart= def.getLeftIToken().getStartOffset();
-                final int targetLength= def.getSYMBOL().toString().length();
+                final int targetLength= node.getLeftIToken().toString().length();
 
                 return new IHyperlink[] {
                         new IHyperlink() {
@@ -52,10 +54,16 @@ public class HyperlinkDetector implements ISourceHyperlinkDetector, ILanguageSer
                                 return new Region(srcStart, srcLength);
                             }
                             public String getTypeLabel() {
-                                return "non-terminal";
+                        	if (def instanceof nonTerm)
+                        	    return "non-terminal";
+                        	if (def instanceof terminal)
+                        	    return "terminal";
+                        	if (def instanceof Imacro_name_symbol)
+                        	    return "macro";
+                        	return null;
                             }
                             public String getHyperlinkText() {
-                                return def.getSYMBOL().toString();
+                                return def.getLeftIToken().toString();
                             }
                             public void open() {
                                 textViewer.setSelectedRange(targetStart, targetLength);
