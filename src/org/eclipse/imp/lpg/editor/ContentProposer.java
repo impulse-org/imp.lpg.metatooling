@@ -6,9 +6,7 @@ package org.jikespg.uide.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import lpg.lpgjavaruntime.PrsStream;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -18,17 +16,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.uide.editor.IContentProposer;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.IParseController;
-import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import org.jikespg.uide.parser.JikesPGParser.IJikesPG_item;
-import org.jikespg.uide.parser.JikesPGParser.JikesPG;
-import org.jikespg.uide.parser.JikesPGParser.JikesPG_itemList;
-import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
-import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
-import org.jikespg.uide.parser.JikesPGParser.nonTerm;
-import org.jikespg.uide.parser.JikesPGParser.nonTermList;
-import org.jikespg.uide.parser.JikesPGParser.rules_segment;
-import org.jikespg.uide.parser.JikesPGParser.terminal;
-import org.jikespg.uide.parser.JikesPGParser.terminalList;
+import org.jikespg.uide.parser.ASTUtils;
+import org.jikespg.uide.parser.JikesPGParser.*;
 
 public class ContentProposer implements IContentProposer {
 
@@ -91,15 +80,34 @@ public class ContentProposer implements IContentProposer {
 
         final List/*<ICompletionProposal>*/ proposals= new ArrayList();
 
-        proposals.addAll(computeNonTerminalCompletions(prefix, offset, root));
-        proposals.addAll(computeTerminalCompletions(prefix, offset, root));
+        if (prefix.startsWith("$"))
+            proposals.addAll(computeMacroCompletions(prefix, offset, root));
+        else {
+            proposals.addAll(computeNonTerminalCompletions(prefix, offset, root));
+            proposals.addAll(computeTerminalCompletions(prefix, offset, root));
+        }
 
         return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
 
+    private List/*<ICompletionProposal>*/ computeMacroCompletions(String prefix, int offset, JikesPG root) {
+        List/*<ICompletionProposal>*/ result= new ArrayList();
+        List/*<Imacro_name_symbol>*/ macros= ASTUtils.getMacros(root);
+
+        for(Iterator iter= macros.iterator(); iter.hasNext(); ) {
+            Imacro_name_symbol macro= (Imacro_name_symbol) iter.next();
+            String macroName= macro.toString();
+
+            if (macroName.startsWith(prefix)) {
+                result.add(new GrammarProposal(macroName, prefix, offset));
+            }
+        }
+        return result;
+    }
+
     private List/*<ICompletionProposal>*/ computeNonTerminalCompletions(final String prefix, final int offset, JikesPG root) {
         List/*<ICompletionProposal>*/ result= new ArrayList();
-        List/*<nonTerm>*/ nonTerms= getNonTerminals(root);
+        List/*<nonTerm>*/ nonTerms= ASTUtils.getNonTerminals(root);
 
         for(Iterator iter= nonTerms.iterator(); iter.hasNext(); ) {
             nonTerm nt= (nonTerm) iter.next();
@@ -114,21 +122,9 @@ public class ContentProposer implements IContentProposer {
         return result;
     }
 
-    private List/*<nonTerm>*/ getNonTerminals(JikesPG root) {
-        List/*<nonTerm>*/ result= new ArrayList();
-
-        // TODO: pick up non-terminals from any imported file
-        RulesSeg rules= (RulesSeg) findItemOfType(root, RulesSeg.class);
-        rules_segment rulesSeg= rules.getrules_segment();
-        nonTermList nonTermList= rulesSeg.getnonTermList();
-
-        result.addAll(nonTermList.getArrayList());
-        return result;
-    }
-
     private List/*<ICompletionProposal>*/ computeTerminalCompletions(final String prefix, final int offset, JikesPG root) {
         List/*<ICompletionProposal>*/ result= new ArrayList();
-        List/*<terminal>*/ terms= getTerminals(root);
+        List/*<terminal>*/ terms= ASTUtils.getTerminals(root);
 
         for(Iterator iter= terms.iterator(); iter.hasNext(); ) {
             terminal t= (terminal) iter.next();
@@ -141,28 +137,5 @@ public class ContentProposer implements IContentProposer {
             }
         }
         return result;
-    }
-
-    private List/*<terminal>*/ getTerminals(JikesPG root) {
-        List/*<terminal>*/ result= new ArrayList();
-
-        // TODO: pick up terminals from any imported file
-        TerminalsSeg terminalsSeg= (TerminalsSeg) findItemOfType(root, TerminalsSeg.class);
-        terminalList terminals= terminalsSeg.getterminals_segment();
-
-        result.addAll(terminals.getArrayList());
-        return result;
-    }
-
-    private ASTNode findItemOfType(JikesPG root, Class ofType) {
-        JikesPG_itemList itemList= root.getJikesPG_INPUT();
-
-        for(int i=0; i < itemList.size(); i++) {
-            IJikesPG_item item= itemList.getJikesPG_itemAt(i);
-
-            if (ofType.isInstance(item))
-                return (ASTNode) item;
-        }
-        return null;
     }
 }
