@@ -1,11 +1,13 @@
 package org.jikespg.uide.editor;
 
+import java.util.List;
 import lpg.lpgjavaruntime.IToken;
 import lpg.lpgjavaruntime.PrsStream;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.uide.editor.IHoverHelper;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.IParseController;
+import org.jikespg.uide.parser.ASTUtils;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.IASTNodeToken;
 import org.jikespg.uide.parser.JikesPGParser.IJikesPG_item;
@@ -15,6 +17,7 @@ import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
 import org.jikespg.uide.parser.JikesPGParser.nonTerm;
 import org.jikespg.uide.parser.JikesPGParser.nonTermList;
 import org.jikespg.uide.parser.JikesPGParser.rules_segment;
+import org.jikespg.uide.parser.JikesPGParser.terminal;
 
 public class HoverHelper implements IHoverHelper {
     public String getHoverHelpAt(IParseController parseController, ISourceViewer srcViewer, int offset) {
@@ -51,28 +54,27 @@ public class HoverHelper implements IHoverHelper {
         return getSubstring(parseController, token.getStartOffset(), token.getEndOffset());
     }
 
-    public static nonTerm findDefOf(IASTNodeToken s, JikesPG root) {
+    public static ASTNode findDefOf(IASTNodeToken s, JikesPG root) {
 	// This would use the auto-generated bindings if they were implemented already...
 	String id= stripName(s.toString());
-	JikesPG_itemList itemList= root.getJikesPG_INPUT();
 
-	for(int i=0; i < itemList.size(); i++) {
-	    IJikesPG_item item= itemList.getJikesPG_itemAt(i);
+        List/*<nonTerm>*/ nonTermList= ASTUtils.getNonTerminals(root);
+        List/*<terminal>*/ termList= ASTUtils.getTerminals(root);
+	
+        for(int j=0; j < nonTermList.size(); j++) {
+            nonTerm nonTerm= (nonTerm) nonTermList.get(j);
+            String nonTermName= stripName(nonTerm.getSYMBOL().toString());
 
-	    if (!(item instanceof RulesSeg))
-		continue;
-	    RulesSeg rules= (RulesSeg) item;
-	    rules_segment rulesSeg= rules.getrules_segment();
-	    nonTermList nonTermList= rulesSeg.getnonTermList();
+            if (nonTermName.equals(id))
+        	return nonTerm;
+        }
+        for(int j=0; j < termList.size(); j++) {
+            terminal term= (terminal) termList.get(j);
+            String termName= stripName(term.getterminal_symbol().toString());
 
-	    for(int j=0; j < nonTermList.size(); j++) {
-		nonTerm nonTerm= nonTermList.getnonTermAt(j);
-		String nonTermName= stripName(nonTerm.getSYMBOL().toString());
-
-		if (nonTermName.equals(id))
-		    return nonTerm;
-	    }
-	}
+            if (termName.equals(id))
+        	return term;
+        }
 	return null;
     }
 
