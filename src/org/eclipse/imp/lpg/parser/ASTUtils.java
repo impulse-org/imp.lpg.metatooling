@@ -2,18 +2,8 @@ package org.jikespg.uide.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import org.jikespg.uide.parser.JikesPGParser.DefineSeg;
-import org.jikespg.uide.parser.JikesPGParser.IJikesPG_item;
-import org.jikespg.uide.parser.JikesPGParser.Idefine_segment;
-import org.jikespg.uide.parser.JikesPGParser.JikesPG;
-import org.jikespg.uide.parser.JikesPGParser.JikesPG_itemList;
-import org.jikespg.uide.parser.JikesPGParser.RulesSeg;
-import org.jikespg.uide.parser.JikesPGParser.TerminalsSeg;
-import org.jikespg.uide.parser.JikesPGParser.define_segment1;
-import org.jikespg.uide.parser.JikesPGParser.nonTermList;
-import org.jikespg.uide.parser.JikesPGParser.rules_segment;
-import org.jikespg.uide.parser.JikesPGParser.terminalList;
+import org.jikespg.uide.editor.HoverHelper;
+import org.jikespg.uide.parser.JikesPGParser.*;
 
 public class ASTUtils {
     private ASTUtils() { }
@@ -64,6 +54,38 @@ public class ASTUtils {
     
             if (ofType.isInstance(item))
                 return (ASTNode) item;
+        }
+        return null;
+    }
+
+    public static ASTNode findDefOf(IASTNodeToken s, JikesPG root) {
+        // This would use the auto-generated bindings if they were implemented already...
+        String id= HoverHelper.stripName(s.toString());
+    
+        List/*<nonTerm>*/ nonTermList= getNonTerminals(root);
+        List/*<terminal>*/ termList= getTerminals(root);
+        List/*<Imacro_name_symbol>*/ macros= getMacros(root);
+    
+        for(int j=0; j < nonTermList.size(); j++) {
+            nonTerm nonTerm= (nonTerm) nonTermList.get(j);
+            String nonTermName= HoverHelper.stripName(nonTerm.getSYMBOL().toString());
+    
+            if (nonTermName.equals(id))
+        	return nonTerm;
+        }
+        for(int j=0; j < termList.size(); j++) {
+            terminal term= (terminal) termList.get(j);
+            String termName= HoverHelper.stripName(term.getterminal_symbol().toString());
+    
+            if (termName.equals(id))
+        	return term;
+        }
+        for(int j=0; j < macros.size(); j++) {
+            Imacro_name_symbol macro= (Imacro_name_symbol) macros.get(j);
+            String macroName= HoverHelper.stripName(macro.toString());
+    
+            if (macroName.equals(id))
+        	return (ASTNode) macro;
         }
         return null;
     }
