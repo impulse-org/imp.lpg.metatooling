@@ -228,10 +228,10 @@ $Rules
 
     notEOLOrRightAngle -> letter | digit | specialNoRightAngle | Space | HT | FF
 
-    notEOLOrQuotes ::= notEOLOrQuote
+    notEOLOrQuotes ::= $empty
                      | notEOLOrQuotes notEOLOrQuote
 
-    notEOLOrDoubleQuotes ::= notEOLOrDoubleQuote
+    notEOLOrDoubleQuotes ::= $empty
                            | notEOLOrDoubleQuotes notEOLOrDoubleQuote
 
     notEOLOrRightAngles ::= notEOLOrRightAngle
@@ -365,7 +365,7 @@ $Rules
 
    OptionsHeader ::= options optionWhiteChar optionWhite
    
-   options ::= '%' oO pP tT iI oO nN sS$s
+   options ::= '%' oO pP tT iI oO nN sS
           /.$BeginJava
                       makeToken(getLeftSpan(), getRightSpan(), $_OPTIONS_KEY);
             $EndJava
