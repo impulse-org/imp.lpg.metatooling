@@ -12,7 +12,6 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.jikespg.uide.IJikesPGResources;
 import org.jikespg.uide.JikesPGPlugin;
-import org.jikespg.uide.parser.GetChildrenVisitor;
 import org.jikespg.uide.parser.JikesPGParser.*;
 
 public class JikesPGStructureNode extends DocumentRangeNode implements ITypedElement {
