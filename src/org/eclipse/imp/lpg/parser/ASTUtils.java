@@ -61,30 +61,30 @@ public class ASTUtils {
     public static ASTNode findDefOf(IASTNodeToken s, JikesPG root) {
         // This would use the auto-generated bindings if they were implemented already...
         String id= HoverHelper.stripName(s.toString());
-    
+
         List/*<nonTerm>*/ nonTermList= getNonTerminals(root);
         List/*<terminal>*/ termList= getTerminals(root);
         List/*<Imacro_name_symbol>*/ macros= getMacros(root);
-    
+
         for(int j=0; j < nonTermList.size(); j++) {
             nonTerm nonTerm= (nonTerm) nonTermList.get(j);
             String nonTermName= HoverHelper.stripName(nonTerm.getSYMBOL().toString());
-    
+
             if (nonTermName.equals(id))
         	return nonTerm;
         }
         for(int j=0; j < termList.size(); j++) {
             terminal term= (terminal) termList.get(j);
             String termName= HoverHelper.stripName(term.getterminal_symbol().toString());
-    
+
             if (termName.equals(id))
         	return term;
         }
         for(int j=0; j < macros.size(); j++) {
             Imacro_name_symbol macro= (Imacro_name_symbol) macros.get(j);
-            String macroName= HoverHelper.stripName(macro.toString());
-    
-            if (macroName.equals(id))
+            String macroName= macro.toString();
+
+            if (macroName.equals(s.toString()))
         	return (ASTNode) macro;
         }
         return null;
