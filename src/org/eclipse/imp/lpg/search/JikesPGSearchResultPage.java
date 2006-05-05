@@ -6,11 +6,10 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
 
-public class JikesPGSearchResultPage extends AbstractTextSearchViewPage implements ISearchResultPage {
+public class JikesPGSearchResultPage extends AbstractTextSearchViewPage {
     private final class JikesPGLabelProvider implements ILabelProvider {
         public void addListener(ILabelProviderListener listener) {
         }
