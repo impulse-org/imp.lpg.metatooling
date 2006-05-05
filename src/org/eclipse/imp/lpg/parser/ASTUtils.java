@@ -1,6 +1,7 @@
 package org.jikespg.uide.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jikespg.uide.editor.HoverHelper;
 import org.jikespg.uide.parser.JikesPGParser.*;
@@ -13,6 +14,9 @@ public class ASTUtils {
     
         // DO NOT pick up macros from any imported file! They shouldn't be treated as defined in this scope!
         DefineSeg defineSeg= (DefineSeg) findItemOfType(root, DefineSeg.class);
+
+        if (defineSeg == null) return Collections.EMPTY_LIST;
+
         Idefine_segment defines= defineSeg.getdefine_segment();
     
         while (defines instanceof define_segment1) {
@@ -28,6 +32,9 @@ public class ASTUtils {
     
         // TODO: pick up non-terminals from any imported file
         RulesSeg rules= (RulesSeg) findItemOfType(root, RulesSeg.class);
+
+        if (rules == null) return Collections.EMPTY_LIST;
+
         rules_segment rulesSeg= rules.getrules_segment();
         nonTermList nonTermList= rulesSeg.getnonTermList();
     
@@ -40,6 +47,9 @@ public class ASTUtils {
     
         // TODO: pick up terminals from any imported file
         TerminalsSeg terminalsSeg= (TerminalsSeg) findItemOfType(root, TerminalsSeg.class);
+
+        if (terminalsSeg == null) return Collections.EMPTY_LIST;
+
         terminalList terminals= terminalsSeg.getterminals_segment();
     
         result.addAll(terminals.getArrayList());
