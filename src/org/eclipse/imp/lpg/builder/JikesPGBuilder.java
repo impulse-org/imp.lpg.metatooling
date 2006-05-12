@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -32,6 +31,7 @@ import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.import_segment1;
 import org.jikespg.uide.parser.JikesPGParser.include_segment1;
 import org.jikespg.uide.parser.JikesPGParser.option;
+import org.jikespg.uide.parser.JikesPGParser.option_value0;
 import org.jikespg.uide.preferences.JikesPGPreferenceCache;
 import org.jikespg.uide.views.JikesPGView;
 import org.osgi.framework.Bundle;
@@ -132,6 +132,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
         String filePath= file.getLocation().toOSString();
 
         lexer.initialize(StreamUtils.readStreamContents(file.getContents()).toCharArray(), filePath);
+	lexer.lexer(null, parser.getParseStream()); // Lex the stream to produce the token stream
 
         ASTNode ast= (ASTNode) parser.parser();
 
@@ -150,8 +151,8 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
         root.accept(new JikesPGParser.AbstractVisitor() {
             public void unimplementedVisitor(String s) { }
             public boolean visit(option n) {
-                if (n.getSYMBOL().equals("import_terminals"))
-                    fDependencyInfo.addDependency(filePath, n.getoption_value().toString());
+                if (n.getSYMBOL().toString().equals("import_terminals"))
+                    fDependencyInfo.addDependency(filePath, ((option_value0) n.getoption_value()).getSYMBOL().toString());
                 return false;
             }
             /* (non-Javadoc)
