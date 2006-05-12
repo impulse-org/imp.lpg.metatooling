@@ -134,7 +134,7 @@
                class="org.jikespg.uide.EnableBuilder"
                icon="icons/builderEnable.gif"
                id="org.jikespg.uide.enableBuilderAction"
-               label="Enable JikesPG Builder"
+               label="Enable &amp;JikesPG Builder"
                tooltip="Enable the JikesPG builder for this project"/>
       </objectContribution>
    </extension>
