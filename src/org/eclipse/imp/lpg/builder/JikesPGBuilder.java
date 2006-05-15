@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -78,13 +79,11 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
     }
 
     protected boolean isSourceFile(IFile file) {
-	IPath path= file.getRawLocation();
+	return !file.isDerived() && JikesPGPreferenceCache.rootExtensionList.contains(file.getFileExtension());
+    }
 
-	if (path == null) return false;
-
-	String fileName= path.toString();
-
-	return (fileName.indexOf("/bin/") == -1 && JikesPGPreferenceCache.extensionList.contains(path.getFileExtension()));
+    protected boolean isNonRootSourceFile(IFile file) {
+        return !file.isDerived() && JikesPGPreferenceCache.nonRootExtensionList.contains(file.getFileExtension());
     }
 
     protected boolean isOutputFolder(IResource resource) {
@@ -119,28 +118,31 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	    processJikesPGOutput(file, process, consoleView);
 	    processJikesPGErrors(file, process, consoleView);
 	    doRefresh(file);
-//	    collectDependencies(file);
+	    collectDependencies(file);
 	} catch (Exception e) {
 	    JikesPGPlugin.getInstance().writeErrorMsg(e.getMessage());
 	    e.printStackTrace();
 	}
     }
 
-    private void collectDependencies(IFile file) throws CoreException {
+    protected void collectDependencies(IFile file) {
         JikesPGLexer lexer= new JikesPGLexer(); // Create the lexer
         JikesPGParser parser= new JikesPGParser(lexer.getLexStream()); // Create the parser
         String filePath= file.getLocation().toOSString();
 
-        lexer.initialize(StreamUtils.readStreamContents(file.getContents()).toCharArray(), filePath);
-	lexer.lexer(null, parser.getParseStream()); // Lex the stream to produce the token stream
+        try {
+            String contents= StreamUtils.readStreamContents(file.getContents());
 
-        ASTNode ast= (ASTNode) parser.parser();
+            lexer.initialize(contents.toCharArray(), filePath);
+            lexer.lexer(null, lexer.getPrsStream());
 
-        // Not sure the following does the right thing: although it adds .g files to the
-        // to-build list when included/imported .gi files are modified, does that assume
-        // the .gi files get passed to the builder? Also, don't we want to scan .gi files
-        // for *their* dependencies?
-        findDependencies(ast, filePath);
+            ASTNode ast= (ASTNode) parser.parser();
+
+            if (ast != null)
+        	findDependencies(ast, file.getFullPath().toString());
+        } catch (CoreException ce) {
+            
+        }
     }
 
     /**
@@ -151,8 +153,11 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
         root.accept(new JikesPGParser.AbstractVisitor() {
             public void unimplementedVisitor(String s) { }
             public boolean visit(option n) {
-                if (n.getSYMBOL().toString().equals("import_terminals"))
-                    fDependencyInfo.addDependency(filePath, ((option_value0) n.getoption_value()).getSYMBOL().toString());
+                if (n.getSYMBOL().toString().equals("import_terminals")) {
+                    String referent= ((option_value0) n.getoption_value()).getSYMBOL().toString();
+                    String referentPath= filePath.substring(0, filePath.lastIndexOf("/")+1) + referent;
+                    fDependencyInfo.addDependency(filePath, referentPath);
+                }
                 return false;
             }
             /* (non-Javadoc)
