@@ -16,5 +16,7 @@ public class PreferenceConstants {
 
     public static final String P_EXTENSION_LIST= "extensionList";
 
+    public static final String P_NON_ROOT_EXTENSION_LIST= "nonRootExtensionList";
+
     public static final String P_GEN_LISTINGS= "generateListings";
 }

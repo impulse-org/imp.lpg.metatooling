@@ -44,8 +44,10 @@ public class JikesPGPlugin extends SAFARIPluginBase {
         JikesPGPreferenceCache.jikesPGExecutableFile= prefStore.getString(PreferenceConstants.P_JIKESPG_EXEC_PATH);
         JikesPGPreferenceCache.useDefaultIncludeDir= prefStore.getBoolean(PreferenceConstants.P_USE_DEFAULT_INCLUDE_DIR);
         JikesPGPreferenceCache.jikesPGIncludeDirs= prefStore.getString(PreferenceConstants.P_JIKESPG_INCLUDE_DIRS);
-        JikesPGPreferenceCache.extensionList= new HashSet();
-        JikesPGPreferenceCache.extensionList.addAll(Arrays.asList(prefStore.getString(PreferenceConstants.P_EXTENSION_LIST).split(",")));
+        JikesPGPreferenceCache.rootExtensionList= new HashSet();
+        JikesPGPreferenceCache.rootExtensionList.addAll(Arrays.asList(prefStore.getString(PreferenceConstants.P_EXTENSION_LIST).split(",")));
+        JikesPGPreferenceCache.nonRootExtensionList= new HashSet();
+        JikesPGPreferenceCache.nonRootExtensionList.addAll(Arrays.asList(prefStore.getString(PreferenceConstants.P_NON_ROOT_EXTENSION_LIST).split(",")));
 
         fEmitInfoMessages= JikesPGPreferenceCache.builderEmitMessages;
     }

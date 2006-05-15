@@ -40,10 +40,16 @@ public class JikesPGPreferenceCache {
     public static String jikesPGIncludeDirs;
 
     /**
-     * Set of Strings identifying the list of file-name extensions that will be processed by
-     * the JikesPG generator.
+     * Set of Strings identifying the list of file-name extensions that will be processed
+     * directly by the JikesPG generator.
      */
-    public static Set/*<String>*/ extensionList;
+    public static Set/*<String>*/ rootExtensionList;
+
+    /**
+     * Set of Strings identifying the list of file-name extensions that will be scanned
+     * for dependencies but not processed directly by the JikesPG generator.
+     */
+    public static Set/*<String>*/ nonRootExtensionList;
 
     /**
      * If true, the generator will be instructed to create listing files when

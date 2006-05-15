@@ -23,5 +23,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	store.setDefault(PreferenceConstants.P_USE_DEFAULT_INCLUDE_DIR, true);
 	store.setDefault(PreferenceConstants.P_JIKESPG_INCLUDE_DIRS, JikesPGBuilder.getDefaultIncludePath());
 	store.setDefault(PreferenceConstants.P_EXTENSION_LIST, "g,lpg,gra");
+	store.setDefault(PreferenceConstants.P_NON_ROOT_EXTENSION_LIST, "gi");
     }
 }
