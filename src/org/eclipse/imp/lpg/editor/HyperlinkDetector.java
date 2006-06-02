@@ -46,7 +46,9 @@ public class HyperlinkDetector implements ISourceHyperlinkDetector, ILanguageSer
                 final int srcStart= node.getLeftIToken().getStartOffset();
                 final int srcLength= node.getRightIToken().getEndOffset() - srcStart + 1;
                 final int targetStart= def.getLeftIToken().getStartOffset();
-                final int targetLength= node.getLeftIToken().toString().length();
+                // SMS 2 Jun 2006:  replaced original calculation of target length
+                // (which was erroneously based on node rather than def)
+                final int targetLength= def.getRightIToken().getEndOffset() - targetStart + 1;
 
                 return new IHyperlink[] {
                         new IHyperlink() {
