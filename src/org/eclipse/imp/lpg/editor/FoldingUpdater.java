@@ -3,6 +3,7 @@ package org.jikespg.uide.editor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import lpg.lpgjavaruntime.LexStream;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -30,6 +31,12 @@ public class FoldingUpdater implements IFoldingUpdater {
 		ProjectionAnnotation annotation= new ProjectionAnnotation();
 		int start= n.getLeftIToken().getStartOffset();
 		int len= n.getRightIToken().getEndOffset() - start + 1;
+
+		newAnnotations.put(annotation, new Position(start, len));
+		annotations.add(annotation);
+	    }
+	    private void makeAnnotation(int start, int len) {
+		ProjectionAnnotation annotation= new ProjectionAnnotation();
 
 		newAnnotations.put(annotation, new Position(start, len));
 		annotations.add(annotation);
@@ -76,6 +83,26 @@ public class FoldingUpdater implements IFoldingUpdater {
 	    }
 	    public boolean visit(RulesSeg n) {
 		makeAnnotation(n);
+		return true;
+	    }
+	    public boolean visit(rhs n) {
+		final action_segment optAction= n.getopt_action_segment();
+
+		if (optAction != null) {
+		    // Make the action block and any surrounding whitespace foldable.
+		    final LexStream lexStream= optAction.getIToken().getPrsStream().getLexStream();
+		    int start= optAction.getLeftIToken().getStartOffset();
+		    int len= optAction.getRightIToken().getEndOffset() - start + 3;
+
+		    while (Character.isWhitespace(lexStream.getCharValue(start-1))) {
+			start--;
+			len++;
+		    }
+		    while (Character.isWhitespace(lexStream.getCharValue(start + len - 1)))
+			len++;
+		    len--;
+		    makeAnnotation(start, len);
+		}
 		return false;
 	    }
 	    public boolean visit(TerminalsSeg n) {
