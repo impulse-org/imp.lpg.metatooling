@@ -42,7 +42,8 @@ $Headers
     public void reportError(int errorCode, String locationInfo, int leftToken, int rightToken, String tokenText)
     {
         int len= getEndOffset(rightToken) - getStartOffset(leftToken) + 1;
-        msgHandler.handleMessage(getStartOffset(leftToken), len, errorMsgText[errorCode]);
+        if (msgHandler != null)
+          msgHandler.handleMessage(getStartOffset(leftToken), len, errorMsgText[errorCode]);
     }
      ./
 $End
