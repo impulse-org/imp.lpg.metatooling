@@ -93,13 +93,16 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
     protected void compile(final IFile file, IProgressMonitor monitor) {
 	String fileName= file.getLocation().toOSString();
 	String includePath= getIncludePath();
-
-	JikesPGPlugin.getInstance().maybeWriteInfoMsg("Using template path '" + includePath + "'.");
-
 	try {
+	    String executablePath= getLPGExecutable();
 	    File parentDir= new File(fileName).getParentFile();
+
+	    JikesPGPlugin.getInstance().maybeWriteInfoMsg("Running generator on grammar file '" + fileName + "'.");
+	    JikesPGPlugin.getInstance().maybeWriteInfoMsg("Using executable at '" + executablePath + "'.");
+	    JikesPGPlugin.getInstance().maybeWriteInfoMsg("Using template path '" + includePath + "'.");
+
 	    String cmd[]= new String[] {
-		    getLPGExecutable(),
+		    executablePath,
 		    "-quiet",
 		    (JikesPGPreferenceCache.generateListing ? "-list" : "-nolist"),
 		    "-include-directory='" + includePath + "'",
@@ -119,9 +122,9 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	    processJikesPGErrors(file, process, consoleView);
 	    doRefresh(file);
 	    collectDependencies(file);
+	    JikesPGPlugin.getInstance().maybeWriteInfoMsg("Generator exit code = " + process.exitValue());
 	} catch (Exception e) {
-	    JikesPGPlugin.getInstance().writeErrorMsg(e.getMessage());
-	    e.printStackTrace();
+	    JikesPGPlugin.getInstance().logException(e.getMessage(), e);
 	}
     }
 
@@ -130,11 +133,12 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
         JikesPGParser parser= new JikesPGParser(lexer.getLexStream()); // Create the parser
         String filePath= file.getLocation().toOSString();
 
+        JikesPGPlugin.getInstance().maybeWriteInfoMsg("Collecting dependencies from file '" + file.getLocation().toOSString() + "'.");
         try {
             String contents= StreamUtils.readStreamContents(file.getContents());
 
             lexer.initialize(contents.toCharArray(), filePath);
-            lexer.lexer(null, lexer.getPrsStream());
+            lexer.lexer(null, parser.getParseStream());
 
             ASTNode ast= (ASTNode) parser.parser();
 
@@ -191,7 +195,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 		parseMissingFileMessage(line, resource);
 	    } else
 		handleMiscMessage(line, resource);
-//	    JikesPGPlugin.getInstance().writeErrorMsg(line);
+	    JikesPGPlugin.getInstance().writeErrorMsg(line);
 	}
 	is.close();
     }
@@ -210,22 +214,28 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	    else {
 		System.out.println(line);
 	    }
+	    if (line.length() == 0)
+		continue;
 
-	    final String msg= line;
-
-	    if (parseSyntaxMessageCreateMarker(msg))
+	    if (parseSyntaxMessageCreateMarker(line))
 		;
-	    else if (msg.indexOf("Input file ") == 0) {
-		parseMissingFileMessage(msg, resource);
+	    else if (line.indexOf("Input file ") == 0) {
+		parseMissingFileMessage(line, resource);
 	    } else
-		handleMiscMessage(msg, resource);
+		handleMiscMessage(line, resource);
 	}
     }
 
     private void handleMiscMessage(String msg, IResource file) {
 	if (msg.length() == 0) return;
-	if (msg.startsWith("Unable to open"))
+	if (msg.startsWith("Unable to open")) {
 	    createMarker(file, 1, -1, -1, msg, IMarker.SEVERITY_ERROR);
+	    return;
+	}
+	if (msg.startsWith("***ERROR: ")) {
+	    createMarker(file, 1, 0, 1, msg.substring(10), IMarker.SEVERITY_ERROR);
+	    return;
+	}
 	if (msg.indexOf("Number of ") < 0 &&
 	    !msg.startsWith("(C) Copyright") &&
 	    !msg.startsWith("IBM LALR Parser"))
