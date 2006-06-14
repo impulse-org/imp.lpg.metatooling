@@ -239,7 +239,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	if (msg.indexOf("Number of ") < 0 &&
 	    !msg.startsWith("(C) Copyright") &&
 	    !msg.startsWith("IBM LALR Parser"))
-	    createMarker(file, 1, -1, -1, msg, IMarker.SEVERITY_INFO);
+	    createMarker(file, 1, 0, 1, msg, IMarker.SEVERITY_INFO);
     }
 
     private void parseMissingFileMessage(String msg, IResource file) {
