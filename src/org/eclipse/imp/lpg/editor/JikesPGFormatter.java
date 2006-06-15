@@ -44,7 +44,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             public void unimplementedVisitor(String s) {
                 System.out.println("Unhandled node type: " + s);
             }
-            public void preVisit(ASTNode n) {
+            public boolean preVisit(ASTNode n) {
                 IToken left= n.getLeftIToken();
                 IToken[] precAdjuncts= left.getPrecedingAdjuncts();
 
@@ -71,6 +71,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                     }
                     fAdjunctNode[0]= n;
                 }
+                return true;
             }
             public void postVisit(ASTNode n) {
         	if (n == fAdjunctNode[0]) {
