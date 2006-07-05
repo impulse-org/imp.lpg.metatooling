@@ -57,4 +57,26 @@ public class NodeLocator implements IASTNodeLocator {
             }
         }
     }
+    
+    
+    // SMS 14 Jun 2006
+    // Added to address change in IASTNodeLocator
+    
+    public int getStartOffset(Object node) {
+    	ASTNode n = (ASTNode) node;
+    	return n.getLeftIToken().getStartOffset();
+    }
+    
+    
+    public int getEndOffset(Object node) {
+    	ASTNode n = (ASTNode) node;
+    	return n.getRightIToken().getEndOffset();
+    }
+    
+    
+    public int getLength(Object  node) {
+    	ASTNode n = (ASTNode) node;
+    	return getEndOffset(n) - getStartOffset(n);
+    }
+    
 }
