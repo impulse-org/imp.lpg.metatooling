@@ -16,6 +16,11 @@ import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
 
+import org.eclipse.uide.editor.IMessageHandler;		// SMS 5 May 2006
+import org.eclipse.core.resources.IMarker;			// SMS 5 May 2006
+import org.eclipse.core.resources.IResource;		// SMS 5 May 2006
+import org.eclipse.core.runtime.CoreException;		// SMS 5 May 2006
+
 import $AST_PKG_NODE$;
 
 public class $CLASS_NAME_PREFIX$ParseController implements IParseController
@@ -29,11 +34,30 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
     private char keywords[][];
     private boolean isKeyword[];
 
-    public void initialize(String filePath, IProject project) {
-        this.project= project;
-        this.filePath= filePath;
-        createLexerAndParser(project.getLocation().append(filePath).toString());
+
+    // SMS 5 May 2006:
+    // Version of initialize method corresponding to change in IParseController
+    /**
+     * @param filePath		Project-relative path of file
+     * @param project		Project that contains the file
+     * @param handler		A message handler to receive error messages (or any others)
+     * 						from the parser
+     */
+    public void initialize(String filePath, IProject project, IMessageHandler handler) {
+    	this.filePath= filePath;
+    	this.project= project;
+    	String fullFilePath = project.getLocation().toString() + "/" + filePath;
+        createLexerAndParser(fullFilePath);
+    	
+    	parser.setMessageHandler(handler);
     }
+    
+    // SMS 5 May 2006:
+    // To make this available to users of the controller
+    public IProject getProject() { return project; }
+    
+    
+    
     public IParser getParser() { return parser; }
     public ILexer getLexer() { return lexer; }
     public Object getCurrentAst() { return currentAst; }
@@ -90,6 +114,21 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
 
         lexer.initialize(contentsArray, filePath);
         parser.getParseStream().resetTokenStream();
+        
+        // SMS 5 May 2006:
+        // Clear the problem markers on the file
+        // It should be okay to do this here because ...
+        // Whoever is doing the parsing should have passed in whatever
+        // listener they were interested in having receive messages
+        // and presumably in creating whatever annotations or markers
+        // those messages require (and is that a good reason?)
+        IResource file = project.getFile(filePath);
+        try {
+        	file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+        } catch(CoreException e) {
+        	System.err.println("JsdivParseController.parse:  caught CoreException while deleting problem markers; continuing to parse regardless");
+        }
+        
         lexer.lexer(my_monitor, parser.getParseStream()); // Lex the stream to produce the token stream
         if (my_monitor.isCancelled())
         	return currentAst; // TODO currentAst might (probably will) be inconsistent wrt the lex stream now
