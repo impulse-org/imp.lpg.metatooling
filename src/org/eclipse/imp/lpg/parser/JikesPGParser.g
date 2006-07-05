@@ -33,6 +33,7 @@ $End
 
 $Headers
     /.
+/*
     private IMessageHandler msgHandler;
 
     public void setMessageHandler(IMessageHandler handler) {
@@ -45,6 +46,7 @@ $Headers
         if (msgHandler != null)
           msgHandler.handleMessage(getStartOffset(leftToken), len, errorMsgText[errorCode]);
     }
+*/
      ./
 $End
 
