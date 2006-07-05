@@ -32,14 +32,35 @@ public class Outliner extends DefaultOutliner {
 //	    System.out.println(s);
 	}
 
+	// SMS 27 Jun 2006
+	// This creates a "Options" item regardless of whether
+	// there actually are options (so try not doing that)
     public boolean visit(JikesPG n) {
-        fItemStack.push(createTopItem("Options", n));
+        //fItemStack.push(createTopItem("Options", n));
         return true;
     }
     public void endVisit(JikesPG n) {
+        //fItemStack.pop();
+    }
+
+
+    // SMS 27 Jun 2006
+    // Options_segments occur only where there are options
+    // lines in the source, so use these as the basis of
+    // creating "Options" items.  These will be created
+    // one per line rather than one per file (but then,
+    // that's what the file actually says).
+    public boolean visit(options_segment n) {
+   		fItemStack.push(createTopItem("Options", n));
+    	return true;
+    }
+    public void endVisit(options_segment n) {
         fItemStack.pop();
     }
+    
+    
 	public boolean visit(option n) {
+		
 	    Ioption_value value= n.getoption_value();
 
             if (value != null) {
@@ -51,6 +72,8 @@ public class Outliner extends DefaultOutliner {
 		createSubItem(symbolImage(n.getSYMBOL()), n);
             return true;
 	}
+
+	
     public boolean visit(import_segment1 n) {
         fItemStack.push(createTopItem("Import", n));
         return false;
@@ -117,6 +140,18 @@ public class Outliner extends DefaultOutliner {
 	public void endVisit(HeadersSeg n) {
 	    fItemStack.pop();
 	}
+	
+	// SMS 27 Jun 2006
+	// Trailers were omitted originally but they can occur
+	public boolean visit(TrailersSeg n) {
+	    fItemStack.push(createTopItem("Trailers", n));
+	    return true;
+	}
+	public void endVisit(TrailersSeg n) {
+	    fItemStack.pop();
+	}
+	
+	
         public void endVisit(include_segment1 n) {
             createTopItem("Include " + symbolImage(n.getSYMBOL()), n.getSYMBOL());
         }
