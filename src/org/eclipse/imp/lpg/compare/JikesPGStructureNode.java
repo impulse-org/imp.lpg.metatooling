@@ -44,17 +44,17 @@ public class JikesPGStructureNode extends DocumentRangeNode implements ITypedEle
     private ASTNode fASTNode;
 
     public JikesPGStructureNode(ASTNode root, IDocument document, int typeCode, String name) {
-        super(typeCode, buildIDFor(typeCode, name), document, offsetOf(root), lengthOf(root));
+        super(typeCode, buildIDFor(typeCode, name), document, offsetOf(root), lengthOf(root, document));
         fASTNode= root;
     }
 
     public JikesPGStructureNode(ASTNode node, JikesPGStructureNode parent, int typeCode, String name) {
-	super(typeCode, buildIDFor(typeCode, name), parent.getDocument(), offsetOf(node), lengthOf(node));
+	super(typeCode, buildIDFor(typeCode, name), parent.getDocument(), offsetOf(node), lengthOf(node, parent.getDocument()));
         fASTNode= node;
     }
 
-    private static int offsetOf(ASTNode n) { return n.getLeftIToken().getStartOffset(); }
-    private static int lengthOf(ASTNode n) { return n.getRightIToken().getEndOffset() - n.getLeftIToken().getStartOffset() + 1; }
+    private static int offsetOf(ASTNode n) { return (n != null) ? n.getLeftIToken().getStartOffset() : 0; }
+    private static int lengthOf(ASTNode n, IDocument doc) { return (n != null) ? n.getRightIToken().getEndOffset() - n.getLeftIToken().getStartOffset() + 1 : doc.getLength(); }
 
     private static String buildIDFor(int typeCode, String name) {
         switch(typeCode) {
@@ -91,7 +91,9 @@ public class JikesPGStructureNode extends DocumentRangeNode implements ITypedEle
     }
 
     public Object[] getChildren() {
-        GetChildrenVisitor v= new GetChildrenVisitor(this);
+	if (fASTNode == null) return new Object[0];
+
+	GetChildrenVisitor v= new GetChildrenVisitor(this);
 
         fASTNode.accept(v);
         return v.getChildren();
@@ -144,6 +146,7 @@ class ASTLabelProvider implements ILabelProvider {
     }
 
     public static String getLabelFor(ASTNode n) {
+	if (n == null) return "<grammar file>"; // seems this only happens when the entire grammar can't be parsed
         if (n instanceof JikesPG) return "grammar";
         if (n instanceof options_segment) return "options";
         if (n instanceof AliasSeg) return "aliases";

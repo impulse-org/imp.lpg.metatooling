@@ -110,8 +110,9 @@ public class StructureMergeViewerCreator implements IViewerCreator {
 
         public String getContents(Object node, boolean ignoreWhitespace) {
             JikesPGStructureNode wrapper= (JikesPGStructureNode) node;
+            ASTNode astNode= wrapper.getASTNode();
 
-            return wrapper.getASTNode().toString();
+            return (astNode != null) ? astNode.toString() : "";
         }
 
         public void save(IStructureComparator node, Object input) {
