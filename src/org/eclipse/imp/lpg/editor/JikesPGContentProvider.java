@@ -1,45 +1,38 @@
 package org.jikespg.uide.editor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 
-public class JikesPGContentProvider implements ITreeContentProvider {
-    protected static final Object[] NO_CHILDREN= new Object[0];
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.uide.core.ILanguageService;
+import org.eclipse.uide.editor.OutlineInformationControl;
+import org.eclipse.uide.editor.OutlineInformationControl.OutlineContentProvider;
+import org.jikespg.uide.parser.JikesPGParser;
+import org.jikespg.uide.parser.JikesPGParser.ASTNode;
+import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
+import org.jikespg.uide.parser.JikesPGParser.AbstractVisitor;
+import org.jikespg.uide.parser.JikesPGParser.action_segment;
+import org.jikespg.uide.parser.JikesPGParser.optTerminalAlias;
+import org.jikespg.uide.parser.JikesPGParser.option_value0;
+import org.jikespg.uide.parser.JikesPGParser.rhsList;
+
+public class JikesPGContentProvider extends OutlineContentProvider implements ILanguageService {
     protected boolean fProvideMembers;
     protected boolean fProvideWorkingCopy;
 
-    /**
-     * Creates a new content provider. The content provider does not
-     * provide members of compilation units or class files.
-     */
     public JikesPGContentProvider() {
-	this(false);
+	this(false, null);
     }
 
     /**
-     *@deprecated Use {@link #StandardJavaElementContentProvider(boolean)} instead.
-     * Since 3.0 compilation unit children are always provided as working copies. The Java Model
-     * does not support the 'original' mode anymore.
-     */
-    public JikesPGContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
-	this(provideMembers);
-    }
-
-    /**
-     * Creates a new <code>StandardJavaElementContentProvider</code>.
+     * Creates a new <code>JikesPGContentProvider</code>.
      *
      * @param provideMembers if <code>true</code> members below compilation units 
      * and class files are provided. 
      */
-    public JikesPGContentProvider(boolean provideMembers) {
+    public JikesPGContentProvider(boolean provideMembers, OutlineInformationControl oic) {
+	super(oic, true);
 	fProvideMembers= provideMembers;
 	fProvideWorkingCopy= provideMembers;
     }
@@ -64,7 +57,6 @@ public class JikesPGContentProvider implements ITreeContentProvider {
      * leaves provided by this content provider.
      */
     public void setProvideMembers(boolean b) {
-	//hello
 	fProvideMembers= b;
     }
 
@@ -101,20 +93,28 @@ public class JikesPGContentProvider implements ITreeContentProvider {
     /* (non-Javadoc)
      * Method declared on IContentProvider.
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-
-    /* (non-Javadoc)
-     * Method declared on IContentProvider.
-     */
-    public void dispose() {}
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	super.inputChanged(viewer, oldInput, newInput);
+    }
 
     /* (non-Javadoc)
      * Method declared on ITreeContentProvider.
      */
     public Object[] getChildren(Object element) {
 	ASTNode node= (ASTNode) element;
+	final ArrayList children= node.getChildren();
 
-	return NO_CHILDREN; // return new GetChildrenVisitor().getChildren(node).toArray();
+	for(Iterator iter= children.iterator(); iter.hasNext(); ) {
+	    ASTNode child= (ASTNode) iter.next();
+
+	    // Filter out certain "useless" AST node types from the child list.
+	    // This prunes out entities and all their sub-children from the outline.
+	    if (child instanceof ASTNodeToken || child instanceof action_segment ||
+		child instanceof option_value0 || child instanceof optTerminalAlias ||
+		child instanceof rhsList)
+		iter.remove();
+	}
+	return children.toArray();
     }
 
     /* (non-Javadoc)
@@ -132,6 +132,6 @@ public class JikesPGContentProvider implements ITreeContentProvider {
     public Object getParent(Object element) {
 	ASTNode node= (ASTNode) element;
 
-	return null; // node.getParent();
+	return node.getParent();
     }
 }
