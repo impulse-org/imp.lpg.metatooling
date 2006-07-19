@@ -209,6 +209,17 @@
             class="org.jikespg.uide.search.JikesPGSearchResultPage"
             id="org.jikespg.uide.searchResultViewPage"
             searchResultClass="org.jikespg.uide.search.JikesPGSearchResult"/>
-   </extension>  
-   
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.labelProvider">
+         <labelProvider
+               class="org.jikespg.uide.editor.JikesPGLabelProvider"
+               language="jikespg"/>
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.outlineContentProvider">
+         <outlineContentProvider
+         		class="org.jikespg.uide.editor.JikesPGContentProvider"
+         		language="jikespg"/>
+   </extension>
 </plugin>
