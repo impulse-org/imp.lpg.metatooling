@@ -122,7 +122,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	    processJikesPGErrors(file, process, consoleView);
 	    doRefresh(file);
 	    collectDependencies(file);
-	    JikesPGPlugin.getInstance().maybeWriteInfoMsg("Generator exit code = " + process.exitValue());
+	    JikesPGPlugin.getInstance().maybeWriteInfoMsg("Generator exit code == " + process.waitFor());
 	} catch (Exception e) {
 	    JikesPGPlugin.getInstance().logException(e.getMessage(), e);
 	}
