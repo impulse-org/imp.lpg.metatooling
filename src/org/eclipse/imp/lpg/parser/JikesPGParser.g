@@ -1,6 +1,6 @@
 %options la=6
 %options package=org.jikespg.uide.parser
-%options automatic_ast,ast_type=ASTNode,visitor=preorder
+%options automatic_ast,ast_type=ASTNode,visitor=preorder,parent_saved
 %options template=uide/btParserTemplate.gi
 %options import_terminals=JikesPGLexer.gi
 
