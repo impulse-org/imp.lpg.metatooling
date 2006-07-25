@@ -14,56 +14,13 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.uide.editor.IContentProposer;
+import org.eclipse.uide.editor.SourceProposal;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.IParseController;
 import org.jikespg.uide.parser.ASTUtils;
 import org.jikespg.uide.parser.JikesPGParser.*;
 
 public class ContentProposer implements IContentProposer {
-
-    private static final class GrammarProposal implements ICompletionProposal {
-        private final String fName;
-
-        private final String fPrefix;
-
-        private final int fOffset;
-
-        private GrammarProposal(String name, String prefix, int offset) {
-            super();
-            fName= name;
-            fPrefix= prefix;
-            fOffset= offset;
-        }
-
-        public void apply(IDocument document) {
-            try {
-                document.replace(fOffset, 0, fName.substring(fPrefix.length()));
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public Point getSelection(IDocument document) {
-            int newOffset= fOffset + fName.length() - fPrefix.length();
-            return new Point(newOffset, 0);
-        }
-
-        public String getAdditionalProposalInfo() {
-            return null;
-        }
-
-        public String getDisplayString() {
-            return fName;
-        }
-
-        public Image getImage() {
-            return null;
-        }
-
-        public IContextInformation getContextInformation() {
-            return null;
-        }
-    }
 
     public ICompletionProposal[] getContentProposals(IParseController controller, final int offset) {
 	PrsStream parseStream= controller.getParser().getParseStream();
@@ -99,7 +56,7 @@ public class ContentProposer implements IContentProposer {
             String macroName= macro.toString();
 
             if (macroName.startsWith(prefix)) {
-                result.add(new GrammarProposal(macroName, prefix, offset));
+                result.add(new SourceProposal(macroName, prefix, offset));
             }
         }
         return result;
@@ -116,7 +73,7 @@ public class ContentProposer implements IContentProposer {
             final String ntName= (idx >= 0) ? ntRawName.substring(0, idx) : ntRawName;
 
             if (ntName.startsWith(prefix)) {
-                result.add(new GrammarProposal(ntName, prefix, offset));
+                result.add(new SourceProposal(ntName, prefix, offset));
             }
         }
         return result;
@@ -133,7 +90,7 @@ public class ContentProposer implements IContentProposer {
             final String termName= (idx >= 0) ? termRawName.substring(0, idx) : termRawName;
 
             if (termName.startsWith(prefix)) {
-                result.add(new GrammarProposal(termName, prefix, offset));
+                result.add(new SourceProposal(termName, prefix, offset));
             }
         }
         return result;
