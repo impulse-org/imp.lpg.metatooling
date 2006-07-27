@@ -91,6 +91,7 @@ public class StructureMergeViewerCreator implements IViewerCreator {
         }
 
         private ASTNode parseContents(String contents, IPath path) {
+            if (contents == null) return null;
             char[] contentsArray= contents.toCharArray();
             ILexer lexer= new JikesPGLexer();
             IParser parser= new JikesPGParser(lexer.getLexStream());
