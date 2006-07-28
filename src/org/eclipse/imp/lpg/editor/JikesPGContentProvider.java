@@ -7,7 +7,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.uide.core.ILanguageService;
 import org.eclipse.uide.editor.OutlineInformationControl;
-import org.eclipse.uide.editor.OutlineInformationControl.OutlineContentProvider;
+import org.eclipse.uide.editor.OutlineInformationControl.OutlineContentProviderBase;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.ASTNodeToken;
@@ -17,7 +17,7 @@ import org.jikespg.uide.parser.JikesPGParser.optTerminalAlias;
 import org.jikespg.uide.parser.JikesPGParser.option_value0;
 import org.jikespg.uide.parser.JikesPGParser.rhsList;
 
-public class JikesPGContentProvider extends OutlineContentProvider implements ILanguageService {
+public class JikesPGContentProvider extends OutlineContentProviderBase implements ILanguageService {
     public JikesPGContentProvider() {
 	this(false, null);
     }
