@@ -105,7 +105,16 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 		    executablePath,
 		    "-quiet",
 		    (JikesPGPreferenceCache.generateListing ? "-list" : "-nolist"),
-		    "-include-directory='" + includePath + "'",
+		    // In order for Windows to treat the following template path argument as
+		    // a single argument, despite any embedded spaces, it has to be completely
+		    // enclosed in double quotes. It does not suffice to quote only the path
+		    // part. However, for jikespg to treat the path properly, the path itself
+		    // must also be quoted, since the outer quotes will be stripped by the
+		    // Windows shell (command/cmd.exe). As an added twist, if we used the same
+		    // kind of quote for both the inner and outer quoting, and the outer quotes
+		    // survived, the part that actually needed quoting would be "bare"! Hence
+		    // we use double quotes for the outer level and single quotes inside.
+		    "\"-include-directory='" + includePath + "'\"",
 		    // TODO RMF 7/21/05 -- Don't specify -dat-directory; causes performance issues with Eclipse.
 		    // Lexer tables can get quite large, so large that Java as spec'ed can't swallow them
 		    // when translated to a switch statement, or even an array initializer. As a result,
