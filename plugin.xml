@@ -81,9 +81,7 @@
          point="org.eclipse.uide.runtime.parser">
       <parser
             class="org.jikespg.uide.parser.ParseController"
-            id="org.jikespg.uide.parser"
-            language="JikesPG"
-            name="JikesPG Grammar Parser"/>
+            language="JikesPG"/>
    </extension>
    <extension
          point="org.eclipse.uide.runtime.tokenColorer">
@@ -95,33 +93,25 @@
          point="org.eclipse.uide.runtime.outliner">
       <outliner
             class="org.jikespg.uide.editor.Outliner"
-            id="org.jikespg.uide.outliner"
-            language="JikesPG"
-            name="JikesPG Grammar Outliner"/>
+            language="JikesPG"/>
    </extension>
    <extension
          point="org.eclipse.uide.runtime.contentProposer">
       <proposer
             class="org.jikespg.uide.editor.ContentProposer"
-            id="org.jikespg.uide.proposer"
-            language="JikesPG"
-            name="JikesPG Content Proposer"/>
+            language="JikesPG"/>
    </extension>
    <extension
          point="org.eclipse.uide.runtime.hoverHelper">
       <hoverhelper
             class="org.jikespg.uide.editor.HoverHelper"
-            id="org.jikespg.uide.hoverHelper"
-            language="JikesPG"
-            name="JikesPG Hover Helper"/>
+            language="JikesPG"/>
    </extension>
    <extension
          point="org.eclipse.uide.runtime.hyperLink">
       <hyperlinkDetector
             class="org.jikespg.uide.editor.HyperlinkDetector"
-            id="org.jikespg.uide.hyperlinkDetector"
-            language="JikesPG"
-            name="JikesPG Hyperlink Detector"/>
+            language="JikesPG"/>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -180,16 +170,13 @@
          point="org.eclipse.uide.runtime.foldingUpdater">
       <foldingUpdater
             class="org.jikespg.uide.editor.FoldingUpdater"
-            id="org.jikespg.uide.foldingUpdater"
-            language="JikesPG"
-            name="JikesPG Source Folding Updater"/>
+            language="JikesPG"/>
    </extension>
    <extension
          point="org.eclipse.uide.runtime.formatter">
       <formatter
             class="org.jikespg.uide.editor.JikesPGFormatter"
-            language="JikesPG"
-            name="JikesPG Grammar Formatter"/>
+            language="JikesPG"/>
    </extension>
    <extension
          point="org.eclipse.search.searchPages">
