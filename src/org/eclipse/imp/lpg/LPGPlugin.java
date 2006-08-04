@@ -62,6 +62,18 @@ public class JikesPGPlugin extends SAFARIPluginBase {
         path= ICONS_PATH.append("outline_item.gif");//$NON-NLS-1$
         imageDescriptor= createImageDescriptor(getInstance().getBundle(), path);
         reg.put(IJikesPGResources.OUTLINE_ITEM, imageDescriptor);
+
+        path= ICONS_PATH.append("grammarfile.gif");//$NON-NLS-1$
+        imageDescriptor= createImageDescriptor(getInstance().getBundle(), path);
+        reg.put(IJikesPGResources.GRAMMAR_FILE, imageDescriptor);
+
+        path= ICONS_PATH.append("grammarfile-warning.jpg");//$NON-NLS-1$
+        imageDescriptor= createImageDescriptor(getInstance().getBundle(), path);
+        reg.put(IJikesPGResources.GRAMMAR_FILE_WARNING, imageDescriptor);
+
+        path= ICONS_PATH.append("grammarfile-error.jpg");//$NON-NLS-1$
+        imageDescriptor= createImageDescriptor(getInstance().getBundle(), path);
+        reg.put(IJikesPGResources.GRAMMAR_FILE_ERROR, imageDescriptor);
     }
 
     public static ImageDescriptor createImageDescriptor(Bundle bundle, IPath path) {

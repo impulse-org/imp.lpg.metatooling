@@ -6,11 +6,15 @@ package org.jikespg.uide.editor;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.uide.core.ILanguageService;
+import org.eclipse.uide.utils.MarkerUtils;
 import org.jikespg.uide.IJikesPGResources;
 import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.parser.JikesPGParser.*;
@@ -22,7 +26,24 @@ public class JikesPGLabelProvider implements ILabelProvider, ILanguageService {
 
     private static Image DEFAULT_IMAGE= sImageRegistry.get(IJikesPGResources.DEFAULT_AST);
 
+    private static Image GRAMMAR_FILE_IMAGE= sImageRegistry.get(IJikesPGResources.GRAMMAR_FILE);
+
+    private static Image GRAMMAR_FILE_ERROR_IMAGE= sImageRegistry.get(IJikesPGResources.GRAMMAR_FILE_ERROR);
+
+    private static Image GRAMMAR_FILE_WARNING_IMAGE= sImageRegistry.get(IJikesPGResources.GRAMMAR_FILE_WARNING);
+
     public Image getImage(Object element) {
+	if (element instanceof IFile) {
+	    IFile file= (IFile) element;
+	    int sev= MarkerUtils.getMaxProblemMarkerSeverity(file, IResource.DEPTH_ONE);
+
+	    switch(sev) {
+	    case IMarker.SEVERITY_ERROR: return GRAMMAR_FILE_ERROR_IMAGE;
+	    case IMarker.SEVERITY_WARNING: return GRAMMAR_FILE_WARNING_IMAGE;
+	    default:
+		return GRAMMAR_FILE_IMAGE;
+	    }
+	}
 	ASTNode n= (ASTNode) element;
 
 	return getImageFor(n);
