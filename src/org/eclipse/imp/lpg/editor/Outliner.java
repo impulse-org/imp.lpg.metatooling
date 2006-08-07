@@ -59,11 +59,11 @@ public class Outliner extends DefaultOutliner
 	    // creating "Options" items.  These will be created
 	    // one per line rather than one per file (but then,
 	    // that's what the file actually says).
-	    public boolean visit(options_segment n) {
+	    public boolean visit(option_specList n) {
 	   		fItemStack.push(createTopItem("Options", n));
 	    	return true;
 	    }
-	    public void endVisit(options_segment n) {
+	    public void endVisit(option_specList n) {
 	        fItemStack.pop();
 	    }
 	    

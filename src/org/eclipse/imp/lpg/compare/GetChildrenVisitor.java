@@ -1,6 +1,5 @@
 package org.jikespg.uide.compare;
 
-import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.*;
 
 /**
@@ -23,7 +22,7 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
     public void unimplementedVisitor(String s) { }
 
     public boolean visit(JikesPG n) {
-        options_segment options= n.getoptions_segment();
+	option_specList options= n.getoptions_segment();
         JikesPG_itemList itemList= n.getJikesPG_INPUT();
         int count= 1 + itemList.size();
 

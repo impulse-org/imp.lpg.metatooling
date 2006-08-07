@@ -62,7 +62,7 @@ public class JikesPGLabelProvider implements ILabelProvider, ILanguageService {
     public static String getLabelFor(ASTNode n) {
 	if (n instanceof JikesPG)
 	    return "grammar";
-	if (n instanceof options_segment)
+	if (n instanceof option_specList)
 	    return "options";
 	if (n instanceof AliasSeg)
 	    return "aliases";
@@ -85,8 +85,8 @@ public class JikesPGLabelProvider implements ILabelProvider, ILanguageService {
 
 	if (n instanceof option_spec)
 	    return "option spec";
-	if (n instanceof option_list)
-	    return "%option " + ((option_list) n).getoption().getSYMBOL();
+	if (n instanceof optionList)
+	    return "%option " + ((optionList) n).getoptionAt(0).getSYMBOL() + "...";
 	if (n instanceof nonTermList)
 	    return "non-terminals";
 	if (n instanceof option)

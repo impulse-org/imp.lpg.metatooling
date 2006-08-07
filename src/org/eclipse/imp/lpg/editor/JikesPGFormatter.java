@@ -88,12 +88,12 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
                 fBuff.append("%options ");
                 return true;
             }
-            public boolean visit(option_list n) {
-        	if (n.getoption_list() != null) {
-        	    n.getoption_list().accept(this);
-        	    fBuff.append(',');
+            public boolean visit(optionList n) {
+        	for(int i=0; i < n.size(); i++) {
+        	    if (i > 0) fBuff.append(", ");
+        	    final option opt= n.getoptionAt(i);
+		    opt.accept(this);
         	}
-        	n.getoption().accept(this);
         	return false;
             }
             public void endVisit(option_spec n) {

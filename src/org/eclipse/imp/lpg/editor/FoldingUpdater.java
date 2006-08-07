@@ -52,7 +52,7 @@ public class FoldingUpdater implements IFoldingUpdater {
 
         // START_HERE (TO INCLUDE VISIT FUNCTIONS FOR NODES THAT MAY BE FOLDED)
 
-        public boolean visit(options_segment n) {
+        public boolean visit(option_specList n) {
             makeAnnotation(n);
             return false;
         }

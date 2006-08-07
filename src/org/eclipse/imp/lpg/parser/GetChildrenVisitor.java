@@ -13,7 +13,7 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
     public void unimplementedVisitor(String s) { }
 
     public boolean visit(JikesPG n) {
-        options_segment options= n.getoptions_segment();
+	option_specList options= n.getoptions_segment();
         JikesPG_itemList itemList= n.getJikesPG_INPUT();
         int count= 1 + itemList.size();
 
@@ -57,8 +57,8 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(action_segment_list n) {
-	fChildren= new Object[] { n.getaction_segment_list(), n.getaction_segment() };
+    public boolean visit(action_segmentList n) {
+	fChildren= n.getChildren().toArray();
         return false;
     }
 
@@ -162,8 +162,8 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(headers_segment1 n) {
-	fChildren= new Object[] { n.getheaders_segment(), n.getaction_segment() };
+    public boolean visit(headers_segment n) {
+	fChildren= new Object[] { n.getaction_segment_list() };
         return false;
     }
 
@@ -324,8 +324,8 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(option_list n) {
-	fChildren= new Object[] { n.getoption_list(), n.getoption() };
+    public boolean visit(optionList n) {
+	fChildren= n.getChildren().toArray();
         return false;
     }
 
@@ -334,8 +334,8 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(options_segment n) {
-	fChildren= new Object[] { n.getoptions_segment(), n.getoption_spec() };
+    public boolean visit(option_specList n) {
+	fChildren= n.getChildren().toArray();
         return false;
     }
 
@@ -464,8 +464,8 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(trailers_segment1 n) {
-	fChildren= new Object[] { n.gettrailers_segment(), n.getaction_segment() };
+    public boolean visit(trailers_segment n) {
+	fChildren= n.getChildren().toArray();
         return false;
     }
 

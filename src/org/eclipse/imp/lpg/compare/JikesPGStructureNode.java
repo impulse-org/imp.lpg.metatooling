@@ -148,7 +148,7 @@ class ASTLabelProvider implements ILabelProvider {
     public static String getLabelFor(ASTNode n) {
 	if (n == null) return "<grammar file>"; // seems this only happens when the entire grammar can't be parsed
         if (n instanceof JikesPG) return "grammar";
-        if (n instanceof options_segment) return "options";
+        if (n instanceof option_specList) return "options";
         if (n instanceof AliasSeg) return "aliases";
         if (n instanceof DefineSeg) return "defines";
         if (n instanceof GlobalsSeg) return "globals";

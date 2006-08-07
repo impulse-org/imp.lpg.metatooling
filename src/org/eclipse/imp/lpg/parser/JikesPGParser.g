@@ -77,15 +77,15 @@ $Rules
     JikesPG_item$TrailersSeg   ::= trailers_segment   END_KEY_OPT
     JikesPG_item$TypesSeg      ::= types_segment      END_KEY_OPT
 
-    options_segment ::= $empty | options_segment option_spec
-    option_spec$option_spec ::= OPTIONS_KEY
+    options_segment$$option_spec ::= $empty | options_segment option_spec
+--  option_spec$option_spec ::= OPTIONS_KEY
     option_spec$option_spec ::= OPTIONS_KEY option_list
-    option_list ::= option | option_list ',' option
+    option_list$$option ::= option | option_list ','$ option
     option ::= SYMBOL option_value
-    option_value ::= $empty | '=' SYMBOL | '=' '(' symbol_list ')'
+    option_value ::= $empty | '='$ SYMBOL | '='$ '('$ symbol_list ')'$
 
     symbol_list$$SYMBOL ::= SYMBOL
-                          | symbol_list ',' SYMBOL
+                          | symbol_list ','$ SYMBOL
 
     ast_segment ::= AST_KEY
     ast_segment ::= AST_KEY action_segment
@@ -119,22 +119,20 @@ $Rules
     import_segment ::= IMPORT_KEY 
     import_segment ::= IMPORT_KEY SYMBOL drop_command_list
 
-    drop_command ::= drop_symbols
-    drop_command ::= drop_rules
+    drop_command_list$$drop_command ::= $empty
+    drop_command_list$$drop_command ::= drop_command_list drop_command
 
-    drop_symbols ::= DROPSYMBOLS_KEY
-    drop_symbols ::= drop_symbols SYMBOL
+    drop_command ::= DROPSYMBOLS_KEY drop_symbols
+    drop_command ::= DROPRULES_KEY drop_rules
 
-    drop_rules ::= DROPRULES_KEY
-    drop_rules ::= drop_rules drop_rule
+    drop_symbols$$SYMBOL  ::= SYMBOL
+    drop_symbols$$SYMBOL  ::= drop_symbols SYMBOL
+    drop_rules$$drop_rule ::= drop_rule
+    drop_rules$$drop_rule ::= drop_rules drop_rule
 
     drop_rule ::= SYMBOL produces rhs
     drop_rule ::= SYMBOL MACRO_NAME produces rhs
-    drop_rule ::= drop_rule '|' rhs
-
-    drop_command_list ::= $empty
-
-    drop_command_list ::= drop_command_list drop_command
+    drop_rule ::= drop_rule '|'$ rhs
 
     keywords_segment ::= KEYWORDS_KEY
     keywords_segment ::= keywords_segment terminal_symbol
@@ -173,13 +171,11 @@ $Rules
     alias_rhs ::= EMPTY_KEY 
     alias_rhs ::= IDENTIFIER_KEY
 
-    start_segment ::= START_KEY start_symbol
+    start_segment    ::= START_KEY start_symbol
 
-    headers_segment ::= HEADERS_KEY
-    headers_segment ::= headers_segment action_segment
+    headers_segment  ::= HEADERS_KEY$ action_segment_list
 
-    trailers_segment ::= TRAILERS_KEY
-    trailers_segment ::= trailers_segment action_segment
+    trailers_segment ::= TRAILERS_KEY$ action_segment_list
 
     start_symbol ::= SYMBOL 
     start_symbol ::= MACRO_NAME
@@ -239,6 +235,6 @@ $Rules
     END_KEY_OPT ::= $empty
     END_KEY_OPT ::= END_KEY 
 
-    action_segment_list ::= $empty
-    action_segment_list ::= action_segment_list action_segment 
+    action_segment_list$$action_segment ::= $empty
+    action_segment_list$$action_segment ::= action_segment_list action_segment 
 $End
