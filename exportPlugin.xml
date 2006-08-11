@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="org.jikespg.uide" default="build.update.jar" basedir=".">
-	<import file="../com.ibm.watson.safari.feature/buildCommon.xml"/>
+	<import file="../org.eclipse.safari.jikespg.feature/buildCommon.xml"/>
 	<import file="../com.ibm.watson.safari.update/buildPluginCommon.xml"/>
 
 	<target name="init" depends="properties">
 		<property name="plugin.name" value="org.jikespg.uide"/>
-		<property name="plugin.version" value="${safari.version}"/>
+		<property name="plugin.version" value="${jikespg.version}"/>
 		<property name="plugin.jar.name" value="${plugin.name}_${plugin.version}.jar"/>
 		<property name="plugin.zip.name" value="${plugin.name}_${plugin.version}.zip"/>
 		<property name="plugin.src.zip" value="${plugin.name}src.zip"/>
@@ -23,7 +23,6 @@
 
 	<target name="properties" if="eclipse.running">
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-
 	</target>
 
 	<!-- ================================================================================= -->
@@ -31,13 +30,19 @@
 	<target name="plugin.jar" depends="init" unless="${plugin.jar.name}" description="Create jar: ${plugin.jar.name}.">
 		<delete dir="${temp.folder}/${plugin.jar.name}.bin"/>
 		<mkdir dir="${temp.folder}/${plugin.jar.name}.bin"/>
+		<!-- run jikespg to generate the parser and lexer -->
+		<exec dir="src/org/jikespg/uide/parser" executable="jikespg"
+		      failonerror="true" output="JikesPGParser.log">
+			<arg line="-include-directory=../../../../../../lpg/templates"/>
+			<arg line="JikesPGParser.g"/>
+		</exec>
 		<!-- compile the source code -->
 		<javac destdir="${temp.folder}/${plugin.jar.name}.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
 			<compilerarg line="${compilerArg}"/>
 			<classpath>
-				<pathelement location="../lpg/lib/lpg.jar"/>
-				<pathelement location="../org.eclipse.uide.runtime/bin"/>
-				<pathelement location="../org.eclipse.uide/bin"/>
+				<pathelement location="../lpg/lpg_${jikespg.version}.jar"/>
+				<pathelement location="../org.eclipse.uide.runtime/org.eclipse.uide.runtime_${jikespg.version}.jar"/>
+				<pathelement location="../org.eclipse.uide/org.eclipse.uide_${jikespg.version}.jar"/>
 				<pathelement path="${eclipse.build.path}"/>
 			</classpath>
 			<src path="src/"/>
