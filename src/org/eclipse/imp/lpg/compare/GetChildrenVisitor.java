@@ -38,25 +38,20 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
     }
 
     public boolean visit(GlobalsSeg n) {
-        globals_segment1 globals= (globals_segment1) n.getglobals_segment();
-        fChildren= new Object[] {
-                new JikesPGStructureNode(globals.getaction_segment(), fStructureNode, JikesPGStructureNode.GLOBAL, "global")
-        };
+        action_segmentList globals= (action_segmentList) n.getglobals_segment();
+        fChildren= new Object[globals.size()];
+
+        for(int i=0; i < globals.size(); i++)
+            fChildren[i]= new JikesPGStructureNode(globals.getElementAt(i), fStructureNode, JikesPGStructureNode.GLOBAL, "global");
         return false;
     }
 
     public boolean visit(DefineSeg n) {
-        define_segment1 defSeg= (define_segment1) n.getdefine_segment();
-        int count=1;
-        for(define_segment1 ds= defSeg; ds != null && ds.getdefine_segment() instanceof define_segment1; ds= (define_segment1) ds.getdefine_segment()) {
-            count++;
-        }
-        fChildren= new Object[count];
-        int i=0;
-        for(define_segment1 ds= defSeg; ds != null; ds= (define_segment1) ds.getdefine_segment(), i++) {
+        defineSpecList defs= (defineSpecList) n.getdefine_segment();
+        fChildren= new Object[defs.size()];
+        for(int i=0; i < defs.size(); i++) {
+            defineSpec ds= defs.getdefineSpecAt(i);
             fChildren[i]= new JikesPGStructureNode(ds, fStructureNode, JikesPGStructureNode.DEFINE, ds.getmacro_name_symbol().toString());
-            if (!(ds.getdefine_segment() instanceof define_segment1))
-                break;
         }
         return false;
     }

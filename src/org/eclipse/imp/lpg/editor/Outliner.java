@@ -83,18 +83,18 @@ public class Outliner extends DefaultOutliner
 		}
 
 		
-	    public boolean visit(import_segment1 n) {
+	    public boolean visit(import_segment n) {
 	        fItemStack.push(createTopItem("Import", n));
 	        return false;
 	    }
-	    public void endVisit(import_segment1 n) {
+	    public void endVisit(import_segment n) {
 	        fItemStack.pop();
 	    }
-	    public boolean visit(notice_segment1 n) {
+	    public boolean visit(NoticeSeg n) {
 	        fItemStack.push(createTopItem("Notice", n));
 	        return false;
 	    }
-	    public void endVisit(notice_segment1 n) {
+	    public void endVisit(NoticeSeg n) {
 	        fItemStack.pop();
 	    }
 		public boolean visit(AliasSeg n) {
@@ -111,15 +111,15 @@ public class Outliner extends DefaultOutliner
 		public void endVisit(DefineSeg n) {
 		    fItemStack.pop();
 		}
-	        public boolean visit(define_segment1 n) {
+	        public boolean visit(defineSpec n) {
 	            createSubItem(symbolImage(n.getmacro_name_symbol()), (ASTNode) n.getmacro_name_symbol());
 	            return true;
 	        }
-	        public boolean visit(eof_segment1 n) {
+	        public boolean visit(EofSeg n) {
 	            fItemStack.push(createTopItem("EOF", n));
 	            return true;
 	        }
-	        public void endVisit(eof_segment1 n) {
+	        public void endVisit(EofSeg n) {
 	            fItemStack.pop();
 	        }
 	        public boolean visit(ExportSeg n) {
@@ -129,8 +129,9 @@ public class Outliner extends DefaultOutliner
 	        public void endVisit(ExportSeg n) {
 	            fItemStack.pop();
 	        }
-	        public void endVisit(export_segment1 n) {
-	            createSubItem(symbolImage(n.getterminal_symbol()), (ASTNode) n.getterminal_symbol());
+	        public boolean visit(terminal_symbol1 n) {
+	            createSubItem(n.getMACRO_NAME().toString(), (ASTNode) n.getMACRO_NAME());
+	            return false;
 	        }
 	        public boolean visit(GlobalsSeg n) {
 	            fItemStack.push(createTopItem("Globals", n));
@@ -138,9 +139,6 @@ public class Outliner extends DefaultOutliner
 	        }
 	        public void endVisit(GlobalsSeg n) {
 	            fItemStack.pop();
-	        }
-	        public void endVisit(globals_segment1 n) {
-	            createSubItem(blockImage(n.getaction_segment()), n.getaction_segment());
 	        }
 		public boolean visit(HeadersSeg n) {
 		    fItemStack.push(createTopItem("Headers", n));
@@ -161,14 +159,21 @@ public class Outliner extends DefaultOutliner
 		}
 		
 		
-	        public void endVisit(include_segment1 n) {
-	            createTopItem("Include " + symbolImage(n.getSYMBOL()), n.getSYMBOL());
+	        public void endVisit(include_segment n) {
+	            createTopItem("Include " + n.getSYMBOL(), n);
 	        }
 		public boolean visit(IdentifierSeg n) {
 		    fItemStack.push(createTopItem("Identifiers", n));
 		    return true;
 		}
 		public void endVisit(IdentifierSeg n) {
+		    fItemStack.pop();
+		}
+		public boolean visit(KeywordsSeg n) {
+		    fItemStack.push(createTopItem("Keywords", n));
+		    return true;
+		}
+		public void endVisit(KeywordsSeg n) {
 		    fItemStack.pop();
 		}
 	        public void endVisit(start_symbol0 n) {
@@ -243,16 +248,15 @@ public class Outliner extends DefaultOutliner
 	        public void endVisit(TypesSeg n) {
 	            fItemStack.pop();
 	        }
-	        public boolean visit(types_segment1 n) {
+//	        public boolean visit(types_segment1 n) {
+//	            return true;
+//	        }
+	        public boolean visit(type_declarations n) {
+	            fItemStack.push(createSubItem(symbolImage(n.getSYMBOL()), n));
 	            return true;
 	        }
-	        public boolean visit(type_declarations0 n) {
-	            createSubItem(symbolImage(n.getSYMBOL3()), n);
-	            return true;
-	        }
-	        public boolean visit(type_declarations1 n) {
-	            createSubItem(symbolImage(n.getSYMBOL()), n);
-	            return true;
+	        public void endVisit(type_declarations n) {
+	            fItemStack.pop();
 	        }
 
     }	// End OutlineVisitor

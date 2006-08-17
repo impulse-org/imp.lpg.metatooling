@@ -26,24 +26,12 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
     }
 
     public boolean visit(GlobalsSeg n) {
-        globals_segment1 globals= (globals_segment1) n.getglobals_segment();
-        fChildren= new Object[] { globals.getaction_segment() };
+        fChildren= n.getChildren().toArray();
         return false;
     }
 
     public boolean visit(DefineSeg n) {
-        define_segment1 defSeg= (define_segment1) n.getdefine_segment();
-        int count=1;
-        for(define_segment1 ds= defSeg; ds != null && ds.getdefine_segment() instanceof define_segment1; ds= (define_segment1) ds.getdefine_segment()) {
-            count++;
-        }
-        fChildren= new Object[count];
-        int i=0;
-        for(define_segment1 ds= defSeg; ds != null; ds= (define_segment1) ds.getdefine_segment(), i++) {
-            fChildren[i]= ds;
-            if (!(ds.getdefine_segment() instanceof define_segment1))
-                break;
-        }
+        fChildren= n.getChildren().toArray();
         return false;
     }
 
@@ -102,38 +90,33 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(alias_segment0 n) {
-	fChildren= new Object[] { n.getALIAS_KEY() };
+    public boolean visit(aliasSpec0 n) {
+	fChildren= NO_CHILDREN;
         return false;
     }
 
-    public boolean visit(alias_segment1 n) {
-	fChildren= new Object[] { n.getalias_segment(), n.getERROR_KEY(), n.getalias_rhs() };
+    public boolean visit(aliasSpec1 n) {
+	fChildren= new Object[] { n.getalias_rhs() };
         return false;
     }
 
-    public boolean visit(alias_segment2 n) {
-	fChildren= new Object[] { n.getalias_segment(), n.getEOL_KEY(), n.getalias_rhs() };
+    public boolean visit(aliasSpec2 n) {
+	fChildren= new Object[] { n.getalias_rhs() };
         return false;
     }
 
-    public boolean visit(alias_segment3 n) {
-	fChildren= new Object[] { n.getalias_segment(), n.getEOF_KEY(), n.getalias_rhs() };
+    public boolean visit(aliasSpec3 n) {
+	fChildren= new Object[] { n.getalias_rhs() };
         return false;
     }
 
-    public boolean visit(alias_segment4 n) {
-	fChildren= new Object[] { n.getalias_segment(), n.getIDENTIFIER_KEY(), n.getalias_rhs() };
+    public boolean visit(aliasSpec4 n) {
+	fChildren= new Object[] { n.getalias_rhs() };
         return false;
     }
 
-    public boolean visit(alias_segment5 n) {
-	fChildren= new Object[] { n.getalias_segment(), n.getSYMBOL(), n.getalias_rhs() };
-        return false;
-    }
-
-    public boolean visit(alias_segment6 n) {
-	fChildren= new Object[] { n.getalias_segment(), n.getalias_lhs_macro_name(), n.getalias_rhs() };
+    public boolean visit(aliasSpec5 n) {
+	fChildren= new Object[] { n.getalias_rhs() };
         return false;
     }
 
@@ -142,28 +125,13 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(ast_segment1 n) {
-	fChildren= new Object[] { n.getaction_segment() };
-        return false;
-    }
-
     public boolean visit(AstSeg n) {
 	fChildren= new Object[] { n.getast_segment() };
         return false;
     }
 
-    public boolean visit(define_segment1 n) {
-	fChildren= new Object[] { n.getdefine_segment(), n.getmacro_name_symbol(), n.getmacro_segment() };
-        return false;
-    }
-
-    public boolean visit(globals_segment1 n) {
-	fChildren= new Object[] { n.getglobals_segment(), n.getaction_segment() };
-        return false;
-    }
-
-    public boolean visit(headers_segment n) {
-	fChildren= new Object[] { n.getaction_segment_list() };
+    public boolean visit(defineSpec n) {
+	fChildren= new Object[] { n.getmacro_name_symbol(), n.getmacro_segment() };
         return false;
     }
 
@@ -172,18 +140,8 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(identifier_segment1 n) {
-	fChildren= new Object[] { n.getterminal_symbol() };
-        return false;
-    }
-
     public boolean visit(ExportSeg n) {
 	fChildren= new Object[] { n.getexport_segment() };
-        return false;
-    }
-
-    public boolean visit(export_segment1 n) {
-	fChildren= new Object[] { n.getexport_segment(), n.getterminal_symbol() };
         return false;
     }
 
@@ -192,18 +150,8 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(eof_segment1 n) {
-	fChildren= new Object[] { n.getterminal_symbol() };
-        return false;
-    }
-
     public boolean visit(EolSeg n) {
 	fChildren= new Object[] { n.geteol_segment() };
-        return false;
-    }
-
-    public boolean visit(eol_segment1 n) {
-	fChildren= new Object[] { n.getterminal_symbol() };
         return false;
     }
 
@@ -212,18 +160,8 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(error_segment1 n) {
-	fChildren= new Object[] { n.getterminal_symbol() };
-        return false;
-    }
-
     public boolean visit(ImportSeg n) {
 	fChildren= new Object[] { n.getimport_segment() };
-        return false;
-    }
-
-    public boolean visit(import_segment1 n) {
-	fChildren= new Object[] { n.getSYMBOL(), n.getdrop_command_list() };
         return false;
     }
 
@@ -232,23 +170,16 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(include_segment1 n) {
-	fChildren= new Object[] { n.getSYMBOL() };
-        return false;
-    }
-
     public boolean visit(KeywordsSeg n) {
-	fChildren= new Object[] { n.getkeywords_segment() };
+	fChildren= n.getkeywords_segment().getChildren().toArray();
         return false;
     }
 
-    public boolean visit(keywords_segment1 n) {
-	fChildren= new Object[] { n.getkeywords_segment(), n.getterminal_symbol() };
-        return false;
-    }
-
-    public boolean visit(keywords_segment2 n) {
-	fChildren= new Object[] { n.getkeywords_segment(), n.getterminal_symbol(), n.getname() };
+    public boolean visit(keywordSpec n) {
+	if (n.getname() != null)
+	    fChildren= new Object[] { n.getterminal_symbol(), n.getname() };
+	else
+	    fChildren= new Object[] { n.getterminal_symbol() };
         return false;
     }
 
@@ -267,8 +198,13 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(names_segment1 n) {
-	fChildren= new Object[] { n.getnames_segment(), n.getname(), n.getname4() };
+    public boolean visit(nameSpecList n) {
+	fChildren= n.getChildren().toArray();
+	return false;
+    }
+
+    public boolean visit(nameSpec n) {
+	fChildren= new Object[] { n.getname(), n.getname3() };
         return false;
     }
 
@@ -354,11 +290,6 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(notice_segment1 n) {
-	fChildren= new Object[] { n.getnotice_segment(), n.getaction_segment() };
-        return false;
-    }
-
     public boolean visit(rhs n) {
 	fChildren= new Object[] { n.getsymWithAttrsList(), n.getopt_action_segment() };
         return false;
@@ -371,11 +302,6 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
 
     public boolean visit(rules_segment n) {
 	fChildren= new Object[] { n.getaction_segment_list(), n.getnonTermList() };
-        return false;
-    }
-
-    public boolean visit(start_segment n) {
-	fChildren= new Object[] { n.getstart_symbol() };
         return false;
     }
 
@@ -395,7 +321,7 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
     }
 
     public boolean visit(symWithAttrsList n) {
-	fChildren= new Object[] { n.getsymWithAttrsList(), n.getsymWithAttrs() };
+	fChildren= n.getChildren().toArray();
         return false;
     }
 
@@ -444,28 +370,18 @@ public class GetChildrenVisitor extends AbstractVisitor implements Visitor {
         return false;
     }
 
-    public boolean visit(type_declarations0 n) {
-	fChildren= new Object[] { n.getSYMBOL(), n.getSYMBOL3() };
+    public boolean visit(type_declarations n) {
+	fChildren= new Object[] { n.getSYMBOL(), n.getbarSymbolList() };
         return false;
     }
 
-    public boolean visit(types_segment1 n) {
-	fChildren= new Object[] { n.gettypes_segment(), n.gettype_declarations() };
-        return false;
-    }
-
-    public boolean visit(type_declarations1 n) {
-	fChildren= new Object[] { n.gettype_declarations(), n.getSYMBOL() };
+    public boolean visit(type_declarationsList n) {
+	fChildren= n.getChildren().toArray();
         return false;
     }
 
     public boolean visit(TrailersSeg n) {
 	fChildren= new Object[] { n.gettrailers_segment() };
-        return false;
-    }
-
-    public boolean visit(trailers_segment n) {
-	fChildren= n.getChildren().toArray();
         return false;
     }
 

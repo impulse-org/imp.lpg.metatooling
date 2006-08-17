@@ -131,10 +131,6 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             public void endVisit(GlobalsSeg n) {
                 fBuff.append("$End\n\n");
             }
-            public boolean visit(globals_segment1 n) {
-                fBuff.append(fIndentString);
-                return true;
-            }
             public boolean visit(HeadersSeg n) {
                 fBuff.append("$Headers\n");
                 return true;
@@ -169,7 +165,7 @@ public class JikesPGFormatter implements ILanguageService, ISourceFormatter {
             public void endVisit(DefineSeg n) {
                 fBuff.append("$End\n\n");
             }
-            public void endVisit(define_segment1 n) {
+            public void endVisit(defineSpec n) {
                 fBuff.append(fIndentString);
                 fBuff.append(n.getmacro_name_symbol());
                 fBuff.append(' ');

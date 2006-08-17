@@ -72,16 +72,26 @@ public class JikesPGLabelProvider implements ILabelProvider, ILanguageService {
 	    return "globals";
 	if (n instanceof HeadersSeg)
 	    return "headers";
+	if (n instanceof IdentifierSeg)
+	    return "identifiers";
 	if (n instanceof ImportSeg)
 	    return "imports";
 	if (n instanceof IncludeSeg)
 	    return "includes";
+	if (n instanceof JikesPG_itemList)
+	    return "item list";
+	if (n instanceof KeywordsSeg)
+	    return "keywords";
+	if (n instanceof NoticeSeg)
+	    return "notice";
+	if (n instanceof StartSeg)
+	    return "start symbol";
 	if (n instanceof RulesSeg)
 	    return "rules";
 	if (n instanceof TerminalsSeg)
 	    return "terminals";
-	if (n instanceof JikesPG_itemList)
-	    return "item list";
+	if (n instanceof TypesSeg)
+	    return "types";
 
 	if (n instanceof option_spec)
 	    return "option spec";
@@ -91,12 +101,58 @@ public class JikesPGLabelProvider implements ILabelProvider, ILanguageService {
 	    return "non-terminals";
 	if (n instanceof option)
 	    return ((option) n).getSYMBOL().toString();
-	if (n instanceof define_segment1)
-	    return /*"macro " +*/((define_segment1) n).getmacro_name_symbol().toString();
+	if (n instanceof defineSpecList)
+	    return "defines";
+	if (n instanceof defineSpec)
+	    return /*"macro " +*/((defineSpec) n).getmacro_name_symbol().toString();
 	if (n instanceof nonTerm)
 	    return /*"non-terminal " +*/((nonTerm) n).getSYMBOL().toString();
 	if (n instanceof terminal)
 	    return /*"terminal " +*/((terminal) n).getterminal_symbol().toString();
+	if (n instanceof include_segment)
+	    return ((include_segment) n).getSYMBOL().toString();
+	if (n instanceof action_segmentList)
+	    return "actions";
+	if (n instanceof action_segment)
+	    return ((action_segment) n).getBLOCK().toString();
+	if (n instanceof terminalList)
+	    return "terminals";
+	if (n instanceof start_symbol0)
+	    return ((start_symbol0) n).getSYMBOL().toString();
+	if (n instanceof drop_commandList)
+	    return "drop";
+	if (n instanceof drop_command0)
+	    return "drop symbols";
+	if (n instanceof drop_command1)
+	    return "drop rules";
+	if (n instanceof drop_rule)
+	    return ((drop_rule) n).getSYMBOL().toString();
+	if (n instanceof drop_ruleList)
+	    return "rules";
+	if (n instanceof rhs)
+	    return ((rhs) n).getsymWithAttrsList().toString();
+	if (n instanceof symWithAttrsList)
+	    return ((symWithAttrsList) n).toString();
+	if (n instanceof keywordSpecList)
+	    return "keywords";
+	if (n instanceof keywordSpec) {
+	    keywordSpec kspec= (keywordSpec) n;
+	    return kspec.getterminal_symbol().toString() + (kspec.getname() != null ? " ::= " + kspec.getname().toString() : "");
+	}
+	if (n instanceof rules_segment)
+	    return "rules";
+//	if (n instanceof types_segment1)
+//	    return "types???";
+	if (n instanceof SYMBOLList)
+	    return n.toString();
+	if (n instanceof type_declarationsList)
+	    return "types";
+	if (n instanceof type_declarations)
+	    return ((type_declarations) n).getSYMBOL().toString();
+	if (n instanceof import_segment)
+	    return "import " + ((import_segment) n).getSYMBOL().toString();
+	if (n instanceof ASTNodeToken)
+	    return ((ASTNodeToken) n).toString();
 
 	return "<???>";
     }

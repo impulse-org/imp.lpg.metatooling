@@ -17,12 +17,11 @@ public class ASTUtils {
 
         if (defineSeg == null) return Collections.EMPTY_LIST;
 
-        Idefine_segment defines= defineSeg.getdefine_segment();
-    
-        while (defines instanceof define_segment1) {
-            define_segment1 define= (define_segment1) defines;
+        defineSpecList defines= defineSeg.getdefine_segment();
+
+        for(int i= 0; i < defines.size(); i++) {
+            defineSpec define= defines.getdefineSpecAt(i);
             result.add(define.getmacro_name_symbol());
-            defines= ((define_segment1) defines).getdefine_segment();
         }
         return result;
     }

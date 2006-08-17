@@ -13,12 +13,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -29,8 +27,8 @@ import org.jikespg.uide.JikesPGPlugin;
 import org.jikespg.uide.parser.JikesPGLexer;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
-import org.jikespg.uide.parser.JikesPGParser.import_segment1;
-import org.jikespg.uide.parser.JikesPGParser.include_segment1;
+import org.jikespg.uide.parser.JikesPGParser.import_segment;
+import org.jikespg.uide.parser.JikesPGParser.include_segment;
 import org.jikespg.uide.parser.JikesPGParser.option;
 import org.jikespg.uide.parser.JikesPGParser.option_value0;
 import org.jikespg.uide.preferences.JikesPGPreferenceCache;
@@ -176,14 +174,14 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
             /* (non-Javadoc)
              * @see org.jikespg.uide.parser.JikesPGParser.AbstractVisitor#visit(org.jikespg.uide.parser.JikesPGParser.ImportSeg)
              */
-            public boolean visit(import_segment1 n) {
+            public boolean visit(import_segment n) {
                 fDependencyInfo.addDependency(filePath, n.getSYMBOL().toString());
                 return false;
             }
             /* (non-Javadoc)
              * @see org.jikespg.uide.parser.JikesPGParser.AbstractVisitor#visit(org.jikespg.uide.parser.JikesPGParser.include_segment1)
              */
-            public boolean visit(include_segment1 n) {
+            public boolean visit(include_segment n) {
                 fDependencyInfo.addDependency(filePath, n.getSYMBOL().toString());
                 return false;
             }

@@ -56,30 +56,30 @@ $Rules
     JikesPG_INPUT$$JikesPG_item ::= $empty
                                 |   JikesPG_INPUT JikesPG_item
 
-    JikesPG_item$AliasSeg      ::= alias_segment      END_KEY_OPT
-    JikesPG_item$DefineSeg     ::= define_segment     END_KEY_OPT
-    JikesPG_item$EofSeg        ::= eof_segment        END_KEY_OPT
-    JikesPG_item$EolSeg        ::= eol_segment        END_KEY_OPT
-    JikesPG_item$ErrorSeg      ::= error_segment      END_KEY_OPT
-    JikesPG_item$ExportSeg     ::= export_segment     END_KEY_OPT
-    JikesPG_item$GlobalsSeg    ::= globals_segment    END_KEY_OPT
-    JikesPG_item$HeadersSeg    ::= headers_segment    END_KEY_OPT
-    JikesPG_item$ImportSeg     ::= import_segment     END_KEY_OPT
-    JikesPG_item$IdentifierSeg ::= identifier_segment END_KEY_OPT
-    JikesPG_item$IncludeSeg    ::= include_segment    END_KEY_OPT
-    JikesPG_item$KeywordsSeg   ::= keywords_segment   END_KEY_OPT
-    JikesPG_item$NamesSeg      ::= names_segment      END_KEY_OPT
-    JikesPG_item$NoticeSeg     ::= notice_segment     END_KEY_OPT
-    JikesPG_item$RulesSeg      ::= rules_segment      END_KEY_OPT
-    JikesPG_item$StartSeg      ::= start_segment      END_KEY_OPT
-    JikesPG_item$TerminalsSeg  ::= terminals_segment  END_KEY_OPT
-    JikesPG_item$AstSeg        ::= ast_segment        END_KEY_OPT
-    JikesPG_item$TrailersSeg   ::= trailers_segment   END_KEY_OPT
-    JikesPG_item$TypesSeg      ::= types_segment      END_KEY_OPT
+    JikesPG_item$AliasSeg      ::= ALIAS_KEY$      alias_segment      END_KEY_OPT$
+    JikesPG_item$AstSeg        ::= AST_KEY$        ast_segment        END_KEY_OPT$
+    JikesPG_item$DefineSeg     ::= DEFINE_KEY$     define_segment     END_KEY_OPT$
+    JikesPG_item$EofSeg        ::= EOF_KEY$        eof_segment        END_KEY_OPT$
+    JikesPG_item$EolSeg        ::= EOL_KEY$        eol_segment        END_KEY_OPT$
+    JikesPG_item$ErrorSeg      ::= ERROR_KEY$      error_segment      END_KEY_OPT$
+    JikesPG_item$ExportSeg     ::= EXPORT_KEY$     export_segment     END_KEY_OPT$
+    JikesPG_item$GlobalsSeg    ::= GLOBALS_KEY$    globals_segment    END_KEY_OPT$
+    JikesPG_item$HeadersSeg    ::= HEADERS_KEY$    headers_segment    END_KEY_OPT$
+    JikesPG_item$IdentifierSeg ::= IDENTIFIER_KEY$ identifier_segment END_KEY_OPT$
+    JikesPG_item$ImportSeg     ::= IMPORT_KEY$     import_segment     END_KEY_OPT$
+    JikesPG_item$IncludeSeg    ::= INCLUDE_KEY$    include_segment    END_KEY_OPT$
+    JikesPG_item$KeywordsSeg   ::= KEYWORDS_KEY$   keywords_segment   END_KEY_OPT$
+    JikesPG_item$NamesSeg      ::= NAMES_KEY$      names_segment      END_KEY_OPT$
+    JikesPG_item$NoticeSeg     ::= NOTICE_KEY$     notice_segment     END_KEY_OPT$
+    JikesPG_item$RulesSeg      ::= RULES_KEY$      rules_segment      END_KEY_OPT$
+    JikesPG_item$StartSeg      ::= START_KEY$      start_segment      END_KEY_OPT$
+    JikesPG_item$TerminalsSeg  ::= TERMINALS_KEY$  terminals_segment  END_KEY_OPT$
+    JikesPG_item$TrailersSeg   ::= TRAILERS_KEY$   trailers_segment   END_KEY_OPT$
+    JikesPG_item$TypesSeg      ::= TYPES_KEY$      types_segment      END_KEY_OPT$
 
+    -- %options
     options_segment$$option_spec ::= $empty | options_segment option_spec
---  option_spec$option_spec ::= OPTIONS_KEY
-    option_spec$option_spec ::= OPTIONS_KEY option_list
+    option_spec$option_spec ::= OPTIONS_KEY$ option_list
     option_list$$option ::= option | option_list ','$ option
     option ::= SYMBOL option_value
     option_value ::= $empty | '='$ SYMBOL | '='$ '('$ symbol_list ')'$
@@ -87,79 +87,15 @@ $Rules
     symbol_list$$SYMBOL ::= SYMBOL
                           | symbol_list ','$ SYMBOL
 
-    ast_segment ::= AST_KEY
-    ast_segment ::= AST_KEY action_segment
+    -- $alias
+    alias_segment$$aliasSpec ::= aliasSpec | alias_segment aliasSpec
 
-    globals_segment ::= GLOBALS_KEY
-    globals_segment ::= globals_segment action_segment
-
-    include_segment ::= INCLUDE_KEY
-    include_segment ::= INCLUDE_KEY SYMBOL
-
-    notice_segment ::= NOTICE_KEY
-    notice_segment ::= notice_segment action_segment
-
-    define_segment ::= DEFINE_KEY
-    define_segment ::= define_segment macro_name_symbol macro_segment 
-
-    macro_name_symbol ::= MACRO_NAME
-    macro_name_symbol ::= SYMBOL -- warning: escape prefix missing...
-    macro_segment ::= BLOCK 
-
-    terminals_segment$$terminal ::= TERMINALS_KEY 
-    terminals_segment$$terminal ::= terminals_segment terminal
---  terminals_segment ::= terminals_segment terminal_symbol produces name
-
-    terminal ::= terminal_symbol optTerminalAlias
-    optTerminalAlias ::= $empty | produces name
-
-    export_segment ::= EXPORT_KEY 
-    export_segment ::= export_segment terminal_symbol
-
-    import_segment ::= IMPORT_KEY 
-    import_segment ::= IMPORT_KEY SYMBOL drop_command_list
-
-    drop_command_list$$drop_command ::= $empty
-    drop_command_list$$drop_command ::= drop_command_list drop_command
-
-    drop_command ::= DROPSYMBOLS_KEY drop_symbols
-    drop_command ::= DROPRULES_KEY drop_rules
-
-    drop_symbols$$SYMBOL  ::= SYMBOL
-    drop_symbols$$SYMBOL  ::= drop_symbols SYMBOL
-    drop_rules$$drop_rule ::= drop_rule
-    drop_rules$$drop_rule ::= drop_rules drop_rule
-
-    drop_rule ::= SYMBOL produces rhs
-    drop_rule ::= SYMBOL MACRO_NAME produces rhs
-    drop_rule ::= drop_rule '|'$ rhs
-
-    keywords_segment ::= KEYWORDS_KEY
-    keywords_segment ::= keywords_segment terminal_symbol
-    keywords_segment ::= keywords_segment terminal_symbol produces name
-
-    error_segment ::= ERROR_KEY
-    error_segment ::= ERROR_KEY terminal_symbol
-
-    identifier_segment ::= IDENTIFIER_KEY
-    identifier_segment ::= IDENTIFIER_KEY terminal_symbol
-
-    eol_segment ::= EOL_KEY
-    eol_segment ::= EOL_KEY terminal_symbol
-
-    eof_segment ::= EOF_KEY
-    eof_segment ::= EOF_KEY terminal_symbol
-
-    terminal_symbol ::= SYMBOL
-    terminal_symbol ::= MACRO_NAME -- warning: escape prefix used in symbol
-
-    alias_segment ::= ALIAS_KEY
-    alias_segment ::= alias_segment ERROR_KEY produces alias_rhs 
-    alias_segment ::= alias_segment EOL_KEY produces alias_rhs 
-    alias_segment ::= alias_segment EOF_KEY produces alias_rhs 
-    alias_segment ::= alias_segment IDENTIFIER_KEY produces alias_rhs 
-    alias_segment ::= alias_segment SYMBOL produces alias_rhs 
-    alias_segment ::= alias_segment alias_lhs_macro_name produces alias_rhs 
+    aliasSpec ::= ERROR_KEY produces alias_rhs 
+    aliasSpec ::= EOL_KEY produces alias_rhs 
+    aliasSpec ::= EOF_KEY produces alias_rhs 
+    aliasSpec ::= IDENTIFIER_KEY produces alias_rhs 
+    aliasSpec ::= SYMBOL produces alias_rhs 
+    aliasSpec ::= alias_lhs_macro_name produces alias_rhs 
 
     alias_lhs_macro_name ::= MACRO_NAME -- warning: escape prefix used in symbol
 
@@ -171,18 +107,79 @@ $Rules
     alias_rhs ::= EMPTY_KEY 
     alias_rhs ::= IDENTIFIER_KEY
 
-    start_segment    ::= START_KEY start_symbol
+    -- $ast
+    ast_segment ::= action_segment
 
-    headers_segment  ::= HEADERS_KEY$ action_segment_list
+    -- $define
+    define_segment$$defineSpec ::= defineSpec | define_segment defineSpec
+    defineSpec ::= macro_name_symbol macro_segment
 
-    trailers_segment ::= TRAILERS_KEY$ action_segment_list
+    macro_name_symbol ::= MACRO_NAME
+    macro_name_symbol ::= SYMBOL -- warning: escape prefix missing...
+    macro_segment ::= BLOCK 
 
-    start_symbol ::= SYMBOL 
-    start_symbol ::= MACRO_NAME
+    -- $eol/$eof
+    eol_segment ::= terminal_symbol
+    eof_segment ::= terminal_symbol
 
-    rules_segment ::= RULES_KEY$ action_segment_list nonTermList
+    -- $error
+    error_segment ::= terminal_symbol
 
-    nonTermList$$nonTerm ::= $empty | nonTermList nonTerm
+    -- $export
+    export_segment$$terminal_symbol ::= terminal_symbol | export_segment terminal_symbol
+
+    -- $globals
+    globals_segment$$action_segment ::= action_segment | globals_segment action_segment
+
+    -- $headers
+    headers_segment  ::= action_segment_list
+
+    -- $identifier
+    identifier_segment ::= terminal_symbol
+
+    -- $import
+    import_segment  ::= SYMBOL drop_command_list
+
+    drop_command_list$$drop_command ::= drop_command | drop_command_list drop_command
+
+    drop_command ::= DROPSYMBOLS_KEY drop_symbols
+    drop_command ::= DROPRULES_KEY drop_rules
+
+    drop_symbols$$SYMBOL  ::= SYMBOL
+    drop_symbols$$SYMBOL  ::= drop_symbols SYMBOL
+    drop_rules$$drop_rule ::= drop_rule
+    drop_rules$$drop_rule ::= drop_rules drop_rule
+
+    drop_rule ::= SYMBOL optMacroName produces rhsList
+
+    optMacroName ::= $empty | MACRO_NAME
+
+    -- $include
+    include_segment ::= SYMBOL
+
+    -- $keywords
+    keywords_segment$$keywordSpec ::= keywordSpec | keywords_segment keywordSpec
+    keywordSpec ::= terminal_symbol
+    keywordSpec ::= terminal_symbol produces name
+
+    -- $names
+    names_segment$$nameSpec ::= nameSpec | names_segment nameSpec
+    nameSpec ::= name produces name
+
+    name ::= SYMBOL
+    name ::= MACRO_NAME -- warning: escape prefix used in symbol
+    name ::= EMPTY_KEY 
+    name ::= ERROR_KEY 
+    name ::= EOL_KEY 
+    name ::= IDENTIFIER_KEY
+
+    -- $notice
+    notice_segment$$action_segment ::= action_segment | notice_segment action_segment
+
+    -- $rules
+    rules_segment ::= action_segment_list nonTermList
+
+    nonTermList$$nonTerm ::= nonTerm | nonTermList nonTerm
 
     nonTerm$nonTerm ::= SYMBOL produces rhsList
     nonTerm$nonTerm ::= SYMBOL MACRO_NAME$className produces rhsList
@@ -206,7 +203,7 @@ $Rules
 
     rhs ::= symWithAttrsList opt_action_segment
 
-    symWithAttrsList ::= symWithAttrs | symWithAttrsList symWithAttrs
+    symWithAttrsList$$symWithAttrs ::= symWithAttrs | symWithAttrsList symWithAttrs
 
     symWithAttrs ::= EMPTY_KEY
     symWithAttrs ::= SYMBOL
@@ -216,21 +213,29 @@ $Rules
 
     action_segment ::= BLOCK 
 
-    types_segment ::= TYPES_KEY
-    types_segment ::= types_segment type_declarations
+    -- $start
+    start_segment ::= start_symbol
+    start_symbol  ::= SYMBOL 
+    start_symbol  ::= MACRO_NAME
 
-    type_declarations ::= SYMBOL produces SYMBOL
-                        | type_declarations '|' SYMBOL
+    -- $terminals
+    terminals_segment$$terminal ::= terminal | terminals_segment terminal
+--  terminals_segment ::= terminals_segment terminal_symbol produces name
 
-    names_segment ::= NAMES_KEY
-    names_segment ::= names_segment name produces name 
+    terminal ::= terminal_symbol optTerminalAlias
+    optTerminalAlias ::= $empty | produces name
 
-    name ::= SYMBOL
-    name ::= MACRO_NAME -- warning: escape prefix used in symbol
-    name ::= EMPTY_KEY 
-    name ::= ERROR_KEY 
-    name ::= EOL_KEY 
-    name ::= IDENTIFIER_KEY
+    terminal_symbol ::= SYMBOL
+    terminal_symbol ::= MACRO_NAME -- warning: escape prefix used in symbol
+
+    -- $trailers
+    trailers_segment ::= action_segment_list
+
+    -- $types
+    types_segment$$type_declarations ::= type_declarations | types_segment type_declarations
+
+    type_declarations     ::= SYMBOL produces barSymbolList
+    barSymbolList$$SYMBOL ::= SYMBOL | barSymbolList '|'$ SYMBOL
 
     END_KEY_OPT ::= $empty
     END_KEY_OPT ::= END_KEY 
