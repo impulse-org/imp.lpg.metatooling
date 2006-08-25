@@ -9,6 +9,12 @@ import org.jikespg.uide.parser.JikesPGParser.*;
 public class ASTUtils {
     private ASTUtils() { }
 
+    public static JikesPG getRoot(ASTNode node) {
+	while (node != null && !(node instanceof JikesPG))
+	    node= node.parent;
+	return (JikesPG) node;
+    }
+
     public static List/*<Imacro_name_symbol>*/ getMacros(JikesPG root) {
         List/*<Imacro_name_symbol>*/ result= new ArrayList();
     
@@ -97,5 +103,32 @@ public class ASTUtils {
         	return (ASTNode) macro;
         }
         return null;
+    }
+
+    public static List/*symWithAttrs*/ findRefsOf(final nonTerm nonTerm) {
+	final List result= new ArrayList();
+	JikesPG root= getRoot(nonTerm);
+
+	List/*<nonTerm>*/ nonTerms= getNonTerminals(root);
+
+	// Indexed search would be nice here...
+	for(int i=0; i < nonTerms.size(); i++) {
+	    nonTerm nt= (nonTerm) nonTerms.get(i);
+
+	    nt.accept(new AbstractVisitor() {
+		public void unimplementedVisitor(String s) { }
+		public boolean visit(symWithAttrs1 n) {
+		    if (n.getSYMBOL().toString().equals(nonTerm.getSYMBOL().toString()))
+			result.add(n);
+		    return super.visit(n);
+		}
+		public boolean visit(symWithAttrs2 n) {
+		    if (n.getSYMBOL().toString().equals(nonTerm.getSYMBOL().toString()))
+			result.add(n);
+		    return super.visit(n);
+		}
+	    });
+	}
+	return result;
     }
 }
