@@ -29,7 +29,7 @@ public class JikesPGReferenceResolver extends ReferenceResolver {
 	 */
 	public Object getLinkTarget(Object node, IParseController parseController)
 	{
-		if (!(node instanceof ASTNode)) return null;
+		if (!(node instanceof IASTNodeToken)) return null;
 		
 		JikesPG ast = (JikesPG) parseController.getCurrentAst();
 		final ASTNode def= ASTUtils.findDefOf((IASTNodeToken) node, (JikesPG) ast);
