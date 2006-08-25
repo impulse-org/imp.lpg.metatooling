@@ -209,4 +209,10 @@
          		class="org.jikespg.uide.editor.JikesPGContentProvider"
          		language="jikespg"/>
    </extension>
+   <extension
+         point="org.eclipse.uide.runtime.refactoringContributions">
+         <refactoringContributor
+				language="jikespg"
+				class="org.jikespg.uide.refactoring.JikesPGRefactoringContributor"/>
+   </extension>
 </plugin>
