@@ -50,7 +50,6 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
     static {
 	dependencies.add(RuntimePlugin.UIDE_RUNTIME);
-	dependencies.add(JikesPGPlugin.kPluginID);
 	dependencies.add("org.eclipse.core.runtime");
 	dependencies.add("org.eclipse.core.resources");
 	dependencies.add("org.eclipse.uide.runtime");
