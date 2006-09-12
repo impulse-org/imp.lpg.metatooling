@@ -107,12 +107,13 @@
             class="org.jikespg.uide.editor.HoverHelper"
             language="JikesPG"/>
    </extension>
-   <extension
+<!-- <extension
          point="org.eclipse.uide.runtime.hyperLink">
       <hyperlinkDetector
             class="org.jikespg.uide.editor.HyperlinkDetector"
             language="JikesPG"/>
    </extension>
+  -->
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
@@ -214,5 +215,11 @@
          <refactoringContributor
 				language="jikespg"
 				class="org.jikespg.uide.refactoring.JikesPGRefactoringContributor"/>
+   </extension>
+   <extension
+         point="org.eclipse.uide.runtime.referenceResolvers">
+         <referenceResolver
+                language="jikespg"
+                class="org.jikespg.uide.editor.JikesPGReferenceResolver"/>
    </extension>
 </plugin>
