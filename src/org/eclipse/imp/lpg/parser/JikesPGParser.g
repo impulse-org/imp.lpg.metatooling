@@ -56,26 +56,27 @@ $Rules
     JikesPG_INPUT$$JikesPG_item ::= $empty
                                 |   JikesPG_INPUT JikesPG_item
 
-    JikesPG_item$AliasSeg      ::= ALIAS_KEY$      alias_segment      END_KEY_OPT$
-    JikesPG_item$AstSeg        ::= AST_KEY$        ast_segment        END_KEY_OPT$
-    JikesPG_item$DefineSeg     ::= DEFINE_KEY$     define_segment     END_KEY_OPT$
-    JikesPG_item$EofSeg        ::= EOF_KEY$        eof_segment        END_KEY_OPT$
-    JikesPG_item$EolSeg        ::= EOL_KEY$        eol_segment        END_KEY_OPT$
-    JikesPG_item$ErrorSeg      ::= ERROR_KEY$      error_segment      END_KEY_OPT$
-    JikesPG_item$ExportSeg     ::= EXPORT_KEY$     export_segment     END_KEY_OPT$
-    JikesPG_item$GlobalsSeg    ::= GLOBALS_KEY$    globals_segment    END_KEY_OPT$
-    JikesPG_item$HeadersSeg    ::= HEADERS_KEY$    headers_segment    END_KEY_OPT$
-    JikesPG_item$IdentifierSeg ::= IDENTIFIER_KEY$ identifier_segment END_KEY_OPT$
-    JikesPG_item$ImportSeg     ::= IMPORT_KEY$     import_segment     END_KEY_OPT$
-    JikesPG_item$IncludeSeg    ::= INCLUDE_KEY$    include_segment    END_KEY_OPT$
-    JikesPG_item$KeywordsSeg   ::= KEYWORDS_KEY$   keywords_segment   END_KEY_OPT$
-    JikesPG_item$NamesSeg      ::= NAMES_KEY$      names_segment      END_KEY_OPT$
-    JikesPG_item$NoticeSeg     ::= NOTICE_KEY$     notice_segment     END_KEY_OPT$
-    JikesPG_item$RulesSeg      ::= RULES_KEY$      rules_segment      END_KEY_OPT$
-    JikesPG_item$StartSeg      ::= START_KEY$      start_segment      END_KEY_OPT$
-    JikesPG_item$TerminalsSeg  ::= TERMINALS_KEY$  terminals_segment  END_KEY_OPT$
-    JikesPG_item$TrailersSeg   ::= TRAILERS_KEY$   trailers_segment   END_KEY_OPT$
-    JikesPG_item$TypesSeg      ::= TYPES_KEY$      types_segment      END_KEY_OPT$
+    JikesPG_item$AliasSeg       ::= ALIAS_KEY$                   alias_segment       END_KEY_OPT$
+    JikesPG_item$AstSeg         ::= AST_KEY$                     ast_segment         END_KEY_OPT$
+    JikesPG_item$DefineSeg      ::= DEFINE_KEY$                  define_segment      END_KEY_OPT$
+    JikesPG_item$EofSeg         ::= EOF_KEY$                     eof_segment         END_KEY_OPT$
+    JikesPG_item$EolSeg         ::= EOL_KEY$                     eol_segment         END_KEY_OPT$
+    JikesPG_item$ErrorSeg       ::= ERROR_KEY$                   error_segment       END_KEY_OPT$
+    JikesPG_item$ExportSeg      ::= EXPORT_KEY$                  export_segment      END_KEY_OPT$
+    JikesPG_item$GlobalsSeg     ::= GLOBALS_KEY$                 globals_segment     END_KEY_OPT$
+    JikesPG_item$HeadersSeg     ::= HEADERS_KEY$                 headers_segment     END_KEY_OPT$
+    JikesPG_item$IdentifierSeg  ::= IDENTIFIER_KEY$              identifier_segment  END_KEY_OPT$
+    JikesPG_item$ImportSeg      ::= IMPORT_KEY$                  import_segment      END_KEY_OPT$
+    JikesPG_item$IncludeSeg     ::= INCLUDE_KEY$                 include_segment     END_KEY_OPT$
+    JikesPG_item$KeywordsSeg    ::= KEYWORDS_KEY$                keywords_segment    END_KEY_OPT$
+    JikesPG_item$NamesSeg       ::= NAMES_KEY$                   names_segment       END_KEY_OPT$
+    JikesPG_item$NoticeSeg      ::= NOTICE_KEY$                  notice_segment      END_KEY_OPT$
+    JikesPG_item$RulesSeg       ::= RULES_KEY$                   rules_segment       END_KEY_OPT$
+    JikesPG_item$StartSeg       ::= START_KEY$                   start_segment       END_KEY_OPT$
+    JikesPG_item$TerminalsSeg   ::= TERMINALS_KEY$               terminals_segment   END_KEY_OPT$
+    JikesPG_item$TrailersSeg    ::= TRAILERS_KEY$                trailers_segment    END_KEY_OPT$
+    JikesPG_item$TypesSeg       ::= TYPES_KEY$                   types_segment       END_KEY_OPT$
+    JikesPG_item$PredecessorSeg ::= DISJOINTPREDECESSORSETS_KEY$ predecessor_segment END_KEY_OPT$
 
     -- %options
     options_segment$$option_spec ::= $empty | options_segment option_spec
@@ -236,6 +237,11 @@ $Rules
 
     type_declarations     ::= SYMBOL produces barSymbolList
     barSymbolList$$SYMBOL ::= SYMBOL | barSymbolList '|'$ SYMBOL
+
+    -- $types
+    predecessor_segment$$symbol_pair ::= $empty | predecessor_segment symbol_pair
+
+    symbol_pair ::= SYMBOL SYMBOL
 
     END_KEY_OPT ::= $empty
     END_KEY_OPT ::= END_KEY 

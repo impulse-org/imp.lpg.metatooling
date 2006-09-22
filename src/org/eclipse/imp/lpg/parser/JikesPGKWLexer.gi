@@ -20,6 +20,7 @@ $Export
    ALIAS_KEY
    AST_KEY
    DEFINE_KEY
+   DISJOINTPREDECESSORSETS_KEY
    DROPRULES_KEY
    DROPSYMBOLS_KEY
    EMPTY_KEY
@@ -63,6 +64,11 @@ $Rules
     Keyword ::= '$' d e f i n e
         /.$BeginJava
             $setResult($_DEFINE_KEY);
+          $EndJava
+        ./
+     Keyword ::= '$' d i s j o i n t p r e d e c e s s o r s e t s
+        /.$BeginJava
+            $setResult($_DISJOINTPREDECESSORSETS_KEY);
           $EndJava
         ./
     Keyword ::= '$' d r o p r u l e s

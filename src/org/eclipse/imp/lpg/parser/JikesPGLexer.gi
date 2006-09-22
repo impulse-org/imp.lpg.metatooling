@@ -92,6 +92,7 @@ $End
 --$Headers
 --    /.
 --		public int[] keywords = {
+--                      $_DISJOINTPREDECESSORSETS_KEY,
 --			$_DROPSYMBOLS_KEY, $_DROPRULES_KEY, $_NOTICE_KEY, $_DEFINE_KEY,
 --			$_TERMINALS_KEY, $_KEYWORDS_KEY, $_IDENTIFIER_KEY, $_ALIAS_KEY,
 --			$_EMPTY_KEY, $_START_KEY, $_TYPES_KEY, $_RULES_KEY, $_NAMES_KEY, $_END_KEY,
@@ -794,6 +795,7 @@ $Rules
 
    --
    -- or_marker
+   -- out_directory
    --
    option ::= or_marker$om optionWhite '='$eq optionWhite anyNonWhiteChar$val optionWhite
           /.$BeginJava
@@ -804,6 +806,16 @@ $Rules
           ./
    or_marker ::= oO rR _opt mM aA rR kK eE rR
                | oO mM 
+
+   option ::= out_directory$dd optionWhite '='$eq optionWhite Value$val optionWhite
+          /.$BeginJava
+                      makeToken(getRhsFirstTokenIndex($dd), getRhsLastTokenIndex($dd), $_SYMBOL);
+                      makeToken(getRhsFirstTokenIndex($eq), getRhsLastTokenIndex($eq), $_EQUAL);
+                      makeToken(getRhsFirstTokenIndex($val), getRhsLastTokenIndex($val), $_SYMBOL);
+            $EndJava
+          ./
+   out_directory ::= oO uU tT _opt dD iI rR eE cC tT oO rR yY 
+                   | oO dD
 
    --
    -- package
