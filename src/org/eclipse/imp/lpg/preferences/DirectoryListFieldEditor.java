@@ -4,6 +4,7 @@
 package org.jikespg.uide.preferences;
 
 import java.io.File;
+import java.util.Stack;
 
 import org.eclipse.jface.preference.StringButtonFieldEditor;
 import org.eclipse.swt.SWT;
@@ -66,23 +67,78 @@ public class DirectoryListFieldEditor extends StringButtonFieldEditor {
         // insertion point in middle of text; insert new entry before this entry
         return leadingPart + dirPath + (prevSep > 0 ? "" : ";") + curText.substring(prevSep);
     }
+    
+    
+    // SMS 28 Sep 2006
+    // Modified doCheckState() to tolerate the use of quotes (needed to
+    // accommodate path entries with spaces).
+    // Now checks that any single or double quotes in the list are properly
+    // balanced and that any list segments between quotes represent valid
+    // directory paths.
+    
     protected boolean doCheckState() {
+    	
         String path= getTextControl().getText();
+        if (path.length() == 0 && isEmptyStringAllowed()) {
+        	return true;
+        }
+        
+        // Check for balanced quotes
+        final String singleQuote = "'";
+        final String doubleQuote = "\"";
+        Stack stack = new Stack();
+        for (int i = 0; i < path.length(); i++) {
+        	if (path.charAt(i) == '\'') {
+        		if (!stack.empty() && singleQuote.equals(stack.peek()))
+        			stack.pop();
+        		else
+        			stack.push(singleQuote);
+        	}
+        	if (path.charAt(i) == '"') {
+        		if (!stack.empty() && doubleQuote.equals(stack.peek()))
+        			stack.pop();
+        		else
+        			stack.push(doubleQuote);
+        	}
+        }
+        if (stack.size() != 0)
+        	return false;
 
-        if (path.length() == 0 && isEmptyStringAllowed())
-    	return true;
-
-        String[] pathElems= path.split(";");
-
-        for(int i= 0; i < pathElems.length; i++) {
-    	String pathElem= pathElems[i].trim();
-    	File dir= new File(pathElem);
-
-    	if (!dir.isDirectory())
-    	    return false;
+        
+        // Now validate list segments between quotes
+        path = path.replace("\"", "'");
+        String[] splits = path.split("'");       
+        boolean splitsVerified = true;
+        for (int i = 0; i < splits.length; i++) {
+        	splitsVerified = splitsVerified && doCheckState(splits[i]);
+        	if (!splitsVerified) return false;
         }
         return true;
     }
+    
+    
+    protected boolean doCheckState(String path)
+    {	// This is the real work of the original doCheckState()
+        if (path.length() == 0) {
+        	return true;
+        }
+        
+        String[] pathElems= path.split(";");
+
+        for(int i= 0; i < pathElems.length; i++) {
+	    	String pathElem= pathElems[i].trim();
+	    	File dir= new File(pathElem);
+	
+	    	if (!dir.isDirectory()) {
+	    		setErrorMessage("Path list contains a name that is not a directory name");
+	    		return false;
+	    	}
+        }
+        
+        return true;
+    }
+
+    
     /**
      * Helper that opens the directory chooser dialog.
      * @param startingDirectory The directory the dialog will open in.
