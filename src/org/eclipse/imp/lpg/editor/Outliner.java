@@ -158,7 +158,6 @@ public class Outliner extends DefaultOutliner
 		    fItemStack.pop();
 		}
 		
-		
 	        public void endVisit(include_segment n) {
 	            createTopItem("Include " + n.getSYMBOL(), n);
 	        }
@@ -216,14 +215,21 @@ public class Outliner extends DefaultOutliner
 		    fItemStack.pop();
 		}
 		public boolean visit(nonTerm n) {
-		    fItemStack.push(createSubItem(symbolImage(n.getSYMBOL()), n));
+		    if (n.getrhsList().size() > 1)
+			fItemStack.push(createSubItem(symbolImage(n.getSYMBOL()), n));
 		    return true;
 		}
 	        public void endVisit(nonTerm n) {
-	            fItemStack.pop();
+		    if (n.getrhsList().size() > 1)
+			fItemStack.pop();
 	        }
 	        public boolean visit(rhs n) {
 	            fRHSLabel = new StringBuffer();
+	            final nonTerm parentNonTerm= (nonTerm) n.getParent().getParent();
+		    if (parentNonTerm.getrhsList().size() == 1) {
+			fRHSLabel.append(parentNonTerm.getSYMBOL());
+			fRHSLabel.append(" ::= ");
+		    }
 	            return true;
 	        }
 	        public void endVisit(rhs n) {
