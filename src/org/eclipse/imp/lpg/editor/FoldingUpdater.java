@@ -89,6 +89,16 @@ public class FoldingUpdater implements IFoldingUpdater {
 
         public boolean visit(ImportSeg n) {
             makeAnnotation(n);
+            return true;
+        }
+
+        public boolean visit(drop_command0 n) {
+            makeAnnotation(n);
+            return false;
+        }
+
+        public boolean visit(drop_command1 n) {
+            makeAnnotation(n);
             return false;
         }
 
