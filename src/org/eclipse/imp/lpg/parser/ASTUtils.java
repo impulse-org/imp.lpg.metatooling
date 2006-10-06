@@ -2,6 +2,7 @@ package org.jikespg.uide.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import org.jikespg.uide.editor.HoverHelper;
 import org.jikespg.uide.parser.JikesPGParser.*;
@@ -19,16 +20,19 @@ public class ASTUtils {
         List/*<Imacro_name_symbol>*/ result= new ArrayList();
     
         // DO NOT pick up macros from any imported file! They shouldn't be treated as defined in this scope!
-        DefineSeg defineSeg= (DefineSeg) findItemOfType(root, DefineSeg.class);
+        List<ASTNode> defineSegs= findItemOfType(root, DefineSeg.class);
+        for(Iterator iter= defineSegs.iterator(); iter.hasNext(); ) {
+	    DefineSeg defineSeg= (DefineSeg) iter.next();
+	    
+	    if (defineSeg == null) continue;
 
-        if (defineSeg == null) return Collections.EMPTY_LIST;
+	    defineSpecList defines= defineSeg.getdefine_segment();
 
-        defineSpecList defines= defineSeg.getdefine_segment();
-
-        for(int i= 0; i < defines.size(); i++) {
-            defineSpec define= defines.getdefineSpecAt(i);
-            result.add(define.getmacro_name_symbol());
-        }
+	    for(int i= 0; i < defines.size(); i++) {
+		defineSpec define= defines.getdefineSpecAt(i);
+		result.add(define.getmacro_name_symbol());
+	    }
+	}
         return result;
     }
 
@@ -36,14 +40,18 @@ public class ASTUtils {
         List/*<nonTerm>*/ result= new ArrayList();
     
         // TODO: pick up non-terminals from any imported file
-        RulesSeg rules= (RulesSeg) findItemOfType(root, RulesSeg.class);
+        List<ASTNode> rulesSegs= findItemOfType(root, RulesSeg.class);
 
-        if (rules == null) return Collections.EMPTY_LIST;
+        if (rulesSegs.size() == 0) return Collections.EMPTY_LIST;
 
-        rules_segment rulesSeg= rules.getrules_segment();
-        nonTermList nonTermList= rulesSeg.getnonTermList();
-    
-        result.addAll(nonTermList.getArrayList());
+        for(Iterator iter= rulesSegs.iterator(); iter.hasNext(); ) {
+	    RulesSeg rulesSeg= (RulesSeg) iter.next();
+	    
+	    rules_segment rules_seg= rulesSeg.getrules_segment();
+	    nonTermList nonTermList= rules_seg.getnonTermList();
+	    
+	    result.addAll(nonTermList.getArrayList());
+	}
         return result;
     }
 
@@ -51,26 +59,31 @@ public class ASTUtils {
         List/*<terminal>*/ result= new ArrayList();
     
         // TODO: pick up terminals from any imported file
-        TerminalsSeg terminalsSeg= (TerminalsSeg) findItemOfType(root, TerminalsSeg.class);
+        List<ASTNode> terminalsSegs= findItemOfType(root, TerminalsSeg.class);
 
-        if (terminalsSeg == null) return Collections.EMPTY_LIST;
+        for(Iterator iter= terminalsSegs.iterator(); iter.hasNext();) {
+	    TerminalsSeg terminalsSeg= (TerminalsSeg) iter.next();
 
-        terminalList terminals= terminalsSeg.getterminals_segment();
-    
-        result.addAll(terminals.getArrayList());
+	    if (terminalsSeg != null) {
+	        terminalList terminals= terminalsSeg.getterminals_segment();
+	        
+	        result.addAll(terminals.getArrayList());
+	    }
+	}
         return result;
     }
 
-    public static ASTNode findItemOfType(JikesPG root, Class ofType) {
+    public static List<ASTNode> findItemOfType(JikesPG root, Class ofType) {
         JikesPG_itemList itemList= root.getJikesPG_INPUT();
-    
+        List<ASTNode> result= new ArrayList<ASTNode>();
+
         for(int i=0; i < itemList.size(); i++) {
             IJikesPG_item item= itemList.getJikesPG_itemAt(i);
     
             if (ofType.isInstance(item))
-                return (ASTNode) item;
+                result.add((ASTNode) item);
         }
-        return null;
+        return result;
     }
 
     public static ASTNode findDefOf(IASTNodeToken s, JikesPG root) {
