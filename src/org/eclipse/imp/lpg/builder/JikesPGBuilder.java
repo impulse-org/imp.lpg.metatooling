@@ -54,7 +54,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
      */
     public static final String LPG_PLUGIN_ID= "lpg";
 
-    private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (.*)";
+    private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (informative|Warning|Error): (.*)";
     private static final Pattern SYNTAX_MSG_PATTERN= Pattern.compile(SYNTAX_MSG_REGEXP);
 
     private static final String MISSING_MSG_REGEXP= "Input file \"([^\"]+)\" could not be read";
@@ -277,10 +277,13 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 //	    int endCol= Integer.parseInt(matcher.group(5));
 	    int startChar= Integer.parseInt(matcher.group(6)) - 1;// - (startLine - 1) * lineSepBias + 1;
 	    int endChar= Integer.parseInt(matcher.group(7));// - (endLine - 1) * lineSepBias + 1;
-	    String descrip= matcher.group(8);
+            String severity= matcher.group(8);
+	    String descrip= matcher.group(9);
 
 	    if (startLine == 0) startLine= 1;
-	    createMarker(errorResource, startLine, startChar, endChar, descrip, IMarker.SEVERITY_ERROR);
+	    createMarker(errorResource, startLine, startChar, endChar, descrip,
+                    (severity.equals("Informative") ? IMarker.SEVERITY_INFO :
+                        (severity.equals("Warning") ? IMarker.SEVERITY_WARNING : IMarker.SEVERITY_ERROR)));
 	    return true;
 	}
 	return false;
