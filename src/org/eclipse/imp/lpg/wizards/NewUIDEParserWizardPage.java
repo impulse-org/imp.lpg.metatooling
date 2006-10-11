@@ -48,10 +48,14 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	try {
 //	    getField("class").setEnabled(false);
             String lang= getField("language").getText();
-            getField("id").setText(lang + ".safari.parser");
+            // RMF 10/10/2006 - fOmitExtensionIDName is true except for builder
+            // extensions, so there *is* no "id" field for the parser extension!
+//          getField("id").setText(lang + ".safari.parser");
             getField("language").fText.addModifyListener(new ModifyListener() {
                 public void modifyText(ModifyEvent e) {
-                    setIDIfEmpty();
+                    // RMF 10/10/2006 - fOmitExtensionIDName is true except for builder
+                    // extensions, so there *is* no "id" field for the parser extension!
+//                  setIDIfEmpty();
                     setClassIfEmpty();
                 }
             });
@@ -107,25 +111,27 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
             if (field.getText().length() == 0)
                 field.setText(pluginLang);
-            getField("class").setText(fGrammarOptions.getPackageForLanguage(pluginLang) + ".Parser");
+            getField("class").setText(fGrammarOptions.getPackageForLanguage(pluginLang) + ".ParseController");
         } catch (Exception e) {
             ErrorHandler.reportError("Cannot set language", e);
         }
     }
 
-    protected void setIDIfEmpty() {
-	try {
-	    WizardPageField langField= getField("language");
-            String language= langField.getText();
-
-            if (language.length() == 0)
-                return;
-            String langID= lowerCaseFirst(language);
-	    getField("id").setText(langID + ".safari.parser");
-	} catch (Exception e) {
-	    ErrorHandler.reportError("Cannot set ID", e);
-	}
-    }
+    // RMF 10/10/2006 - There *is* no "id" field/attribute; that only exists for builder extensions that actually need one.
+//    protected void setIDIfEmpty() {
+//        if (true) return;
+//	try {
+//	    WizardPageField langField= getField("language");
+//            String language= langField.getText();
+//
+//            if (language.length() == 0)
+//                return;
+//            String langID= lowerCaseFirst(language);
+//	    getField("id").setText(langID + ".safari.parser");
+//	} catch (Exception e) {
+//	    ErrorHandler.reportError("Cannot set ID", e);
+//	}
+//    }
 
     protected void setClassIfEmpty() {
         try {
@@ -137,7 +143,8 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
             String langPkg= lowerCaseFirst(language);
             String langClass= upperCaseFirst(language);
 
-            getField("class").setText(langPkg + ".safari.parser." + langClass + "ParseController");
+//          getField("class").setText(langPkg + ".safari.parser." + langClass + "ParseController");
+            getField("class").setText(fGrammarOptions.getPackageForLanguage(language) + ".ParseController");
         } catch (Exception e) {
             ErrorHandler.reportError("Cannot set class", e);
         }
