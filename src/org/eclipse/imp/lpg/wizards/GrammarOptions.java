@@ -86,14 +86,14 @@ public class GrammarOptions {
 
     public String getPackageForLanguage(String language) {
         if (getPackageName().length() == 0) {
-            StringBuffer buffer= new StringBuffer("org.");
+            StringBuffer buffer= new StringBuffer(/*"org."*/);
             for(int n= 0; n < language.length(); n++) {
         	char c= Character.toLowerCase(language.charAt(n));
     
         	if (Character.isJavaIdentifierPart(c))
         	    buffer.append(c);
             }
-            buffer.append(".parser");
+            buffer.append(".safari.parser");
             setPackageName(buffer.toString());
         }
         return getPackageName();
