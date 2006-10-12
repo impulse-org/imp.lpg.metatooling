@@ -143,7 +143,7 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
             String langPkg= lowerCaseFirst(language);
             String langClass= upperCaseFirst(language);
 
-//          getField("class").setText(langPkg + ".safari.parser." + langClass + "ParseController");
+            // TODO Unify the following code with similar stuff in NewUIDEParserWizard.generateCodeStubs().
             getField("class").setText(fGrammarOptions.getPackageForLanguage(language) + ".ParseController");
         } catch (Exception e) {
             ErrorHandler.reportError("Cannot set class", e);

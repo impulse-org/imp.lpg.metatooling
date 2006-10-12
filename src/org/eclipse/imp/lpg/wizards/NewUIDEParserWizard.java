@@ -93,7 +93,7 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         String grammarFileName= langClassName + "Parser.g";
 	String lexerFileName= langClassName + "Lexer.gi";
 	String kwlexerFileName= langClassName + "KWLexer.gi";
-	String controllerFileName= langClassName + "ParseController.java";
+	String controllerFileName= "ParseController.java";
 
         // RMF 3/2/2006 - The following would probably be simpler if we just passed in the 
 	IFile grammarFile= createGrammar(grammarFileName, parserTemplateName, autoGenerateASTs, fProject,
