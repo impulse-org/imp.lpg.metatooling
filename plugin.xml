@@ -222,4 +222,10 @@
                 language="jikespg"
                 class="org.jikespg.uide.editor.JikesPGReferenceResolver"/>
    </extension>
+   <extension
+         point="com.ibm.watson.safari.xform.astAdapter">
+         <astAdapter
+            language="JikesPG"
+            class="org.jikespg.uide.refactoring.JikesPGASTAdapter"/>
+   </extension>
 </plugin>
