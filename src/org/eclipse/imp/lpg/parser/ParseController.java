@@ -7,9 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import lpg.lpgjavaruntime.IToken;
 import lpg.lpgjavaruntime.Monitor;
+import lpg.lpgjavaruntime.IMessageHandler;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.uide.editor.IMessageHandler;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.ILexer;
 import org.eclipse.uide.parser.IParseController;

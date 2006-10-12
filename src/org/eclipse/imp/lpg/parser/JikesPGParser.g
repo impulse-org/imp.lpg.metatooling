@@ -6,7 +6,6 @@
 
 $Globals
     /.import org.eclipse.uide.parser.IParser;
-import org.eclipse.uide.editor.IMessageHandler;
      ./
 $End
 
