@@ -1,21 +1,17 @@
 package org.jikespg.uide.refactoring;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.uide.core.ILanguageService;
 import org.jikespg.uide.parser.GetChildrenVisitor;
 import org.jikespg.uide.parser.JikesPGParser;
 import org.jikespg.uide.parser.JikesPGParser.ASTNode;
 import org.jikespg.uide.parser.JikesPGParser.nonTerm;
 import org.jikespg.uide.parser.JikesPGParser.terminal;
-
 import com.ibm.watson.safari.xform.pattern.matching.MatchResult;
 import com.ibm.watson.safari.xform.pattern.matching.Matcher;
 import com.ibm.watson.safari.xform.pattern.parser.ASTAdapterBase;
-import com.ibm.watson.safari.xform.pattern.parser.Ast.NodeAttribute;
 
 public class JikesPGASTAdapter extends ASTAdapterBase implements ILanguageService {
     @Override
