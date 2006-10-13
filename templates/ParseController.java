@@ -70,8 +70,8 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
     }
     public IToken getTokenAtCharacter(int offset) {
     	return parser.getParseStream().getTokenAtCharacter(offset);
-    }
-    public IASTNodeLocator getNodeLocator() { return new AstLocator(); }
+    }											// SMS 3 Oct 2006:  trying new locator
+    public IASTNodeLocator getNodeLocator() { return new $CLASS_NAME_PREFIX$NodeLocator(); }	//return new AstLocator(); }
 
     public boolean hasErrors() { return currentAst == null; }
     public List getErrors() { return Collections.singletonList(new ParseError("parse error", null)); }
