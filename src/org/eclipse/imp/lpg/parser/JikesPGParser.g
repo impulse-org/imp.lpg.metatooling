@@ -179,7 +179,7 @@ $Rules
     -- $rules
     rules_segment ::= action_segment_list nonTermList
 
-    nonTermList$$nonTerm ::= nonTerm | nonTermList nonTerm
+    nonTermList$$nonTerm ::= $empty | nonTermList nonTerm
 
     nonTerm$nonTerm ::= SYMBOL produces rhsList
     nonTerm$nonTerm ::= SYMBOL MACRO_NAME$className produces rhsList
