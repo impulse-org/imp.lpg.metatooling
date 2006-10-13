@@ -93,7 +93,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         String grammarFileName= langClassName + "Parser.g";
 	String lexerFileName= langClassName + "Lexer.gi";
 	String kwlexerFileName= langClassName + "KWLexer.gi";
-	String controllerFileName= "ParseController.java";
+	String controllerFileName= langClassName + "ParseController.java";
+
 
         // RMF 3/2/2006 - The following would probably be simpler if we just passed in the 
 	IFile grammarFile= createGrammar(grammarFileName, parserTemplateName, autoGenerateASTs, fProject,
@@ -105,6 +106,11 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	createParseController(controllerFileName, parseCtlrTemplateName, hasKeywords, fProject,
 		monitor);
 
+	// SMS 29 Sep 2006
+	String locatorFileName = fClassName + "NodeLocator.java";
+	createNodeLocator(locatorFileName, "AstLocator.tmpl", fProject, monitor);
+	
+	
 	editFile(monitor, grammarFile);
 	enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
     }
@@ -113,6 +119,9 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
     static final String astNode= "ASTNode";
 
+
+    
+    
     static final String sAutoGenTemplate= "%options automatic_ast=toplevel,visitor=preorder,ast_directory=./" + astDirectory
 	    + ",ast_type=" + astNode;
 
@@ -162,6 +171,29 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	return createFileFromTemplate(fileName, "ParseController.tmpl", fPackageFolder, subs, project, monitor);
     }
 
+    
+	// SMS 29 Sep 2006
+    // All this node locator stuff, to provide one that has the same AST node type
+    // as is generated for the parser by the other parts of this wizard (and unlike
+    // the node type assumed in org.eclipse.uide.parser)
+    
+	
+    private IFile createNodeLocator(
+		String fileName, String templateName, IProject project, IProgressMonitor monitor) throws CoreException
+    {
+    	Map subs= getStandardSubstitutions();
+
+    	subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
+    	subs.put("$AST_NODE$", astNode);
+    	//subs.put("$PARSER_TYPE$", fClassName + "Parser");
+    	//subs.put("$LEXER_TYPE$", fClassName + "Lexer");
+
+    	return createFileFromTemplate(fileName, "AstLocator.tmpl", fPackageFolder, subs, project, monitor);
+	}
+    
+    
+    
+    
     protected String getTemplateBundleID() {
         return JikesPGPlugin.kPluginID;
     }
