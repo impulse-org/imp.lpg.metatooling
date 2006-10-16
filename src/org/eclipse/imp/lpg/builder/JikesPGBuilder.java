@@ -54,7 +54,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
      */
     public static final String LPG_PLUGIN_ID= "lpg";
 
-    private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (informative|Warning|Error): (.*)";
+    private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (Informative|Warning|Error): (.*)";
     private static final Pattern SYNTAX_MSG_PATTERN= Pattern.compile(SYNTAX_MSG_REGEXP);
 
     private static final String SYNTAX_MSG_NOSEV_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (.*)";
@@ -253,7 +253,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 
 	    if (matcher.matches()) {
 		String errorFile= matcher.group(1);
-		String projectLoc= getProject().getLocation().toOSString();
+		String projectLoc= getProject().getLocation().toString();
 
 		if (errorFile.startsWith(projectLoc))
 		    errorFile= errorFile.substring(projectLoc.length());
