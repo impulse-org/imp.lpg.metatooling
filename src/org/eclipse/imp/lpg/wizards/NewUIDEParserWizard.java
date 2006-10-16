@@ -124,7 +124,7 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
     
     
-    static final String sAutoGenTemplate= "%options automatic_ast=toplevel,visitor=preorder,ast_directory=./" + astDirectory
+    static final String sAutoGenTemplate= "%options parent_saved,automatic_ast=toplevel,visitor=preorder,ast_directory=./" + astDirectory
 	    + ",ast_type=" + astNode;
 
     static final String sKeywordTemplate= "%options filter=kwTemplate.gi";

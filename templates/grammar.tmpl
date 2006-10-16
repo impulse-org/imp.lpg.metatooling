@@ -52,6 +52,99 @@ $Start
     Program
 $End
 
+$Recover
+   MissingExpression
+$End
+
+$Headers
+    /.
+        public class Symbol {
+            String name, type;
+            Symbol(String name, String type) {
+                 this.name = name; this.type = type;
+            }
+            public String getName() { return name; }
+            public String getType() { return type; }
+        }
+
+        public class SymbolTable extends Hashtable {
+            SymbolTable parent;
+            SymbolTable(SymbolTable parent) { this.parent = parent; }
+            Symbol findSymbol(String name) {
+                Symbol symbol = (Symbol) get(name);
+                return (symbol != null
+                                ? symbol
+                                : parent != null ? parent.findSymbol(name) : null);
+            }
+            public SymbolTable getParent() { return parent; }
+        }
+        
+        Stack symbolTableStack = null;
+        SymbolTable topLevelSymbolTable = null;
+        public SymbolTable getTopLevelSymbolTable() { return topLevelSymbolTable; }
+
+        public void resolve($ast_type root) {
+            if (root != null) {
+                symbolTableStack = new Stack();
+                topLevelSymbolTable = new SymbolTable(null);
+                symbolTableStack.push(topLevelSymbolTable);
+                root.accept(new SymbolTableVisitor());
+            }
+        }
+        
+        /*
+         * A visitor for ASTs.  Its purpose is to build a symbol table
+         * for declared symbols and resolved identifier in expressions.
+         */
+        private final class SymbolTableVisitor extends AbstractVisitor {
+            public void unimplementedVisitor(String s) {
+                  // Sometimes useful for debugging
+                  // System.out.println(s);
+            }
+
+            public Symbol getSymbol(IToken id) {
+                Symbol symbol = ((SymbolTable) symbolTableStack.peek()).findSymbol(id.toString());
+                if (symbol == null)
+                     handler.handleMessage(id.getStartOffset(),
+                                           id.getEndOffset() - id.getStartOffset() + 1,
+                                           "Undeclared variable " + id.toString());
+                return symbol;
+            }
+            
+            public boolean visit(block n) {
+                n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
+                return true;
+            }
+
+            public void endVisit(block n) { symbolTableStack.pop(); }
+
+            public boolean visit(declaration n) {
+                IToken id = n.getIDENTIFIER().getIToken();
+                SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
+                if (symbol_table.get(id.toString()) == null)
+                     symbol_table.put(id.toString(),
+                                      new Symbol(id.toString(),
+                                                 n.gettype().getIToken().toString()));
+                else handler.handleMessage(id.getStartOffset(),
+                                           id.getEndOffset() - id.getStartOffset() + 1,
+                                           "Illegal redeclaration of " + id.toString());
+                return true;
+            }
+
+            public boolean visit(assignment n) {
+                getSymbol(n.getIDENTIFIER().getIToken()); return true;
+            }
+            
+            public boolean visit(BadAssignment n) {
+                getSymbol(n.getIDENTIFIER().getIToken()); return true;
+            }
+            
+            public boolean visit(term1 n) {
+                n.setSymbol(getSymbol(n.getIDENTIFIER())); return true;
+            }
+        } // End SymbolTableVisitor
+    ./
+$End
 
 $Rules
     -- In this section you list all the rules for your grammar.
@@ -59,23 +152,33 @@ $Rules
     -- 
     --  Here are some example rules:
     -- 
-    
-    	Program ::= stmtList
-    
-        stmtList$$statement ::= $empty
-                | stmtList statement
-        statement ::= declaration
-                    | assignment
-                    | block
-    	block ::= LEFTBRACE stmtList RIGHTBRACE
-        declaration ::= int identifier ;
-                      | short identifier ;
-        assignment ::= identifier '=' expression ';'
-        expression ::= expression '+' term
-                     | expression '-' term
-                     | term
-        term ::= identifier
-               | NUMBER
-        identifier ::= IDENTIFIER
-    -- 
+    stmtList$$statement ::= $empty
+                          | stmtList statement
+    statement ::= declaration
+                | assignment
+                | block
+                | ;
+    block ::= '{' stmtList '}'
+    /.
+        $action_type.SymbolTable symbolTable;
+        public void setSymbolTable($action_type.SymbolTable symbolTable) { this.symbolTable = symbolTable; }
+        public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
+    ./
+
+    declaration$declaration ::= int$type IDENTIFIER ;
+                              | short$type IDENTIFIER ;
+    assignment ::= IDENTIFIER '=' expression ';'
+                 | BadAssignment
+    expression ::= expression '+' term
+                 | expression '-' term
+                 | term
+    term ::= NUMBER
+           | IDENTIFIER
+    /.
+        $action_type.Symbol symbol;
+        public void setSymbol($action_type.Symbol symbol) { this.symbol = symbol; }
+        public $action_type.Symbol getSymbol() { return symbol; }
+    ./
+
+    BadAssignment ::= IDENTIFIER '=' MissingExpression 
 $End
