@@ -290,7 +290,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 
 	if (matcher.matches()) {
 	    String errorFile= matcher.group(1);
-	    String projectLoc= getProject().getLocation().toOSString();
+	    String projectLoc= getProject().getLocation().toString();
 
 	    if (errorFile.startsWith(projectLoc))
 		errorFile= errorFile.substring(projectLoc.length());
