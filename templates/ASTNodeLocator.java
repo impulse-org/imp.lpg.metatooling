@@ -6,14 +6,14 @@ import org.eclipse.uide.parser.IASTNodeLocator;
 import $PACKAGE_NAME$.Ast.AbstractVisitor;
 import lpg.lpgjavaruntime.IToken;
 
-public class $CLASS_NAME_PREFIX$NodeLocator implements IASTNodeLocator
+public class $CLASS_NAME_PREFIX$ASTNodeLocator implements IASTNodeLocator
 {
     private final $AST_NODE$[] fNode= new $AST_NODE$[1];
 
     private int fStartOffset;
     private int fEndOffset;
 
-    public $CLASS_NAME_PREFIX$NodeLocator( ) {
+    public $CLASS_NAME_PREFIX$ASTNodeLocator( ) {
     }
   
     
