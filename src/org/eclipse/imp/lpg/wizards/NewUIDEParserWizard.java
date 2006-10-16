@@ -53,7 +53,9 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	dependencies.add("org.eclipse.core.runtime");
 	dependencies.add("org.eclipse.core.resources");
 	dependencies.add("org.eclipse.uide.runtime");
-	dependencies.add("lpg");
+	// SMS 14 Oct 2006
+	// To enable buliding in runtime workspace based on lpg project
+	//dependencies.add("lpg");
     }
 
     protected List getPluginDependencies() {
@@ -107,8 +109,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 		monitor);
 
 	// SMS 29 Sep 2006
-	String locatorFileName = fClassName + "NodeLocator.java";
-	createNodeLocator(locatorFileName, "AstLocator.tmpl", fProject, monitor);
+	String locatorFileName = fClassName + "ASTNodeLocator.java";
+	createNodeLocator(locatorFileName, "ASTNodeLocator.tmpl", fProject, monitor);
 	
 	
 	editFile(monitor, grammarFile);
@@ -167,7 +169,7 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	subs.put("$AST_NODE$", astNode);
 	subs.put("$PARSER_TYPE$", fClassName + "Parser");
 	subs.put("$LEXER_TYPE$", fClassName + "Lexer");
-
+	
 	return createFileFromTemplate(fileName, "ParseController.tmpl", fPackageFolder, subs, project, monitor);
     }
 
@@ -188,7 +190,7 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
     	//subs.put("$PARSER_TYPE$", fClassName + "Parser");
     	//subs.put("$LEXER_TYPE$", fClassName + "Lexer");
 
-    	return createFileFromTemplate(fileName, "AstLocator.tmpl", fPackageFolder, subs, project, monitor);
+    	return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
 	}
     
     
