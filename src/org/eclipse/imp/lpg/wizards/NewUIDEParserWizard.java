@@ -55,7 +55,11 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	dependencies.add("org.eclipse.uide.runtime");
 	// SMS 14 Oct 2006
 	// To enable buliding in runtime workspace based on lpg project
-	//dependencies.add("lpg");
+        //
+        // PC Restored on 10/16/2006. This is a critical dependency.
+        // Eclipse forbids introducing project dependencies on plugins.
+        //
+	dependencies.add("lpg");
     }
 
     protected List getPluginDependencies() {
