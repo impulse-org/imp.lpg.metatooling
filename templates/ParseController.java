@@ -1,4 +1,4 @@
-package $PACKAGE_NAME$;
+	package $PACKAGE_NAME$;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 import lpg.lpgjavaruntime.Monitor;
+import lpg.lpgjavaruntime.IMessageHandler;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -16,7 +17,6 @@ import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
 
-import org.eclipse.uide.editor.IMessageHandler;		// SMS 5 May 2006
 import org.eclipse.core.resources.IMarker;			// SMS 5 May 2006
 import org.eclipse.core.resources.IResource;		// SMS 5 May 2006
 import org.eclipse.core.runtime.CoreException;		// SMS 5 May 2006
