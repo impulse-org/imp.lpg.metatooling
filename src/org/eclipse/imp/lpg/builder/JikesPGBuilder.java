@@ -57,6 +57,9 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
     private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (informative|Warning|Error): (.*)";
     private static final Pattern SYNTAX_MSG_PATTERN= Pattern.compile(SYNTAX_MSG_REGEXP);
 
+    private static final String SYNTAX_MSG_NOSEV_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (.*)";
+    private static final Pattern SYNTAX_MSG_NOSEV_PATTERN= Pattern.compile(SYNTAX_MSG_NOSEV_REGEXP);
+
     private static final String MISSING_MSG_REGEXP= "Input file \"([^\"]+)\" could not be read";
     private static final Pattern MISSING_MSG_PATTERN= Pattern.compile(MISSING_MSG_REGEXP);
 
@@ -245,8 +248,30 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	}
 	if (msg.indexOf("Number of ") < 0 &&
 	    !msg.startsWith("(C) Copyright") &&
-	    !msg.startsWith("IBM LALR Parser"))
-	    createMarker(file, 1, 0, 1, msg, IMarker.SEVERITY_INFO);
+	    !msg.startsWith("IBM LALR Parser")) {
+	    Matcher matcher= SYNTAX_MSG_NOSEV_PATTERN.matcher(msg);
+
+	    if (matcher.matches()) {
+		String errorFile= matcher.group(1);
+		String projectLoc= getProject().getLocation().toOSString();
+
+		if (errorFile.startsWith(projectLoc))
+		    errorFile= errorFile.substring(projectLoc.length());
+
+		IResource errorResource= getProject().getFile(errorFile);
+		int startLine= Integer.parseInt(matcher.group(2));
+//		int startCol= Integer.parseInt(matcher.group(3));
+//		int endLine= Integer.parseInt(matcher.group(4));
+//		int endCol= Integer.parseInt(matcher.group(5));
+		int startChar= Integer.parseInt(matcher.group(6)) - 1;// - (startLine - 1) * lineSepBias + 1;
+		int endChar= Integer.parseInt(matcher.group(7));// - (endLine - 1) * lineSepBias + 1;
+		String descrip= matcher.group(8);
+
+		if (startLine == 0) startLine= 1;
+		createMarker(errorResource, startLine, startChar, endChar, descrip, IMarker.SEVERITY_WARNING);
+	    } else
+		createMarker(file, 1, 0, 1, msg, IMarker.SEVERITY_INFO);
+	}
     }
 
     private void parseMissingFileMessage(String msg, IResource file) {
