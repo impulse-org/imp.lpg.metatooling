@@ -30,7 +30,7 @@ public class ParseController implements IParseController {
     public void initialize(String filePath, IProject project, IMessageHandler handler) {
 	this.filePath= filePath;
 	this.project= project;
-//	parser.setMessageHandler(handler);
+	parser.setMessageHandler(handler);
     }
 
     public IParser getParser() {
