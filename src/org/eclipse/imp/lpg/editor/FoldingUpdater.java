@@ -245,7 +245,7 @@ public class FoldingUpdater implements IFoldingUpdater {
             // time that it is necessary to modify the annotations
             fOldAnnotations= (Annotation[]) annotations.toArray(new Annotation[annotations.size()]);
         } catch (Exception e) {
-            ErrorHandler.reportError("JsdifFoldingUpdater.updateFoldingStructure:  EXCEPTION", e);
+            ErrorHandler.reportError("FoldingUpdater.updateFoldingStructure:  EXCEPTION", e);
         }
     }
 
