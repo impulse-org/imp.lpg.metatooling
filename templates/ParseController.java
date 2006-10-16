@@ -134,6 +134,7 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
         	return currentAst; // TODO currentAst might (probably will) be inconsistent wrt the lex stream now
 
         currentAst = ($AST_NODE$) parser.parser(my_monitor, 0);
+        parser.resolve(currentAst);
 
         cacheKeywordsOnce(); // better place/time to do this?
 
