@@ -111,7 +111,8 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
             if (field.getText().length() == 0)
                 field.setText(pluginLang);
-            getField("class").setText(fGrammarOptions.getPackageForLanguage(pluginLang) + ".ParseController");
+            // SMS 16 Oct 2006:  added pluginLang to default ParseController class name
+            getField("class").setText(fGrammarOptions.getPackageForLanguage(upperCaseFirst(pluginLang)) + "." + pluginLang + "ParseController");
         } catch (Exception e) {
             ErrorHandler.reportError("Cannot set language", e);
         }
@@ -144,7 +145,8 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
             String langClass= upperCaseFirst(language);
 
             // TODO Unify the following code with similar stuff in NewUIDEParserWizard.generateCodeStubs().
-            getField("class").setText(fGrammarOptions.getPackageForLanguage(language) + ".ParseController");
+            // SMS 16 Oct 2006:  added language to default ParseController class name
+            getField("class").setText(fGrammarOptions.getPackageForLanguage(language) + "." + langClass + "ParseController");
         } catch (Exception e) {
             ErrorHandler.reportError("Cannot set class", e);
         }
