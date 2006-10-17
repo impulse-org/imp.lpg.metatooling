@@ -162,6 +162,11 @@ $Rules
             $setResult($_TERMINALS_KEY);
           $EndJava
         ./
+    Keyword ::= '$' r e c o v e r
+        /.$BeginJava
+            $setResult($_RECOVER_KEY);
+          $EndJava
+        ./
     Keyword ::= '$' r u l e s
         /.$BeginJava
             $setResult($_RULES_KEY);
