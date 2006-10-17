@@ -58,7 +58,44 @@ $Recover
    MissingExpression
 $End
 
-$Headers
+$Rules
+    -- In this section you list all the rules for your grammar.
+    -- When reduced, each rule will produce one Ast node.
+    -- 
+    --  Here are some example rules:
+    -- 
+    stmtList$$statement ::= $empty
+                          | stmtList statement
+    statement ::= declaration
+                | assignment
+                | block
+                | ;
+    block ::= '{' stmtList '}'
+    /.
+        $action_type.SymbolTable symbolTable;
+        public void setSymbolTable($action_type.SymbolTable symbolTable) { this.symbolTable = symbolTable; }
+        public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
+    ./
+
+    declaration$declaration ::= int$type IDENTIFIER ;
+                              | short$type IDENTIFIER ;
+    assignment ::= IDENTIFIER '=' expression ';'
+                 | BadAssignment
+    expression ::= expression '+' term
+                 | expression '-' term
+                 | term
+    term ::= NUMBER
+           | IDENTIFIER
+    /.
+        $action_type.Symbol symbol;
+        public void setSymbol($action_type.Symbol symbol) { this.symbol = symbol; }
+        public $action_type.Symbol getSymbol() { return symbol; }
+    ./
+
+    BadAssignment ::= IDENTIFIER '=' MissingExpression 
+$End
+
+$Trailers
     /.
         public class Symbol {
             String name, type;
@@ -146,41 +183,4 @@ $Headers
             }
         } // End SymbolTableVisitor
     ./
-$End
-
-$Rules
-    -- In this section you list all the rules for your grammar.
-    -- When reduced, each rule will produce one Ast node.
-    -- 
-    --  Here are some example rules:
-    -- 
-    stmtList$$statement ::= $empty
-                          | stmtList statement
-    statement ::= declaration
-                | assignment
-                | block
-                | ;
-    block ::= '{' stmtList '}'
-    /.
-        $action_type.SymbolTable symbolTable;
-        public void setSymbolTable($action_type.SymbolTable symbolTable) { this.symbolTable = symbolTable; }
-        public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
-    ./
-
-    declaration$declaration ::= int$type IDENTIFIER ;
-                              | short$type IDENTIFIER ;
-    assignment ::= IDENTIFIER '=' expression ';'
-                 | BadAssignment
-    expression ::= expression '+' term
-                 | expression '-' term
-                 | term
-    term ::= NUMBER
-           | IDENTIFIER
-    /.
-        $action_type.Symbol symbol;
-        public void setSymbol($action_type.Symbol symbol) { this.symbol = symbol; }
-        public $action_type.Symbol getSymbol() { return symbol; }
-    ./
-
-    BadAssignment ::= IDENTIFIER '=' MissingExpression 
 $End
