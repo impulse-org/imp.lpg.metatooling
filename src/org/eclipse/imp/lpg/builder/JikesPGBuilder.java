@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.IFile;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.uide.core.SAFARIBuilderBase;
+import org.eclipse.uide.preferences.ISafariPreferencesService;
 import org.eclipse.uide.runtime.SAFARIPluginBase;
 import org.eclipse.uide.utils.StreamUtils;
 import org.jikespg.uide.JikesPGPlugin;
@@ -31,7 +33,7 @@ import org.jikespg.uide.parser.JikesPGParser.import_segment;
 import org.jikespg.uide.parser.JikesPGParser.include_segment;
 import org.jikespg.uide.parser.JikesPGParser.option;
 import org.jikespg.uide.parser.JikesPGParser.option_value0;
-import org.jikespg.uide.preferences.JikesPGPreferenceCache;
+import org.jikespg.uide.preferences.PreferenceConstants;
 import org.jikespg.uide.views.JikesPGView;
 import org.osgi.framework.Bundle;
 
@@ -55,6 +57,7 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
     public static final String LPG_PLUGIN_ID= "lpg";
 
     private static final String SYNTAX_MSG_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (Informative|Warning|Error): (.*)";
+
     private static final Pattern SYNTAX_MSG_PATTERN= Pattern.compile(SYNTAX_MSG_REGEXP);
 
     private static final String SYNTAX_MSG_NOSEV_REGEXP= "(.*):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+): (.*)";
@@ -62,7 +65,14 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 
     private static final String MISSING_MSG_REGEXP= "Input file \"([^\"]+)\" could not be read";
     private static final Pattern MISSING_MSG_PATTERN= Pattern.compile(MISSING_MSG_REGEXP);
-
+    
+    // SMS 8 Sep 2006
+	ISafariPreferencesService prefService = null;
+    {
+    	prefService = JikesPGPlugin.getPreferencesService();
+    	prefService.setProject(getProject());
+    }
+	
     protected SAFARIPluginBase getPlugin() {
 	return JikesPGPlugin.getInstance();
     }
@@ -80,11 +90,24 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
     }
 
     protected boolean isSourceFile(IFile file) {
-	return !file.isDerived() && JikesPGPreferenceCache.rootExtensionList.contains(file.getFileExtension());
+    	// SMS 8 Sep 2006
+    	//return !file.isDerived() && JikesPGPreferenceCache.rootExtensionList.contains(file.getFileExtension());
+
+	    String extensListed = prefService.getStringPreference(getProject(), PreferenceConstants.P_EXTENSION_LIST);
+	    String[] extens = extensListed.split(",");
+	    HashSet rootExtensionsSet = new HashSet();
+	    for(int i= 0; i < extens.length; i++) { rootExtensionsSet.add(extens[i]); }
+    	return !file.isDerived() && rootExtensionsSet.contains(file.getFileExtension());
     }
 
     protected boolean isNonRootSourceFile(IFile file) {
-        return !file.isDerived() && JikesPGPreferenceCache.nonRootExtensionList.contains(file.getFileExtension());
+    	// SMS 8 Sep 2006
+        //return !file.isDerived() && JikesPGPreferenceCache.nonRootExtensionList.contains(file.getFileExtension());
+ 	    String extensListed = prefService.getStringPreference(getProject(), PreferenceConstants.P_NON_ROOT_EXTENSION_LIST);
+	    String[] extens = extensListed.split(",");
+	    HashSet nonrootExtensionsSet = new HashSet();
+	    for(int i= 0; i < extens.length; i++) { nonrootExtensionsSet.add(extens[i]); }
+    	return !file.isDerived() && nonrootExtensionsSet.contains(file.getFileExtension());
     }
 
     protected boolean isOutputFolder(IResource resource) {
@@ -105,7 +128,9 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
 	    String cmd[]= new String[] {
 		    executablePath,
 		    "-quiet",
-		    (JikesPGPreferenceCache.generateListing ? "-list" : "-nolist"),
+		    // SMS 8 Sep 2006
+		    //(JikesPGPreferenceCache.generateListing ? "-list" : "-nolist"),
+		    (prefService.getBooleanPreference(getProject(), PreferenceConstants.P_GEN_LISTINGS) ? "-list" : "-nolist"),
 		    // In order for Windows to treat the following template path argument as
 		    // a single argument, despite any embedded spaces, it has to be completely
 		    // enclosed in double quotes. It does not suffice to quote only the path
@@ -315,9 +340,10 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
     }
 
     public static String getIncludePath() {
-	if (JikesPGPreferenceCache.jikesPGIncludeDirs != null &&
-	    JikesPGPreferenceCache.jikesPGIncludeDirs.length() > 0)
-	    return JikesPGPreferenceCache.jikesPGIncludeDirs;
+    	// SMS 8 Sep 2006
+		//	if (JikesPGPreferenceCache.jikesPGIncludeDirs != null &&
+		//	    JikesPGPreferenceCache.jikesPGIncludeDirs.length() > 0)
+		//	    return JikesPGPreferenceCache.jikesPGIncludeDirs;
 
 	return getDefaultIncludePath();
     }
@@ -339,7 +365,9 @@ public class JikesPGBuilder extends SAFARIBuilderBase {
     }
 
     private String getLPGExecutable() throws IOException {
-	return JikesPGPreferenceCache.jikesPGExecutableFile;
+    	// SMS 8 Sep 2006
+    	//return JikesPGPreferenceCache.jikesPGExecutableFile;
+    	return prefService.getStringPreference(getProject(), PreferenceConstants.P_JIKESPG_EXEC_PATH);
     }
 
     public static String getDefaultExecutablePath() {
