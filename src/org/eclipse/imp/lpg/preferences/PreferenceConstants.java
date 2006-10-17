@@ -4,6 +4,7 @@ package org.jikespg.uide.preferences;
  * Constant definitions for JikesPG plug-in preferences
  */
 public class PreferenceConstants {
+	
     public static final String P_JIKESPG_EXEC_PATH= "execPath";
 
     public static final String P_JIKESPG_INCLUDE_DIRS= "includeDirs";

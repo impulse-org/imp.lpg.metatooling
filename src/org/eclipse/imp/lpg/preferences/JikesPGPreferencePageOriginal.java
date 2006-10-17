@@ -22,11 +22,11 @@ import org.jikespg.uide.builder.JikesPGBuilder;
  * belongs to the main plug-in class. That way, preferences can be accessed directly via the
  * preference store.
  */
-public class JikesPGPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class JikesPGPreferencePageOriginal extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
     private FileFieldEditor fExecField;
     private DirectoryListFieldEditor fTemplateField;
 
-    public JikesPGPreferencePage() {
+    public JikesPGPreferencePageOriginal() {
 	super(GRID);
 	setPreferenceStore(JikesPGPlugin.getInstance().getPreferenceStore());
 	setDescription("Preferences for the JikesPG parser/lexer generator");
@@ -38,30 +38,26 @@ public class JikesPGPreferencePage extends FieldEditorPreferencePage implements 
      * save and restore itself.
      */
     public void createFieldEditors() {
-
 	final BooleanFieldEditor useDefaultExecField= new BooleanFieldEditorExtraListener(PreferenceConstants.P_USE_DEFAULT_EXEC, "Use default generator executable", getFieldEditorParent(),
 	    new IPropertyChangeListener() {
 	    	public void propertyChange(PropertyChangeEvent event) {
 	    	    if (event.getNewValue().equals(Boolean.TRUE)) {
-	    		fExecField.setEnabled(false, JikesPGPreferencePage.this.getFieldEditorParent());
+	    		fExecField.setEnabled(false, JikesPGPreferencePageOriginal.this.getFieldEditorParent());
 			fExecField.setStringValue(JikesPGBuilder.getDefaultExecutablePath());
 	    	    } else
-	    		fExecField.setEnabled(true, JikesPGPreferencePage.this.getFieldEditorParent());
+	    		fExecField.setEnabled(true, JikesPGPreferencePageOriginal.this.getFieldEditorParent());
 	    	}
 	    });
-
-	    
-	    
 	fExecField= new FileFieldEditor(PreferenceConstants.P_JIKESPG_EXEC_PATH, "Generator e&xecutable:", getFieldEditorParent());
 
 	final BooleanFieldEditor useDefaultTemplateField= new BooleanFieldEditorExtraListener(PreferenceConstants.P_USE_DEFAULT_INCLUDE_DIR, "Use default generator include path", getFieldEditorParent(),
 	    new IPropertyChangeListener() {
 	    	public void propertyChange(PropertyChangeEvent event) {
 	    	    if (event.getNewValue().equals(Boolean.TRUE)) {
-	    		fTemplateField.setEnabled(false, JikesPGPreferencePage.this.getFieldEditorParent());
+	    		fTemplateField.setEnabled(false, JikesPGPreferencePageOriginal.this.getFieldEditorParent());
 			fTemplateField.setStringValue(JikesPGBuilder.getDefaultIncludePath());
 	    	    } else
-	    		fTemplateField.setEnabled(true, JikesPGPreferencePage.this.getFieldEditorParent());
+	    		fTemplateField.setEnabled(true, JikesPGPreferencePageOriginal.this.getFieldEditorParent());
 	    	}
 	    });
 	fTemplateField= new DirectoryListFieldEditor(PreferenceConstants.P_JIKESPG_INCLUDE_DIRS, "&Include directories:", getFieldEditorParent());
