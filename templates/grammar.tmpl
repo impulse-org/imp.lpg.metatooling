@@ -89,9 +89,9 @@ $Rules
 
     identifier ::= IDENTIFIER
     /.
-        $action_type.Symbol symbol;
-        public void setSymbol($action_type.Symbol symbol) { this.symbol = symbol; }
-        public $action_type.Symbol getSymbol() { return symbol; }
+        declaration decl;
+        public void setDeclaration(declaration decl) { this.decl = decl; }
+        public declaration getDeclaration() { return decl; }
     ./
 
     BadAssignment ::= identifier '=' MissingExpression 
@@ -99,24 +99,14 @@ $End
 
 $Headers
     /.
-        public class Symbol {
-            declaration decl;
-            Symbol(declaration decl) {
-                 this.decl = decl;
-            }
-            public declaration getDeclaration() { return decl; }
-            public String getName() { return decl.getidentifier().getIToken().toString(); }
-            public String getType() { return decl.gettype().getIToken().toString(); }
-        }
-
         public class SymbolTable extends Hashtable {
             SymbolTable parent;
             SymbolTable(SymbolTable parent) { this.parent = parent; }
-            Symbol findSymbol(String name) {
-                Symbol symbol = (Symbol) get(name);
-                return (symbol != null
-                                ? symbol
-                                : parent != null ? parent.findSymbol(name) : null);
+            declaration findDeclaration(String name) {
+                declaration decl = (declaration) get(name);
+                return (decl != null
+                              ? decl
+                              : parent != null ? parent.findDeclaration(name) : null);
             }
             public SymbolTable getParent() { return parent; }
         }
@@ -139,18 +129,15 @@ $Headers
          * for declared symbols and resolved identifier in expressions.
          */
         private final class SymbolTableVisitor extends AbstractVisitor {
-            public void unimplementedVisitor(String s) {
-                  // Sometimes useful for debugging
-                  // System.out.println(s);
-            }
+            public void unimplementedVisitor(String s) { /* Useful for debugging: System.out.println(s); */ }
 
-            public Symbol getSymbol(IToken id) {
-                Symbol symbol = ((SymbolTable) symbolTableStack.peek()).findSymbol(id.toString());
-                if (symbol == null)
+            public declaration getDeclaration(IToken id) {
+                declaration decl = ((SymbolTable) symbolTableStack.peek()).findDeclaration(id.toString());
+                if (decl == null)
                      handler.handleMessage(id.getStartOffset(),
                                            id.getEndOffset() - id.getStartOffset() + 1,
                                            "Undeclared variable " + id.toString());
-                return symbol;
+                return decl;
             }
             
             public boolean visit(block n) {
@@ -164,7 +151,7 @@ $Headers
                 IToken id = n.getidentifier().getIToken();
                 SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
                 if (symbol_table.get(id.toString()) == null)
-                     symbol_table.put(id.toString(), new Symbol(n));
+                     symbol_table.put(id.toString(), n);
                 else handler.handleMessage(id.getStartOffset(),
                                            id.getEndOffset() - id.getStartOffset() + 1,
                                            "Illegal redeclaration of " + id.toString());
@@ -172,15 +159,15 @@ $Headers
             }
 
             public boolean visit(assignment n) {
-                getSymbol(n.getidentifier().getIToken()); return true;
+                getDeclaration(n.getidentifier().getIToken()); return true;
             }
             
             public boolean visit(BadAssignment n) {
-                getSymbol(n.getidentifier().getIToken()); return true;
+                getDeclaration(n.getidentifier().getIToken()); return true;
             }
             
             public boolean visit(identifier n) {
-                n.setSymbol(getSymbol(n.getIDENTIFIER())); return true;
+                n.setDeclaration(getDeclaration(n.getIDENTIFIER())); return true;
             }
         } // End SymbolTableVisitor
     ./
