@@ -75,7 +75,7 @@ $Rules
     JikesPG_item$TerminalsSeg   ::= TERMINALS_KEY$               terminals_segment   END_KEY_OPT$
     JikesPG_item$TrailersSeg    ::= TRAILERS_KEY$                trailers_segment    END_KEY_OPT$
     JikesPG_item$TypesSeg       ::= TYPES_KEY$                   types_segment       END_KEY_OPT$
-    JikesPG_item$PredecessorSeg ::= RECOVER_KEY$                 recover_segment     END_KEY_OPT$
+    JikesPG_item$RecoverSeg     ::= RECOVER_KEY$                 recover_segment     END_KEY_OPT$
     JikesPG_item$PredecessorSeg ::= DISJOINTPREDECESSORSETS_KEY$ predecessor_segment END_KEY_OPT$
 
     -- %options
