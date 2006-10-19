@@ -71,7 +71,7 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 
     public String determineLanguage() {
 	try {
-	    IPluginModel pluginModel= ExtensionPointEnabler.getPluginModel(this);
+	    IPluginModel pluginModel= ExtensionPointEnabler.getPluginModel(getProject());
 
 	    if (pluginModel != null) {
 		IPluginExtension[] extensions= pluginModel.getExtensions().getExtensions();
