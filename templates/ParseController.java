@@ -1,4 +1,4 @@
-	package $PACKAGE_NAME$;
+package $PACKAGE_NAME$;
 
 import java.io.IOException;
 import java.util.Collections;
