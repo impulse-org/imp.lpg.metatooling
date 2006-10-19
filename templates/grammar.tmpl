@@ -130,15 +130,6 @@ $Headers
          */
         private final class SymbolTableVisitor extends AbstractVisitor {
             public void unimplementedVisitor(String s) { /* Useful for debugging: System.out.println(s); */ }
-
-            public declaration getDeclaration(IToken id) {
-                declaration decl = ((SymbolTable) symbolTableStack.peek()).findDeclaration(id.toString());
-                if (decl == null)
-                     handler.handleMessage(id.getStartOffset(),
-                                           id.getEndOffset() - id.getStartOffset() + 1,
-                                           "Undeclared variable " + id.toString());
-                return decl;
-            }
             
             public boolean visit(block n) {
                 n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
@@ -158,16 +149,15 @@ $Headers
                 return true;
             }
 
-            public boolean visit(assignment n) {
-                getDeclaration(n.getidentifier().getIToken()); return true;
-            }
-            
-            public boolean visit(BadAssignment n) {
-                getDeclaration(n.getidentifier().getIToken()); return true;
-            }
-            
             public boolean visit(identifier n) {
-                n.setDeclaration(getDeclaration(n.getIDENTIFIER())); return true;
+                IToken id = n.getIDENTIFIER();
+                declaration decl = ((SymbolTable) symbolTableStack.peek()).findDeclaration(id.toString());
+                if (decl == null)
+                     handler.handleMessage(id.getStartOffset(),
+                                           id.getEndOffset() - id.getStartOffset() + 1,
+                                           "Undeclared variable " + id.toString());
+                else n.setDeclaration(decl);
+                return true;
             }
         } // End SymbolTableVisitor
     ./
