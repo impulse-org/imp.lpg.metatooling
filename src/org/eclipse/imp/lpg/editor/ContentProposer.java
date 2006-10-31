@@ -37,7 +37,7 @@ public class ContentProposer implements IContentProposer {
         final String prefixToken= thisNode.getLeftIToken().toString();
         final String prefix= prefixToken.substring(0, offset - thisNode.getLeftIToken().getStartOffset());
 
-        final List/*<ICompletionProposal>*/ proposals= new ArrayList();
+        final List<ICompletionProposal> proposals= new ArrayList<ICompletionProposal>();
 
         if (thisNode.getParent() instanceof option) {
 	    option opt= (option) thisNode.getParent();
@@ -52,20 +52,20 @@ public class ContentProposer implements IContentProposer {
             proposals.addAll(computeTerminalCompletions(prefix, offset, root));
         }
 
-        return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+        return proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
 
     private final static String[] OPTION_KEYS= {
 	"action", "ast_directory", "ast_type", "attributes",
 	"automatic_ast", "backtrack", "byte", "conflicts",
 	"dat-directory", "dat-file", "dcl-file", "debug",
-	"def-file", "edit", "error-maps", "escape=character", 
+	"def-file", "edit", "error-maps", "escape", 
 	"extends-parsetable", "export-terminals", "factory", "file-prefix",
 	"filter", "first", "follow", "goto-default",
 	"grm-file", "imp-file", "import-terminals", "include-directory",
 	"lalr-level", "list", "margin", "max_cases",
 	"names", "nt-check", "or-marker", "out_directory",
-	"package", "parent_saved", "parsetable-interfaces", "prefix=string",
+	"package", "parent_saved", "parsetable-interfaces", "prefix",
 	"priority", "programming_language", "prs-file", "quiet",
 	"read-reduce", "remap-terminals", "scopes", "serialize",
 	"shift-default", "single-productions", "slr", "soft-keywords",
@@ -85,9 +85,9 @@ public class ContentProposer implements IContentProposer {
 	return result;
     }
 
-    private List/*<ICompletionProposal>*/ computeMacroCompletions(String prefix, int offset, JikesPG root) {
-        List/*<ICompletionProposal>*/ result= new ArrayList();
-        List/*<Imacro_name_symbol>*/ macros= ASTUtils.getMacros(root);
+    private List<ICompletionProposal> computeMacroCompletions(String prefix, int offset, JikesPG root) {
+        List<ICompletionProposal> result= new ArrayList<ICompletionProposal>();
+        List<Imacro_name_symbol> macros= ASTUtils.getMacros(root);
 
         for(Iterator iter= macros.iterator(); iter.hasNext(); ) {
             Imacro_name_symbol macro= (Imacro_name_symbol) iter.next();
@@ -100,9 +100,9 @@ public class ContentProposer implements IContentProposer {
         return result;
     }
 
-    private List/*<ICompletionProposal>*/ computeNonTerminalCompletions(final String prefix, final int offset, JikesPG root) {
-        List/*<ICompletionProposal>*/ result= new ArrayList();
-        List/*<nonTerm>*/ nonTerms= ASTUtils.getNonTerminals(root);
+    private List<ICompletionProposal> computeNonTerminalCompletions(final String prefix, final int offset, JikesPG root) {
+        List<ICompletionProposal> result= new ArrayList<ICompletionProposal>();
+        List<nonTerm> nonTerms= ASTUtils.getNonTerminals(root);
 
         for(Iterator iter= nonTerms.iterator(); iter.hasNext(); ) {
             nonTerm nt= (nonTerm) iter.next();
@@ -117,9 +117,9 @@ public class ContentProposer implements IContentProposer {
         return result;
     }
 
-    private List/*<ICompletionProposal>*/ computeTerminalCompletions(final String prefix, final int offset, JikesPG root) {
-        List/*<ICompletionProposal>*/ result= new ArrayList();
-        List/*<terminal>*/ terms= ASTUtils.getTerminals(root);
+    private List<ICompletionProposal> computeTerminalCompletions(final String prefix, final int offset, JikesPG root) {
+        List<ICompletionProposal> result= new ArrayList<ICompletionProposal>();
+        List<terminal> terms= ASTUtils.getTerminals(root);
 
         for(Iterator iter= terms.iterator(); iter.hasNext(); ) {
             terminal t= (terminal) iter.next();

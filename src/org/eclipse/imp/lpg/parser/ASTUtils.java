@@ -16,8 +16,8 @@ public class ASTUtils {
 	return (JikesPG) node;
     }
 
-    public static List/*<Imacro_name_symbol>*/ getMacros(JikesPG root) {
-        List/*<Imacro_name_symbol>*/ result= new ArrayList();
+    public static List<Imacro_name_symbol> getMacros(JikesPG root) {
+        List<Imacro_name_symbol> result= new ArrayList<Imacro_name_symbol>();
     
         // DO NOT pick up macros from any imported file! They shouldn't be treated as defined in this scope!
         List<ASTNode> defineSegs= findItemOfType(root, DefineSeg.class);
@@ -36,13 +36,13 @@ public class ASTUtils {
         return result;
     }
 
-    public static List/*<nonTerm>*/ getNonTerminals(JikesPG root) {
-        List/*<nonTerm>*/ result= new ArrayList();
+    public static List<nonTerm> getNonTerminals(JikesPG root) {
+        List<nonTerm> result= new ArrayList<nonTerm>();
     
         // TODO: pick up non-terminals from any imported file
         List<ASTNode> rulesSegs= findItemOfType(root, RulesSeg.class);
 
-        if (rulesSegs.size() == 0) return Collections.EMPTY_LIST;
+        if (rulesSegs.size() == 0) return Collections.emptyList();
 
         for(Iterator iter= rulesSegs.iterator(); iter.hasNext(); ) {
 	    RulesSeg rulesSeg= (RulesSeg) iter.next();
@@ -55,8 +55,8 @@ public class ASTUtils {
         return result;
     }
 
-    public static List/*<terminal>*/ getTerminals(JikesPG root) {
-        List/*<terminal>*/ result= new ArrayList();
+    public static List<terminal> getTerminals(JikesPG root) {
+        List<terminal> result= new ArrayList();
     
         // TODO: pick up terminals from any imported file
         List<ASTNode> terminalsSegs= findItemOfType(root, TerminalsSeg.class);
@@ -90,26 +90,26 @@ public class ASTUtils {
         // This would use the auto-generated bindings if they were implemented already...
         String id= HoverHelper.stripName(s.toString());
 
-        List/*<nonTerm>*/ nonTermList= getNonTerminals(root);
-        List/*<terminal>*/ termList= getTerminals(root);
-        List/*<Imacro_name_symbol>*/ macros= getMacros(root);
+        List<nonTerm> nonTermList= getNonTerminals(root);
+        List<terminal> termList= getTerminals(root);
+        List<Imacro_name_symbol> macros= getMacros(root);
 
         for(int j=0; j < nonTermList.size(); j++) {
-            nonTerm nonTerm= (nonTerm) nonTermList.get(j);
+            nonTerm nonTerm= nonTermList.get(j);
             String nonTermName= HoverHelper.stripName(nonTerm.getSYMBOL().toString());
 
             if (nonTermName.equals(id))
         	return nonTerm;
         }
         for(int j=0; j < termList.size(); j++) {
-            terminal term= (terminal) termList.get(j);
+            terminal term= termList.get(j);
             String termName= HoverHelper.stripName(term.getterminal_symbol().toString());
 
             if (termName.equals(id))
         	return term;
         }
         for(int j=0; j < macros.size(); j++) {
-            Imacro_name_symbol macro= (Imacro_name_symbol) macros.get(j);
+            Imacro_name_symbol macro= macros.get(j);
             String macroName= macro.toString();
 
             if (macroName.equals(s.toString()))
@@ -118,15 +118,15 @@ public class ASTUtils {
         return null;
     }
 
-    public static List/*symWithAttrs*/ findRefsOf(final nonTerm nonTerm) {
-	final List result= new ArrayList();
+    public static List<ASTNode> findRefsOf(final nonTerm nonTerm) {
+	final List<ASTNode> result= new ArrayList<ASTNode>();
 	JikesPG root= getRoot(nonTerm);
 
-	List/*<nonTerm>*/ nonTerms= getNonTerminals(root);
+	List<nonTerm> nonTerms= getNonTerminals(root);
 
 	// Indexed search would be nice here...
 	for(int i=0; i < nonTerms.size(); i++) {
-	    nonTerm nt= (nonTerm) nonTerms.get(i);
+	    nonTerm nt= nonTerms.get(i);
 
 	    nt.accept(new AbstractVisitor() {
 		public void unimplementedVisitor(String s) { }
