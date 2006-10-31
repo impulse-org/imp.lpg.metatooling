@@ -4,6 +4,7 @@
 package org.jikespg.uide.editor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import lpg.lpgjavaruntime.PrsStream;
@@ -33,11 +34,18 @@ public class ContentProposer implements IContentProposer {
 
         IASTNodeLocator locator= controller.getNodeLocator();
 	ASTNode thisNode= (ASTNode) locator.findNode(root, offset);
-        final String prefix= thisNode.getLeftIToken().toString();
+        final String prefixToken= thisNode.getLeftIToken().toString();
+        final String prefix= prefixToken.substring(0, offset - thisNode.getLeftIToken().getStartOffset());
 
         final List/*<ICompletionProposal>*/ proposals= new ArrayList();
 
-        if (prefix.startsWith("$"))
+        if (thisNode.getParent() instanceof option) {
+	    option opt= (option) thisNode.getParent();
+
+	    if (thisNode == opt.getSYMBOL()) {
+		proposals.addAll(computeOptionKeyProposals(prefix, offset));
+	    }
+        } else if (prefix.startsWith("$"))
             proposals.addAll(computeMacroCompletions(prefix, offset, root));
         else {
             proposals.addAll(computeNonTerminalCompletions(prefix, offset, root));
@@ -45,6 +53,36 @@ public class ContentProposer implements IContentProposer {
         }
 
         return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+    }
+
+    private final static String[] OPTION_KEYS= {
+	"action", "ast_directory", "ast_type", "attributes",
+	"automatic_ast", "backtrack", "byte", "conflicts",
+	"dat-directory", "dat-file", "dcl-file", "debug",
+	"def-file", "edit", "error-maps", "escape=character", 
+	"extends-parsetable", "export-terminals", "factory", "file-prefix",
+	"filter", "first", "follow", "goto-default",
+	"grm-file", "imp-file", "import-terminals", "include-directory",
+	"lalr-level", "list", "margin", "max_cases",
+	"names", "nt-check", "or-marker", "out_directory",
+	"package", "parent_saved", "parsetable-interfaces", "prefix=string",
+	"priority", "programming_language", "prs-file", "quiet",
+	"read-reduce", "remap-terminals", "scopes", "serialize",
+	"shift-default", "single-productions", "slr", "soft-keywords",
+	"states", "suffix", "sym-file", "tab-file",
+	"table", "template", "trace", "variables",
+	"verbose", "visitor", "visitor-type", "warnings",
+    	"xref"
+    };
+
+    private Collection<SourceProposal> computeOptionKeyProposals(String prefix, int offset) {
+	Collection<SourceProposal> result= new ArrayList<SourceProposal>();
+	for(int i= 0; i < OPTION_KEYS.length; i++) {
+	    String key= OPTION_KEYS[i];
+	    if (key.startsWith(prefix))
+		result.add(new SourceProposal(key, prefix, offset));
+	}
+	return result;
     }
 
     private List/*<ICompletionProposal>*/ computeMacroCompletions(String prefix, int offset, JikesPG root) {
