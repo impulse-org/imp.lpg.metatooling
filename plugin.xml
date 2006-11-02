@@ -129,12 +129,21 @@
                tooltip="Enable the JikesPG builder for this project"/>
       </objectContribution>
    </extension>
+<!--   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
             class="org.jikespg.uide.preferences.JikesPGPreferencePage"
             id="org.jikespg.uide.preferencePage"
             name="JikesPG"/>
+   </extension>
+-->	
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.jikespg.uide.preferences.JikesPGTabbedPreferencesPage"
+            id="org.jikespg.uide.tabbedPreferencesPage"
+            name="JikesPG Revised"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
