@@ -26,6 +26,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	    // SMS 8 Sep 2006
 	    // Use the service instead of the store
 	    ///*
+    	// Commented this back in so that the original preferences
+    	// page would have some values to display
 		IPreferenceStore store= JikesPGPlugin.getInstance().getPreferenceStore();
 	
 		store.setDefault(PreferenceConstants.P_EMIT_MESSAGES, true);
