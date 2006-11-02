@@ -123,10 +123,10 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
         // and presumably in creating whatever annotations or markers
         // those messages require (and is that a good reason?)
         IResource file = project.getFile(filePath);
-        try {
+   	    try {
         	file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
         } catch(CoreException e) {
-        	System.err.println("JsdivParseController.parse:  caught CoreException while deleting problem markers; continuing to parse regardless");
+        	System.err.println("$LANG_NAME$ParseController.parse:  caught CoreException while deleting problem markers; continuing to parse regardless");
         }
         
         lexer.lexer(my_monitor, parser.getParseStream()); // Lex the stream to produce the token stream
