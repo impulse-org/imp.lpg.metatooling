@@ -251,8 +251,9 @@ public class ProjectPreferencesTab extends SafariPreferencesTab {
 	  
 		 
         buttons = prefUtils.createDefaultAndApplyButtons(composite, this);
-        Button defaultsButton = (Button) buttons[0];
-        Button applyButton = (Button) buttons[1];
+        // SMS 31 Oct 2006
+        //Button defaultsButton = (Button) buttons[0];
+        //Button applyButton = (Button) buttons[1];
 		
 		return composite;
 	}
@@ -264,16 +265,16 @@ public class ProjectPreferencesTab extends SafariPreferencesTab {
 	}
 	
 
-	
+
 	private class SafariProjectSelectionListener implements SafariPreferencesService.IProjectSelectionListener
 	{
 		Composite composite = null;
 		boolean haveCurrentListeners = false;
 		IEclipsePreferences.IPreferenceChangeListener currentListener = null;
 		
-		/*
-		 * @param	composite is the project field holder, but it isn't used here
-		 */
+		
+		 // @param	composite is the project field holder, but it isn't used here
+
 		SafariProjectSelectionListener(Composite composite) {
 			this.composite = composite;
 		}
@@ -374,10 +375,9 @@ public class ProjectPreferencesTab extends SafariPreferencesTab {
 					
 					includeDirectoriesFieldHolder = includeDirectoriesField.getTextControl().getParent();
 					prefUtils.setField(includeDirectoriesField, includeDirectoriesFieldHolder);
-					//includeDirectoriesField.getTextControl(includeDirectoriesFieldHolder).setEnabled(!useDefaultGenIncludePathField.getBooleanValue());
 					includeDirectoriesField.setEnabled(!useDefaultGenIncludePathField.getBooleanValue(), includeDirectoriesFieldHolder);
 					includeDirectoriesField.getTextControl(includeDirectoriesFieldHolder).setEditable(!useDefaultGenIncludePathField.getBooleanValue());
-					
+
 					extensionsToProcessFieldHolder = extensionsToProcessField.getTextControl().getParent();
 					prefUtils.setField(extensionsToProcessField, extensionsToProcessFieldHolder);
 					extensionsToProcessField.getTextControl(extensionsToProcessFieldHolder).setEditable(true);
@@ -462,7 +462,7 @@ public class ProjectPreferencesTab extends SafariPreferencesTab {
 		};
 	}
 	
-	
+
 	protected List  currentListeners = new ArrayList();
 	protected List 	currentListenerNodes = new ArrayList();
 	
@@ -472,7 +472,10 @@ public class ProjectPreferencesTab extends SafariPreferencesTab {
 		IEclipsePreferences[] nodes = prefService.getNodesForLevels();
 		for (int i = ISafariPreferencesService.PROJECT_INDEX; i < nodes.length; i++) {
 			if (nodes[i] != null) {
-				SafariProjectPreferenceChangeListener listener = new SafariProjectPreferenceChangeListener(field, key, composite);
+				// SMS 31 Oct 2006
+				//SafariProjectPreferenceChangeListener listener = new SafariProjectPreferenceChangeListener(field, key, composite);
+				SafariPreferencesUtilities.SafariStringPreferenceChangeListener listener = 
+					prefUtils.new SafariStringPreferenceChangeListener(field, key, composite);
 				nodes[i].addPreferenceChangeListener(listener);
 				currentListeners.add(listener);
 				currentListenerNodes.add(nodes[i]);
@@ -511,7 +514,7 @@ public class ProjectPreferencesTab extends SafariPreferencesTab {
 		currentListenerNodes = new ArrayList();
 	}
 	
-	
+/*	
 	private class SafariProjectPreferenceChangeListener implements IEclipsePreferences.IPreferenceChangeListener
 	{
 		Composite composite = null;
@@ -540,7 +543,7 @@ public class ProjectPreferencesTab extends SafariPreferencesTab {
 			}
 		}
 	}
-
+*/
 	
 	
 	/**
