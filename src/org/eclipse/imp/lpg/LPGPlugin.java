@@ -9,7 +9,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.uide.preferences.SafariPreferencesService;
 import org.eclipse.uide.runtime.SAFARIPluginBase;
-import org.jikespg.uide.preferences.JikesPGPreferenceCache;
+import org.jikespg.uide.preferences.PreferenceConstants;
 import org.jikespg.uide.preferences.PreferenceInitializer;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -61,11 +61,17 @@ public class JikesPGPlugin extends SAFARIPluginBase {
         JikesPGPreferenceCache.nonRootExtensionList.addAll(Arrays.asList(prefStore.getString(PreferenceConstants.P_NON_ROOT_EXTENSION_LIST).split(",")));
         */
         
-        // SMS 8 Sep 2006
-        // We're not using the cache, but presumably we still need this
-        // value; once cache is abandoned, maybe it can be defined somewhere
-        // else
-        fEmitInfoMessages= JikesPGPreferenceCache.builderEmitMessages;
+        // SMS 8 Sep 2006 updated 30 Oct 2006
+        // Not sure why the field fEmitInfoMessages is used in preference to the preference cache
+        // (ask Bob F. about that).  If it is going to continue to be used, then it should probably
+        // be initialized from the new preferences store instead of the deprecated preferences
+        // cache.  (The field would seem to represent a sort of separate, single-value cache.)
+        // Presently it doesn't actually seem to be used anywhere, at least within the JikesPG
+        // UIDE, suggesting that it could safely be removed, at least insofar as JikesPG is concerned.
+        // Potential users of the field would have to get the value from the preferences store,
+        // but since the value is a preference, that doesn't seem inappropriate.
+        //fEmitInfoMessages= JikesPGPreferenceCache.builderEmitMessages;
+        fEmitInfoMessages = preferencesService.getBooleanPreference(PreferenceConstants.P_EMIT_MESSAGES);
     }
 
     public static final IPath ICONS_PATH= new Path("icons/"); //$NON-NLS-1$
@@ -114,5 +120,18 @@ public class JikesPGPlugin extends SAFARIPluginBase {
     	}
     	return preferencesService;
     }
+    
+    
+    // SMS 30 Oct 2006
+    // Overwriting method in SAFAIPluginBase because at that level we don't have
+    // a preferences service to query dynamically, only a field set from this level
+    // at the time of preference initialization
+    public void maybeWriteInfoMsg(String msg) {
+        //if (!fEmitInfoMessages)
+        if (!preferencesService.getBooleanPreference(PreferenceConstants.P_EMIT_MESSAGES))
+            return;
+        writeInfoMsg(msg);
+    }
+
     
 }
