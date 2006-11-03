@@ -11,14 +11,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.safari.jikespg.builder.JikesPGBuilder;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.uide.runtime.RuntimePlugin;
+import org.eclipse.uide.wizards.ExtensionPointEnabler;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
 import org.jikespg.uide.JikesPGPlugin;
-import org.jikespg.uide.builder.JikesPGBuilder;
 
 /**
  * This wizard creates a JikesPG grammar, a "parser" language service, and a
@@ -101,22 +102,22 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	String kwlexerFileName= langClassName + "KWLexer.gi";
 	String controllerFileName= langClassName + "ParseController.java";
 
+	// TODO Need to add the base language plugin (if any) as a plugin dependency
+//	final String baseLang= ExtensionPointEnabler.findServiceAttribute(RuntimePlugin.UIDE_RUNTIME + ".languageDescription", fLanguageName, "language", "derivedFrom", "");
+//	final String baseLangServiceImpl= ExtensionPointEnabler.findServiceImplClass(RuntimePlugin.UIDE_RUNTIME + ".parser", baseLang, null);
+//	subs.put("$BASE_CLASS$", baseLangServiceImpl);
 
-        // RMF 3/2/2006 - The following would probably be simpler if we just passed in the 
-	IFile grammarFile= createGrammar(grammarFileName, parserTemplateName, autoGenerateASTs, fProject,
-		monitor);
+	IFile grammarFile= createGrammar(grammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 
 	createLexer(lexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
         if (hasKeywords)
             createKWLexer(kwlexerFileName, kwLexerTemplateName, hasKeywords, fProject, monitor);
-	createParseController(controllerFileName, parseCtlrTemplateName, hasKeywords, fProject,
-		monitor);
+	createParseController(controllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
 
 	// SMS 29 Sep 2006
 	String locatorFileName = fClassName + "ASTNodeLocator.java";
 	createNodeLocator(locatorFileName, "ASTNodeLocator.tmpl", fProject, monitor);
-	
-	
+
 	editFile(monitor, grammarFile);
 	enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
     }
@@ -125,9 +126,6 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
     static final String astNode= "ASTNode";
 
-
-    
-    
     static final String sAutoGenTemplate= "%options parent_saved,automatic_ast=toplevel,visitor=preorder,ast_directory=./" + astDirectory
 	    + ",ast_type=" + astNode;
 

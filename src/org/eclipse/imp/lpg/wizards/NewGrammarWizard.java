@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.safari.jikespg.builder.JikesPGBuilder;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -30,7 +31,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.jikespg.uide.JikesPGPlugin;
-import org.jikespg.uide.builder.JikesPGBuilder;
 import org.osgi.framework.Bundle;
 
 /**
