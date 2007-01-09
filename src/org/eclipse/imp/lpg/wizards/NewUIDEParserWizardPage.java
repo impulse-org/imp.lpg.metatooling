@@ -1,5 +1,9 @@
 package org.jikespg.uide.wizards;
 
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -65,9 +69,41 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	}
     }
 
+    public String determineLanguage() {
+	try {
+	    IPluginModel pluginModel= ExtensionPointEnabler.getPluginModel(getProject());
+
+	    if (pluginModel != null) {
+		IPluginExtension[] extensions= pluginModel.getExtensions().getExtensions();
+
+		for(int n= 0; n < extensions.length; n++) {
+		    IPluginExtension extension= extensions[n];
+
+                    if (!extension.getPoint().equals("org.eclipse.uide.runtime.languageDescription"))
+                        continue;
+
+                    IPluginObject[] children= extension.getChildren();
+
+		    for(int k= 0; k < children.length; k++) {
+			IPluginObject object= children[k];
+
+			if (object.getName().equals("language")) {
+			    return ((IPluginElement) object).getAttribute("language").getValue();
+			}
+		    }
+		    System.out.println("Unable to determine language for plugin '" + pluginModel.getBundleDescription().getName() + "': no languageDescription extension.");
+		}
+	    } else if (getProject() != null)
+		System.out.println("Not a plugin project: " + getProject().getName());
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+	return "";
+    }
+
     protected void setLanguageIfEmpty() {
         try {
-            String pluginLang= ExtensionPointEnabler.determineLanguage(getProject()); // if a languageDesc exists
+            String pluginLang= determineLanguage(); // if a languageDesc exists
             if (pluginLang.length() == 0)
                 return;
 
