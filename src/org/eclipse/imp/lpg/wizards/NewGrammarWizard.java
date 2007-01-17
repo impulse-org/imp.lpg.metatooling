@@ -150,8 +150,9 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 		{ "$PACKAGE_NAME$", packageName },
 		{ "$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "" },
 		{ "$TEMPLATE$", templateName } };
-
-	return createFileFromTemplate(fileName, "grammar.tmpl", replacements, project, monitor);
+	
+	String grammarTemplateName = "grammar.g";
+	return createFileFromTemplate(fileName, grammarTemplateName, replacements, project, monitor);
     }
 
     private IFile createSampleLexerFile(String packageName, String languageName, String fileName, String templateName,
@@ -165,7 +166,8 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 		{ "$KEYWORD_LEXER$", hasKeywords ? ("$" + languageName + "KWLexer") : "Object" },
 		{ "$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap") } };
 
-	return createFileFromTemplate(fileName, "lexer.tmpl", replacements, project, monitor);
+	String lexerTemplateName = "lexer.gi";
+	return createFileFromTemplate(fileName, lexerTemplateName, replacements, project, monitor);
     }
 
     private IFile createSampleKWLexerFile(String packageName, String languageName, String fileName, String templateName,
@@ -175,7 +177,8 @@ public class NewGrammarWizard extends Wizard implements INewWizard {
 		{ "$PACKAGE_NAME$", packageName },
 		{ "$TEMPLATE$", templateName }
 	};
-	return createFileFromTemplate(fileName, "kwlexer.tmpl", replacements, project, monitor);
+	String kwLexerTemplateName = "kwlexer.gi";
+	return createFileFromTemplate(fileName, kwLexerTemplateName, replacements, project, monitor);
     }
 
     private void addBuilder(IProject project, String id) throws CoreException {

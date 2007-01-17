@@ -91,7 +91,7 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
 	String lexerTemplateName= templateKind + "/LexerTemplate.gi";
 	String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
-        String parseCtlrTemplateName= "ParseController.tmpl";
+        String parseCtlrTemplateName= "ParseController.java";
 
         String langClassName= Character.toUpperCase(fLanguageName.charAt(0)) + fLanguageName.substring(1);
 
@@ -116,8 +116,9 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
 	// SMS 29 Sep 2006
 	String locatorFileName = fClassName + "ASTNodeLocator.java";
-	createNodeLocator(locatorFileName, "ASTNodeLocator.tmpl", fProject, monitor);
-
+	String locatorTemplateName = "ASTNodeLocator.java";
+	createNodeLocator(locatorFileName, locatorTemplateName, fProject, monitor);
+	
 	editFile(monitor, grammarFile);
 	enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
     }
@@ -139,7 +140,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	subs.put("$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
 	subs.put("$TEMPLATE$", templateName);
 
-	return createFileFromTemplate(fileName, "grammar.tmpl", fPackageFolder, subs, project, monitor);
+	String grammarTemplateFileName = "grammar.g";
+	return createFileFromTemplate(fileName, grammarTemplateFileName, fPackageFolder, subs, project, monitor);
     }
 
     private IFile createLexer(String fileName, String templateName,
@@ -152,7 +154,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	subs.put("$KEYWORD_LEXER$", hasKeywords ? ("$" + fClassName + "KWLexer") : "Object");
 	subs.put("$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
 
-	return createFileFromTemplate(fileName, "lexer.tmpl", fPackageFolder, subs, project, monitor);
+	String lexerTemplateName = "lexer.gi";
+	return createFileFromTemplate(fileName, lexerTemplateName, fPackageFolder, subs, project, monitor);
     }
 
     private IFile createKWLexer(String fileName, String templateName,
@@ -160,7 +163,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	Map subs= getStandardSubstitutions();
 	subs.put("$TEMPLATE$", templateName);
 
-	return createFileFromTemplate(fileName, "kwlexer.tmpl", fPackageFolder, subs, project, monitor);
+	String kwLexerTemplateName = "kwlexer.gi";
+	return createFileFromTemplate(fileName, kwLexerTemplateName, fPackageFolder, subs, project, monitor);
     }
 
     private IFile createParseController(String fileName, 
@@ -172,7 +176,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	subs.put("$PARSER_TYPE$", fClassName + "Parser");
 	subs.put("$LEXER_TYPE$", fClassName + "Lexer");
 	
-	return createFileFromTemplate(fileName, "ParseController.tmpl", fPackageFolder, subs, project, monitor);
+	String parseControllerTemplateName = "ParseController.java";
+	return createFileFromTemplate(fileName, parseControllerTemplateName, fPackageFolder, subs, project, monitor);
     }
 
     
