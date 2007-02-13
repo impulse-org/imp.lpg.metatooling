@@ -15,7 +15,6 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.uide.runtime,
  org.eclipse.uide,
- lpg,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
  org.eclipse.compare,
@@ -24,6 +23,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ltk.ui.refactoring,
  com.ibm.watson.safari.xform,
  com.ibm.watson.smapifier,
- org.eclipse.safari.jikespg.runtime
+ org.eclipse.safari.jikespg.runtime,
+ lpg.javaruntime
 Provide-Package: org.jikespg.uide,
  org.jikespg.uide.wizards
