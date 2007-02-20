@@ -24,6 +24,6 @@ Require-Bundle: org.eclipse.core.resources,
  com.ibm.watson.safari.xform,
  com.ibm.watson.smapifier,
  org.eclipse.safari.jikespg.runtime,
- lpg.javaruntime
+ lpg.runtime
 Provide-Package: org.jikespg.uide,
  org.jikespg.uide.wizards
