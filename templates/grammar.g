@@ -131,6 +131,14 @@ $Headers
         private final class SymbolTableVisitor extends AbstractVisitor {
             public void unimplementedVisitor(String s) { /* Useful for debugging: System.out.println(s); */ }
             
+            public void emitError(IToken id, String message) {
+                getMessageHandler().handleMessage(0,
+                    getLexStream().getLocation(id.getStartOffset(), id.getEndOffset()),
+                    getLexStream().getLocation(0, 0),
+                    getFileName(),
+                    new String [] { message });
+            }
+
             public boolean visit(block n) {
                 n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
                 return true;
@@ -143,9 +151,7 @@ $Headers
                 SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
                 if (symbol_table.get(id.toString()) == null)
                      symbol_table.put(id.toString(), n);
-                else handler.handleMessage(id.getStartOffset(),
-                                           id.getEndOffset() - id.getStartOffset() + 1,
-                                           "Illegal redeclaration of " + id.toString());
+                else emitError(id, "Illegal redeclaration of " + id.toString());
                 return true;
             }
 
@@ -153,9 +159,7 @@ $Headers
                 IToken id = n.getIDENTIFIER();
                 declaration decl = ((SymbolTable) symbolTableStack.peek()).findDeclaration(id.toString());
                 if (decl == null)
-                     handler.handleMessage(id.getStartOffset(),
-                                           id.getEndOffset() - id.getStartOffset() + 1,
-                                           "Undeclared variable " + id.toString());
+                     emitError(id, "Undeclared variable " + id.toString());
                 else n.setDeclaration(decl);
                 return true;
             }
