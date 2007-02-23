@@ -60,7 +60,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         // PC Restored on 10/16/2006. This is a critical dependency.
         // Eclipse forbids introducing project dependencies on plugins.
         //
-	dependencies.add("lpg");
+	// SMS 23 Feb 2007:  leg -> leg.runtime
+	dependencies.add("lpg.runtime");
     }
 
     protected List getPluginDependencies() {
