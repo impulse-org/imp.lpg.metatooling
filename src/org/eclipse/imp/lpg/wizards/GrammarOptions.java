@@ -85,7 +85,10 @@ public class GrammarOptions {
     }
 
     public String getPackageForLanguage(String language) {
-        if (getPackageName().length() == 0) {
+	// RMF 2/23/2007 - Disabled the following test, so that the package name tracks
+	// changes in the language name, rather than getting set once when the first
+	// language name is passed in.
+//        if (getPackageName().length() == 0) {
             StringBuffer buffer= new StringBuffer(/*"org."*/);
             for(int n= 0; n < language.length(); n++) {
         	char c= Character.toLowerCase(language.charAt(n));
@@ -95,7 +98,7 @@ public class GrammarOptions {
             }
             buffer.append(".safari.parser");
             setPackageName(buffer.toString());
-        }
+//        }
         return getPackageName();
     }
 }
