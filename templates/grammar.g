@@ -30,14 +30,25 @@ $Terminals
     -- referring to the symbol to which it is aliased. For
     -- example, consider the following definitions:
     --
+         boolean
+         double
+         else
+         elseif
+         if
          int
-         short
+         return
+         void
+         while
+         
          IDENTIFIER 
          NUMBER
+         COMMA ::= ','
          SEMICOLON ::= ';'
          PLUS ::= '+'
          MINUS ::= '-'
          ASSIGN ::= '='
+         LEFTPAREN ::= '('
+         RIGHTPAREN ::= ')'
          LEFTBRACE ::= '{'
          RIGHTBRACE ::= '}'
     --
@@ -51,7 +62,7 @@ $Terminals
 $End
 
 $Start
-    stmtList
+    compilationUnit
 $End
 
 $Recover
@@ -64,12 +75,29 @@ $Rules
     -- 
     --  Here are some example rules:
     -- 
+    compilationUnit ::= $empty
+                      | compilationUnit functionDeclaration
+
+    functionDeclaration ::= Type identifier ( parameters ) block 
+    
+    parameters ::= $empty
+                 | parameterList
+
+    parameterList$$declaration ::= declaration
+                                 | parameterList ',' declaration
+                                                            
+    declaration ::= primitiveType identifier
+
     stmtList$$statement ::= $empty
                           | stmtList statement
-    statement ::= declaration
-                | assignment
+    statement ::= declarationStmt
+                | assignmentStmt
+                | ifStmt
+                | returnStmt
+                | whileStmt
                 | block
                 | ;
+
     block ::= '{' stmtList '}'
     /.
         $action_type.SymbolTable symbolTable;
@@ -77,21 +105,46 @@ $Rules
         public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
     ./
 
-    declaration$declaration ::= int$type identifier ;
-                              | short$type identifier ;
-    assignment ::= identifier '=' expression ';'
-                 | BadAssignment
+    declarationStmt ::= declaration ;
+                              
+    Type ::= primitiveType
+           | void
+
+    primitiveType ::= boolean
+                    | double
+                    | int
+                              
+    assignmentStmt ::= identifier '=' expression ';'
+                     | BadAssignment
+    ifStmt ::= if ( expression ) statement elseifStmtList elseStmtOpt
+    
+    elseifStmtList ::= $empty
+                     | elseifStmtList elseif ( expression ) statement
+
+    elseStmtOpt ::= $empty
+                  | else statement
+
+    whileStmt ::= while ( expression ) statement
+
+    returnStmt ::= return expression ;
+
     expression ::= expression '+' term
                  | expression '-' term
                  | term
     term ::= NUMBER
            | identifier
+           | identifier ( expressions )
+    
+    expressions ::= $empty
+                  | expressionList
+    expressionList ::= expression
+                     | expressionList ',' expression
 
     identifier ::= IDENTIFIER
     /.
-        declaration decl;
-        public void setDeclaration(declaration decl) { this.decl = decl; }
-        public declaration getDeclaration() { return decl; }
+        IAst decl;
+        public void setDeclaration(IAst decl) { this.decl = decl; }
+        public IAst getDeclaration() { return decl; }
     ./
 
     BadAssignment ::= identifier '=' MissingExpression 
@@ -102,8 +155,8 @@ $Headers
         public class SymbolTable extends Hashtable {
             SymbolTable parent;
             SymbolTable(SymbolTable parent) { this.parent = parent; }
-            declaration findDeclaration(String name) {
-                declaration decl = (declaration) get(name);
+            IAst findDeclaration(String name) {
+                IAst decl = (IAst) get(name);
                 return (decl != null
                               ? decl
                               : parent != null ? parent.findDeclaration(name) : null);
@@ -132,13 +185,13 @@ $Headers
             public void unimplementedVisitor(String s) { /* Useful for debugging: System.out.println(s); */ }
             
             public void emitError(IToken id, String message) {
-                getMessageHandler().handleMessage(0,
-                    getLexStream().getLocation(id.getStartOffset(), id.getEndOffset()),
-                    getLexStream().getLocation(0, 0),
-                    getFileName(),
-                    new String [] { message });
+                getMessageHandler().handleMessage(ParseErrorCodes.NO_MESSAGE_CODE,
+                                                  getLexStream().getLocation(id.getStartOffset(), id.getEndOffset()),
+                                                  getLexStream().getLocation(0, 0),
+                                                  getFileName(),
+                                                  new String [] { message });
             }
-
+            
             public boolean visit(block n) {
                 n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
                 return true;
@@ -146,6 +199,15 @@ $Headers
 
             public void endVisit(block n) { symbolTableStack.pop(); }
 
+            public boolean visit(functionDeclaration n) {
+                IToken id = n.getidentifier().getIToken();
+                SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
+                if (symbol_table.get(id.toString()) == null)
+                     symbol_table.put(id.toString(), n);
+                else emitError(id, "Illegal redeclaration of " + id.toString());
+                return true;
+            }
+            
             public boolean visit(declaration n) {
                 IToken id = n.getidentifier().getIToken();
                 SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
@@ -157,7 +219,7 @@ $Headers
 
             public boolean visit(identifier n) {
                 IToken id = n.getIDENTIFIER();
-                declaration decl = ((SymbolTable) symbolTableStack.peek()).findDeclaration(id.toString());
+                IAst decl = ((SymbolTable) symbolTableStack.peek()).findDeclaration(id.toString());
                 if (decl == null)
                      emitError(id, "Undeclared variable " + id.toString());
                 else n.setDeclaration(decl);
