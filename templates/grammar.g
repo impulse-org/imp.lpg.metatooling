@@ -75,13 +75,18 @@ $Rules
     -- 
     --  Here are some example rules:
     -- 
-    compilationUnit ::= $empty
-                      | compilationUnit functionDeclaration
+    compilationUnit$$functionDeclaration ::= $empty
+                                           | compilationUnit functionDeclaration
 
     functionDeclaration ::= Type identifier ( parameters ) block 
+    /.
+        $action_type.SymbolTable symbolTable;
+        public void setSymbolTable($action_type.SymbolTable symbolTable) { this.symbolTable = symbolTable; }
+        public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
+    ./
     
-    parameters ::= $empty
-                 | parameterList
+    parameters$$declaration ::= $empty
+                              | parameterList
 
     parameterList$$declaration ::= declaration
                                  | parameterList ',' declaration
@@ -135,10 +140,10 @@ $Rules
            | identifier
            | identifier ( expressions )
     
-    expressions ::= $empty
-                  | expressionList
-    expressionList ::= expression
-                     | expressionList ',' expression
+    expressions$$expression ::= $empty
+                              | expressionList
+    expressionList$$expression ::= expression
+                                 | expressionList ',' expression
 
     identifier ::= IDENTIFIER
     /.
@@ -155,7 +160,7 @@ $Headers
         public class SymbolTable extends Hashtable {
             SymbolTable parent;
             SymbolTable(SymbolTable parent) { this.parent = parent; }
-            IAst findDeclaration(String name) {
+            public IAst findDeclaration(String name) {
                 IAst decl = (IAst) get(name);
                 return (decl != null
                               ? decl
@@ -167,6 +172,24 @@ $Headers
         Stack symbolTableStack = null;
         SymbolTable topLevelSymbolTable = null;
         public SymbolTable getTopLevelSymbolTable() { return topLevelSymbolTable; }
+
+        //
+        // TODO: In the future, the user will be able to identify scope structures
+        // (special non terminals such as block and functionDeclaration below) in
+        // the grammar specification that carry symbol table information. The class
+        // associated with such symbols will implement a special IScope interface and
+        // will be required to specify an implementation of the method "getSymbolTable"
+        // that is defined in IScope. Thus, the implementation of this funftion will
+        // be simpler as it would only need to search for an instance of IScope.
+        //
+        public SymbolTable getEnclosingSymbolTable(IAst n) {
+            for ( ; n != null; n = n.getParent())
+                if (n instanceof block)
+                     return ((block) n).getSymbolTable();
+                else if (n instanceof functionDeclaration)
+                     return ((functionDeclaration) n).getSymbolTable();
+            return getTopLevelSymbolTable();
+        }
 
         public void resolve($ast_type root) {
             if (root != null) {
@@ -205,9 +228,17 @@ $Headers
                 if (symbol_table.get(id.toString()) == null)
                      symbol_table.put(id.toString(), n);
                 else emitError(id, "Illegal redeclaration of " + id.toString());
+
+                //
+                // Add a symbol table for the parameters
+                //
+                n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
+
                 return true;
             }
             
+            public void endVisit(functionDeclaration n) { symbolTableStack.pop(); }
+
             public boolean visit(declaration n) {
                 IToken id = n.getidentifier().getIToken();
                 SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
