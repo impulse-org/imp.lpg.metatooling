@@ -32,10 +32,13 @@ $Export
         SINGLE_LINE_COMMENT
         IDENTIFIER 
         NUMBER 
+        COMMA
         SEMICOLON
         PLUS
         MINUS
         ASSIGN
+        LEFTPAREN
+        RIGHTPAREN
         LEFTBRACE
         RIGHTBRACE
 $End
@@ -124,6 +127,12 @@ $Rules
           $EndJava
         ./
 
+    Token ::= ','
+        /.$BeginJava
+                    makeToken($_COMMA);
+          $EndJava
+        ./
+
     Token ::= '+'
         /.$BeginJava
                     makeToken($_PLUS);
@@ -139,6 +148,18 @@ $Rules
     Token ::= '='
         /.$BeginJava
                     makeToken($_ASSIGN);
+          $EndJava
+        ./
+
+    Token ::= '('
+        /.$BeginJava
+                    makeToken($_LEFTPAREN);
+          $EndJava
+        ./
+
+    Token ::= ')'
+        /.$BeginJava
+                    makeToken($_RIGHTPAREN);
           $EndJava
         ./
 
