@@ -47,6 +47,12 @@ $Terminals
          PLUS ::= '+'
          MINUS ::= '-'
          ASSIGN ::= '='
+         TIMES ::= '*'
+         DIVIDE ::= '/'
+         GREATER ::= '>'
+         LESS ::= '<'
+         EQUAL ::= '=='
+         NOTEQUAL ::= '!='
          LEFTPAREN ::= '('
          RIGHTPAREN ::= ')'
          LEFTBRACE ::= '{'
@@ -135,6 +141,12 @@ $Rules
 
     expression ::= expression '+' term
                  | expression '-' term
+                 | expression '*' term
+                 | expression '/' term
+                 | expression '>' term
+                 | expression '<' term
+                 | expression '==' term
+                 | expression '!=' term
                  | term
     term ::= NUMBER
            | identifier
