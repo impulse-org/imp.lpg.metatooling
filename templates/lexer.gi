@@ -36,6 +36,12 @@ $Export
         SEMICOLON
         PLUS
         MINUS
+        TIMES
+        DIVIDE
+        GREATER
+        LESS
+        EQUAL
+        NOTEQUAL
         ASSIGN
         LEFTPAREN
         RIGHTPAREN
@@ -172,6 +178,42 @@ $Rules
     Token ::= '}'
         /.$BeginJava
                     makeToken($_RIGHTBRACE);
+          $EndJava
+        ./
+
+    Token ::= '*'
+        /.$BeginJava
+                    makeToken($_TIMES);
+          $EndJava
+        ./
+
+    Token ::= '/'
+        /.$BeginJava
+                    makeToken($_DIVIDE);
+          $EndJava
+        ./
+
+    Token ::= '>'
+        /.$BeginJava
+                    makeToken($_GREATER);
+          $EndJava
+        ./
+
+    Token ::= '<'
+        /.$BeginJava
+                    makeToken($_LESS);
+          $EndJava
+        ./
+
+    Token ::= '=' '='
+        /.$BeginJava
+                    makeToken($_EQUAL);
+          $EndJava
+        ./
+
+    Token ::= '!' '='
+        /.$BeginJava
+                    makeToken($_NOTEQUAL);
           $EndJava
         ./
 
