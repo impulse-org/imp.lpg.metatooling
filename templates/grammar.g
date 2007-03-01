@@ -33,15 +33,17 @@ $Terminals
          boolean
          double
          else
-         elseif
+         false
          if
          int
          return
+         true
          void
          while
          
          IDENTIFIER 
          NUMBER
+         DoubleLiteral
          COMMA ::= ','
          SEMICOLON ::= ';'
          PLUS ::= '+'
@@ -84,7 +86,7 @@ $Rules
     compilationUnit$$functionDeclaration ::= $empty
                                            | compilationUnit functionDeclaration
 
-    functionDeclaration ::= Type identifier ( parameters ) block 
+    functionDeclaration ::= Type identifier '(' parameters ')' block 
     /.
         $action_type.SymbolTable symbolTable;
         public void setSymbolTable($action_type.SymbolTable symbolTable) { this.symbolTable = symbolTable; }
@@ -107,7 +109,7 @@ $Rules
                 | returnStmt
                 | whileStmt
                 | block
-                | ;
+                | ';'
 
     block ::= '{' stmtList '}'
     /.
@@ -116,8 +118,9 @@ $Rules
         public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
     ./
 
-    declarationStmt ::= declaration ;
-                              
+    declarationStmt ::= declaration ';'
+                      | declaration '=' expression ';'
+                       
     Type ::= primitiveType
            | void
 
@@ -127,17 +130,12 @@ $Rules
                               
     assignmentStmt ::= identifier '=' expression ';'
                      | BadAssignment
-    ifStmt ::= if ( expression ) statement elseifStmtList elseStmtOpt
-    
-    elseifStmtList ::= $empty
-                     | elseifStmtList elseif ( expression ) statement
+    ifStmt ::= if '(' expression ')' statement
+             | if '(' expression ')' statement else statement
 
-    elseStmtOpt ::= $empty
-                  | else statement
+    whileStmt ::= while '(' expression ')' statement
 
-    whileStmt ::= while ( expression ) statement
-
-    returnStmt ::= return expression ;
+    returnStmt ::= return expression ';'
 
     expression ::= expression '+' term
                  | expression '-' term
@@ -149,8 +147,11 @@ $Rules
                  | expression '!=' term
                  | term
     term ::= NUMBER
+           | DoubleLiteral
+           | true
+           | false
            | identifier
-           | identifier ( expressions )
+           | identifier '(' expressions ')'
     
     expressions$$expression ::= $empty
                               | expressionList

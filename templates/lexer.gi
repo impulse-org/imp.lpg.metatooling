@@ -31,7 +31,8 @@ $Export
     --
         SINGLE_LINE_COMMENT
         IDENTIFIER 
-        NUMBER 
+        NUMBER
+        DoubleLiteral
         COMMA
         SEMICOLON
         PLUS
@@ -115,6 +116,11 @@ $Rules
     Token ::= number
         /.$BeginJava
                     makeToken($_NUMBER);
+          $EndJava
+        ./
+    Token ::= DoubleLiteral
+        /.$BeginJava
+                    makeToken($_DoubleLiteral);
           $EndJava
         ./
     Token ::= white
@@ -224,6 +230,21 @@ $Rules
     number ::= digit
              | number digit
 
+    DoubleLiteral ::= Decimal
+                    | Decimal Exponent
+                    | number Exponent
+                    
+    Exponent ::= LetterEe number
+               | LetterEe '-' number
+               | LetterEe '+' number
+
+    LetterEe ::= 'e'
+               | 'E'
+
+    Decimal ::= '.' number
+              | number '.'
+              | number '.' number
+    
     white ::= whiteChar
             | white whiteChar
 

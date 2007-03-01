@@ -14,10 +14,11 @@ $Export
     boolean
     double
     else
-    elseif
+    false
     if
     int
     return
+    true
     void
     while
 $End
@@ -53,9 +54,9 @@ $Rules
           $EndAction
         ./
 
-    Keyword ::= e l s e i f 
+    Keyword ::= f a l s e
         /.$BeginAction
-            $setResult($_elseif);
+            $setResult($_false);
           $EndAction
         ./
 
@@ -80,6 +81,12 @@ $Rules
     Keyword ::= r e t u r n
         /.$BeginAction
             $setResult($_return);
+          $EndAction
+        ./
+
+    Keyword ::= t r u e
+        /.$BeginAction
+            $setResult($_true);
           $EndAction
         ./
 
