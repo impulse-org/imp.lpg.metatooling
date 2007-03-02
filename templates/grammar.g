@@ -109,6 +109,7 @@ $Rules
                 | returnStmt
                 | whileStmt
                 | block
+                | functionStmt
                 | ';'
 
     block ::= '{' stmtList '}'
@@ -151,7 +152,11 @@ $Rules
            | true
            | false
            | identifier
-           | identifier '(' expressions ')'
+           | functionCall
+           
+    functionCall ::= identifier '(' expressions ')'
+
+    functionStmt ::= functionCall ';'
     
     expressions$$expression ::= $empty
                               | expressionList
