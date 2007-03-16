@@ -10,23 +10,22 @@ import lpg.runtime.IMessageHandler;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.uide.parser.AstLocator;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.ILexer;
 import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
 
-import org.eclipse.core.resources.IMarker;			// SMS 5 May 2006
-import org.eclipse.core.resources.IResource;		// SMS 5 May 2006
-import org.eclipse.core.runtime.CoreException;		// SMS 5 May 2006
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 import $AST_PKG_NODE$;
 
 public class $CLASS_NAME_PREFIX$ParseController implements IParseController
 {
     private IProject project;
-    private String filePath;
+    private IPath filePath;
     private $PARSER_TYPE$ parser;
     private $LEXER_TYPE$ lexer;
     private $AST_NODE$ currentAst;
@@ -34,30 +33,24 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
     private char keywords[][];
     private boolean isKeyword[];
 
-
-    // SMS 5 May 2006:
-    // Version of initialize method corresponding to change in IParseController
     /**
      * @param filePath		Project-relative path of file
      * @param project		Project that contains the file
      * @param handler		A message handler to receive error messages (or any others)
      * 						from the parser
      */
-    public void initialize(String filePath, IProject project, IMessageHandler handler) {
+    public void initialize(IPath filePath, IProject project, IMessageHandler handler) {
     	this.filePath= filePath;
     	this.project= project;
-    	String fullFilePath = project.getLocation().toString() + "/" + filePath;
+    	IPath fullFilePath = project.getLocation().append(filePath);
         createLexerAndParser(fullFilePath);
-    	
+
     	parser.setMessageHandler(handler);
     }
-    
-    // SMS 5 May 2006:
-    // To make this available to users of the controller
+
     public IProject getProject() { return project; }
-    
-    
-    
+    public IPath getPath() { return filePath; }
+
     public IParser getParser() { return parser; }
     public ILexer getLexer() { return lexer; }
     public Object getCurrentAst() { return currentAst; }
@@ -80,9 +73,9 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
     {
     }
 
-    private void createLexerAndParser(String filePath) {
+    private void createLexerAndParser(IPath filePath) {
         try {
-            lexer = new $LEXER_TYPE$(filePath); // Create the lexer
+            lexer = new $LEXER_TYPE$(filePath.toOSString()); // Create the lexer
             parser = new $PARSER_TYPE$(lexer.getLexStream() /*, project*/);  // Create the parser
         } catch (IOException e) {
             throw new Error(e);
@@ -115,13 +108,6 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
         lexer.initialize(contentsArray, filePath);
         parser.getParseStream().resetTokenStream();
         
-        // SMS 5 May 2006:
-        // Clear the problem markers on the file
-        // It should be okay to do this here because ...
-        // Whoever is doing the parsing should have passed in whatever
-        // listener they were interested in having receive messages
-        // and presumably in creating whatever annotations or markers
-        // those messages require (and is that a good reason?)
         IResource file = project.getFile(filePath);
    	    try {
         	file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
@@ -131,12 +117,12 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
         
         lexer.lexer(my_monitor, parser.getParseStream()); // Lex the stream to produce the token stream
         if (my_monitor.isCancelled())
-        	return currentAst; // TODO currentAst might (probably will) be inconsistent wrt the lex stream now
+            return currentAst; // TODO currentAst might (probably will) be inconsistent wrt the lex stream now
 
         currentAst = ($AST_NODE$) parser.parser(my_monitor, 0);
         parser.resolve(currentAst);
 
-        cacheKeywordsOnce(); // better place/time to do this?
+        cacheKeywordsOnce();
 
         return currentAst;
     }
