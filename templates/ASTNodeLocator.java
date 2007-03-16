@@ -1,6 +1,10 @@
 package $PACKAGE_NAME$;
 
 import $AST_PKG_NODE$;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
 import org.eclipse.uide.parser.IASTNodeLocator;
 
 import $PACKAGE_NAME$.Ast.AbstractVisitor;
@@ -76,8 +80,8 @@ public class $CLASS_NAME_PREFIX$ASTNodeLocator implements IASTNodeLocator
         return getEndOffset(n) - getStartOffset(n);
     }
 
-    public String getPath(Object node) {
+    public IPath getPath(Object node) {
         // TODO Determine path of compilation unit containing this node
-        return "";
+        return new Path("");
     }
 }
