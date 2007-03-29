@@ -9,6 +9,7 @@ import lpg.runtime.Monitor;
 import lpg.runtime.IMessageHandler;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.ILexer;
@@ -105,15 +106,19 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
     	MyMonitor my_monitor = new MyMonitor(monitor);
     	char[] contentsArray = contents.toCharArray();
 
-        lexer.initialize(contentsArray, filePath);
+        lexer.initialize(contentsArray, filePath.toPortableString());
         parser.getParseStream().resetTokenStream();
-        
-        IResource file = project.getFile(filePath);
-   	    try {
-        	file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-        } catch(CoreException e) {
-        	System.err.println("$LANG_NAME$ParseController.parse:  caught CoreException while deleting problem markers; continuing to parse regardless");
-        }
+
+        // SMS 28 Mar 2007
+        // Commenting out to prevent clobbering of markers set by previous
+        // builders in the same build phase.  This will also give behavior
+        // that is more consistent with the handling of markers in the JDT.
+//        IResource file = project.getFile(filePath);
+//   	    try {
+//        	file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+//        } catch(CoreException e) {
+//        	System.err.println("$LANG_NAME$ParseController.parse:  caught CoreException while deleting problem markers; continuing to parse regardless");
+//        }
         
         lexer.lexer(my_monitor, parser.getParseStream()); // Lex the stream to produce the token stream
         if (my_monitor.isCancelled())
