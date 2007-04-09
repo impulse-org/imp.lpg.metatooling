@@ -233,6 +233,27 @@ $Headers
                                                   new String [] { message });
             }
             
+            
+            public void emitError(ASTNode node, String message) {
+                getMessageHandler().handleMessage(
+                    ParseErrorCodes.NO_MESSAGE_CODE,
+                    getLexStream().getLocation(
+                        node.getLeftIToken().getStartOffset(), node.getRightIToken().getEndOffset()),
+                    getLexStream().getLocation(0, 0),
+                    getFileName(),
+                    new String [] { message });
+            }
+
+           public void emitError(int startOffset, int endOffset, String message) {
+                getMessageHandler().handleMessage(
+                    ParseErrorCodes.NO_MESSAGE_CODE,
+                    getLexStream().getLocation(startOffset, endOffset),
+                    getLexStream().getLocation(0, 0),
+                    getFileName(),
+                    new String [] { message });
+            }
+
+            
             public boolean visit(block n) {
                 n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
                 return true;
