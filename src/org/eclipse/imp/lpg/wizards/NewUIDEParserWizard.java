@@ -10,13 +10,18 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.safari.jikespg.builder.JikesPGBuilder;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.uide.runtime.RuntimePlugin;
-import org.eclipse.uide.wizards.ExtensionPointEnabler;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
 import org.jikespg.uide.JikesPGPlugin;
@@ -38,6 +43,12 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
     protected String fParserPackage;
     protected String fClassName;
 
+    
+    protected String fGrammarFileName;
+    protected String fLexerFileName;
+    protected String fKwlexerFileName;
+    protected String fControllerFileName;
+    
     public NewUIDEParserWizard() {
 	super();
 	setNeedsProgressMonitor(true);
@@ -54,13 +65,6 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	dependencies.add("org.eclipse.core.runtime");
 	dependencies.add("org.eclipse.core.resources");
 	dependencies.add("org.eclipse.uide.runtime");
-	// SMS 14 Oct 2006
-	// To enable buliding in runtime workspace based on lpg project
-        //
-        // PC Restored on 10/16/2006. This is a critical dependency.
-        // Eclipse forbids introducing project dependencies on plugins.
-        //
-	// SMS 23 Feb 2007:  lpg -> lpg.runtime
 	dependencies.add("lpg.runtime");
     }
 
@@ -78,50 +82,63 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         String className= page.getValue("class");
         fGrammarOptions.setPackageName(className.substring(0, className.lastIndexOf('.')));
 
-	fPackageName= fGrammarOptions.getPackageName();
-	fLanguageName= fGrammarOptions.getLanguageName();
+	    fPackageName= fGrammarOptions.getPackageName();
+	    fLanguageName= fGrammarOptions.getLanguageName();
         fPackageFolder= fPackageName.replace('.', File.separatorChar);
-    }
-
-    protected void generateCodeStubs(IProgressMonitor monitor) throws CoreException {
-	boolean hasKeywords= fGrammarOptions.getHasKeywords();
-	boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
-	boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
-	String templateKind= fGrammarOptions.getTemplateKind();
-
-        String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
-	String lexerTemplateName= templateKind + "/LexerTemplate.gi";
-	String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
-        String parseCtlrTemplateName= "ParseController.java";
-
+        
+        // SMS 13 Apr 2007 moving this here from generateCodeStubs
+        // so that the information is available for advising the user
+        // before stubs are generated
         String langClassName= Character.toUpperCase(fLanguageName.charAt(0)) + fLanguageName.substring(1);
-
         fClassName= langClassName;
 
-        String grammarFileName= langClassName + "Parser.g";
-	String lexerFileName= langClassName + "Lexer.gi";
-	String kwlexerFileName= langClassName + "KWLexer.gi";
-	String controllerFileName= langClassName + "ParseController.java";
+        fGrammarFileName= langClassName + "Parser.g";
+	    fLexerFileName= langClassName + "Lexer.gi";
+	    fKwlexerFileName= langClassName + "KWLexer.gi";
+        fControllerFileName= langClassName + "ParseController.java";
+ 
+    }
 
+    
+    protected void generateCodeStubs(IProgressMonitor monitor) throws CoreException {
+		boolean hasKeywords= fGrammarOptions.getHasKeywords();
+		boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
+		boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
+		String templateKind= fGrammarOptions.getTemplateKind();
+
+        String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
+	    String lexerTemplateName= templateKind + "/LexerTemplate.gi";
+	    String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
+        String parseCtlrTemplateName= "ParseController.java";
+
+        // SMS 13 Apr 2007:  commenting out as part of move to collectCodeParms()
+//        String langClassName= Character.toUpperCase(fLanguageName.charAt(0)) + fLanguageName.substring(1);
+//        fClassNamePrefix= langClassName;
+//
+//        String grammarFileName= langClassName + "Parser.g";
+//	    String lexerFileName= langClassName + "Lexer.gi";
+//	    String kwlexerFileName= langClassName + "KWLexer.gi";
+//        String controllerFileName= langClassName + "ParseController.java";
+    
 	// TODO Need to add the base language plugin (if any) as a plugin dependency
 //	final String baseLang= ExtensionPointEnabler.findServiceAttribute(RuntimePlugin.UIDE_RUNTIME + ".languageDescription", fLanguageName, "language", "derivedFrom", "");
 //	final String baseLangServiceImpl= ExtensionPointEnabler.findServiceImplClass(RuntimePlugin.UIDE_RUNTIME + ".parser", baseLang, null);
 //	subs.put("$BASE_CLASS$", baseLangServiceImpl);
 
-	IFile grammarFile= createGrammar(grammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
-
-	createLexer(lexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
-        if (hasKeywords)
-            createKWLexer(kwlexerFileName, kwLexerTemplateName, hasKeywords, fProject, monitor);
-	createParseController(controllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
-
-	// SMS 29 Sep 2006
-	String locatorFileName = fClassName + "ASTNodeLocator.java";
-	String locatorTemplateName = "ASTNodeLocator.java";
-	createNodeLocator(locatorFileName, locatorTemplateName, fProject, monitor);
+		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 	
-	editFile(monitor, grammarFile);
-	enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
+		createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
+	        if (hasKeywords)
+	            createKWLexer(fKwlexerFileName, kwLexerTemplateName, hasKeywords, fProject, monitor);
+		createParseController(fControllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
+	
+		// SMS 29 Sep 2006
+		String locatorFileName = fClassName + "ASTNodeLocator.java";
+		String locatorTemplateName = "ASTNodeLocator.java";
+		createNodeLocator(locatorFileName, locatorTemplateName, fProject, monitor);
+		
+		editFile(monitor, grammarFile);
+		enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
     }
 
     static final String astDirectory= "Ast";
@@ -195,14 +212,12 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
     	subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
     	subs.put("$AST_NODE$", astNode);
-    	//subs.put("$PARSER_TYPE$", fClassName + "Parser");
-    	//subs.put("$LEXER_TYPE$", fClassName + "Lexer");
+    	//subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
+    	//subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
 
     	return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
 	}
-    
-    
-    
+
     
     protected String getTemplateBundleID() {
         return JikesPGPlugin.kPluginID;
@@ -224,4 +239,24 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         result.put("$PACKAGE_NAME$", fPackageName);
         return result;
     }
+    
+    
+    
+    /**
+     * Return the names of any existing files that would be clobbered by the
+     * new files to be generated.
+     * 
+     * @return	An array of names of existing files that would be clobbered by
+     * 			the new files to be generated
+     */
+    protected String[] getFilesThatCouldBeClobbered() {
+    	String prefix = fProject.getLocation().toString() + '/' + getProjectSourceLocation() + fPackageName.replace('.', '/') + '/';
+		return new String[] {
+    			prefix + fGrammarFileName,
+    		    prefix + fLexerFileName,
+    		    prefix + fKwlexerFileName,
+    		    prefix + fControllerFileName
+    	};
+    }
+    
 }
