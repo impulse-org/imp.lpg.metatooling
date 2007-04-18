@@ -96,54 +96,54 @@ public class NewUIDEParserWizardPage extends ExtensionPointWizardPage {
 	return "";
     }
 
+    /*
+     * Set the wizard's language field from the value recorded in the plugin,
+     * if any.  If there is one, then also set the default implementation class
+     * name (i.e., the name of the parse controller class).
+     */
     protected void setLanguageIfEmpty() {
         try {
             String pluginLang= determineLanguage(); // if a languageDesc exists
-            if (pluginLang.length() == 0)
+            
+            if (pluginLang.length() == 0) {
+                ErrorHandler.reportError("NewUIDEParserWizard.setLanguageIfEmpty:  Cannot set language field (no language extension found)");	
                 return;
+            }
 
             WizardPageField field= getField("language");
 
             if (field.getText().length() == 0)
                 field.setText(pluginLang);
-            // SMS 16 Oct 2006:  added pluginLang to default ParseController class name
-            getField("class").setText(fGrammarOptions.getPackageForLanguage(upperCaseFirst(pluginLang)) + "." + pluginLang + "ParseController");
+            
+            String parseControllerName = fGrammarOptions.getDefaultQualifiedNameForParseController(pluginLang);
+            getField("class").setText(parseControllerName);
         } catch (Exception e) {
-            ErrorHandler.reportError("Cannot set language", e);
+            ErrorHandler.reportError("NewUIDEParserWizard.setLanguageIfEmpty:  Cannot set language field (exception)", e);	
         }
     }
 
     // RMF 10/10/2006 - There *is* no "id" field/attribute; that only exists for builder extensions that actually need one.
-//    protected void setIDIfEmpty() {
-//        if (true) return;
-//	try {
-//	    WizardPageField langField= getField("language");
-//            String language= langField.getText();
-//
-//            if (language.length() == 0)
-//                return;
-//            String langID= lowerCaseFirst(language);
-//	    getField("id").setText(langID + ".safari.parser");
-//	} catch (Exception e) {
-//	    ErrorHandler.reportError("Cannot set ID", e);
-//	}
-//    }
-
+    // SMS 18 Apr 2007:  So no methods like these for "id"
+    
+    
+    /*
+     * Set the wizard's implementation class field (i.e., the name of the parse controller
+     * class).
+     */
     protected void setClassIfEmpty() {
         try {
             WizardPageField langField= getField("language");
             String language= langField.getText();
-
-            if (language.length() == 0)
+            if (language.length() == 0) {
+                ErrorHandler.reportError("NewUIDEParserWizard.setClassIfEmpty:  Cannot set class field (no language given)");
                 return;
-            String langPkg= lowerCaseFirst(language);
-            String langClass= upperCaseFirst(language);
-
-            // TODO Unify the following code with similar stuff in NewUIDEParserWizard.generateCodeStubs().
-            // SMS 16 Oct 2006:  added language to default ParseController class name
-            getField("class").setText(fGrammarOptions.getPackageForLanguage(language) + "." + langClass + "ParseController");
+            }
+            
+            String parseControllerName = fGrammarOptions.getDefaultQualifiedNameForParseController(language);
+            getField("class").setText(parseControllerName);
+            
         } catch (Exception e) {
-            ErrorHandler.reportError("Cannot set class", e);
+            ErrorHandler.reportError("NewUIDEParserWizard.setClassIfEmpty:  Cannot set class field (exception)", e);
         }
     }
 
