@@ -41,13 +41,14 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
     protected String fPackageName;
     protected String fPackageFolder;
     protected String fParserPackage;
-    protected String fClassName;
+    protected String fClassNamePrefix;
 
     
     protected String fGrammarFileName;
     protected String fLexerFileName;
     protected String fKwlexerFileName;
     protected String fControllerFileName;
+    protected String fLocatorFileName;
     
     public NewUIDEParserWizard() {
 	super();
@@ -79,8 +80,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         fGrammarOptions= page.fGrammarOptions;
         fGrammarOptions.setLanguageName(page.getValue("language"));
         fGrammarOptions.setProjectName(fProject.getName());
-        String className= page.getValue("class");
-        fGrammarOptions.setPackageName(className.substring(0, className.lastIndexOf('.')));
+        String qualifiedClassName = page.getValue("class");
+        fGrammarOptions.setPackageName(qualifiedClassName.substring(0, qualifiedClassName.lastIndexOf('.')));
 
 	    fPackageName= fGrammarOptions.getPackageName();
 	    fLanguageName= fGrammarOptions.getLanguageName();
@@ -89,17 +90,17 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         // SMS 13 Apr 2007 moving this here from generateCodeStubs
         // so that the information is available for advising the user
         // before stubs are generated
-        String langClassName= Character.toUpperCase(fLanguageName.charAt(0)) + fLanguageName.substring(1);
-        fClassName= langClassName;
+        fGrammarOptions.setClassNamePrefix(Character.toUpperCase(fLanguageName.charAt(0)) + fLanguageName.substring(1));
+        fClassNamePrefix = fGrammarOptions.getClassNamePrefix();
 
-        fGrammarFileName= langClassName + "Parser.g";
-	    fLexerFileName= langClassName + "Lexer.gi";
-	    fKwlexerFileName= langClassName + "KWLexer.gi";
-        fControllerFileName= langClassName + "ParseController.java";
- 
+        fGrammarFileName= fClassNamePrefix + "Parser.g";
+	    fLexerFileName= fClassNamePrefix + "Lexer.gi";
+	    fKwlexerFileName= fClassNamePrefix + "KWLexer.gi";
+        fControllerFileName = fGrammarOptions.getDefaultSimpleNameForParseController(fLanguageName) + ".java";	//fClassNamePrefix + "ParseController.java";
+		fLocatorFileName = fGrammarOptions.getDefaultSimpleNameForNodeLocator(fLanguageName) + ".java";			// fClassNamePrefix + "ASTNodeLocator.java";
     }
 
-    
+    	
     protected void generateCodeStubs(IProgressMonitor monitor) throws CoreException {
 		boolean hasKeywords= fGrammarOptions.getHasKeywords();
 		boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
@@ -109,7 +110,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
 	    String lexerTemplateName= templateKind + "/LexerTemplate.gi";
 	    String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
-        String parseCtlrTemplateName= "ParseController.java";
+	    String parseCtlrTemplateName= "ParseController.java";
+		String locatorTemplateName = "ASTNodeLocator.java";
 
         // SMS 13 Apr 2007:  commenting out as part of move to collectCodeParms()
 //        String langClassName= Character.toUpperCase(fLanguageName.charAt(0)) + fLanguageName.substring(1);
@@ -128,14 +130,11 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 	
 		createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
-	        if (hasKeywords)
-	            createKWLexer(fKwlexerFileName, kwLexerTemplateName, hasKeywords, fProject, monitor);
+        if (hasKeywords) {
+            createKWLexer(fKwlexerFileName, kwLexerTemplateName, hasKeywords, fProject, monitor);
+        }
 		createParseController(fControllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
-	
-		// SMS 29 Sep 2006
-		String locatorFileName = fClassName + "ASTNodeLocator.java";
-		String locatorTemplateName = "ASTNodeLocator.java";
-		createNodeLocator(locatorFileName, locatorTemplateName, fProject, monitor);
+		createNodeLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
 		
 		editFile(monitor, grammarFile);
 		enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
@@ -168,8 +167,8 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 
 	subs.put("$TEMPLATE$", templateName);
 	subs.put("$KEYWORD_FILTER$",
-		hasKeywords ? ("%options filter=" + fClassName + "KWLexer.gi") : "");
-	subs.put("$KEYWORD_LEXER$", hasKeywords ? ("$" + fClassName + "KWLexer") : "Object");
+		hasKeywords ? ("%options filter=" + fClassNamePrefix + "KWLexer.gi") : "");
+	subs.put("$KEYWORD_LEXER$", hasKeywords ? ("$" + fClassNamePrefix + "KWLexer") : "Object");
 	subs.put("$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
 
 	String lexerTemplateName = "lexer.gi";
@@ -185,17 +184,18 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 	return createFileFromTemplate(fileName, kwLexerTemplateName, fPackageFolder, subs, project, monitor);
     }
 
-    private IFile createParseController(String fileName, 
-	    String templateName, boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
-	Map subs= getStandardSubstitutions();
-
-	subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
-	subs.put("$AST_NODE$", astNode);
-	subs.put("$PARSER_TYPE$", fClassName + "Parser");
-	subs.put("$LEXER_TYPE$", fClassName + "Lexer");
+    private IFile createParseController(
+    	String fileName, String templateName, boolean hasKeywords, IProject project, IProgressMonitor monitor)
+    throws CoreException {
+		Map subs= getStandardSubstitutions();
 	
-	String parseControllerTemplateName = "ParseController.java";
-	return createFileFromTemplate(fileName, parseControllerTemplateName, fPackageFolder, subs, project, monitor);
+		subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
+		subs.put("$AST_NODE$", astNode);
+		subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
+		subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
+		
+		String parseControllerTemplateName = "ParseController.java";
+		return createFileFromTemplate(fileName, parseControllerTemplateName, fPackageFolder, subs, project, monitor);
     }
 
     
@@ -235,7 +235,7 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
     protected Map getStandardSubstitutions() {
         Map result= new HashMap();
         result.put("$LANG_NAME$", fLanguageName);
-        result.put("$CLASS_NAME_PREFIX$", fClassName);
+        result.put("$CLASS_NAME_PREFIX$", fClassNamePrefix);
         result.put("$PACKAGE_NAME$", fPackageName);
         return result;
     }
