@@ -13,12 +13,15 @@ public class GrammarOptions {
     String fTemplateKind;
 
     String fTargetLanguage;
-
+    
+    String fClassNamePrefix;  // Typically language name with upper case initial
+    
     boolean fHasKeywords;
 
     boolean fRequiresBacktracking;
 
     boolean fAutoGenerateASTs;
+
 
     public boolean getAutoGenerateASTs() {
         return fAutoGenerateASTs;
@@ -84,6 +87,17 @@ public class GrammarOptions {
         fProjectName= projectName;
     }
 
+    
+    public String getClassNamePrefix() {
+    	return fClassNamePrefix;
+    }
+    
+    
+    public void setClassNamePrefix(String prefix) {
+    	fClassNamePrefix = prefix;
+    }
+    
+    
     public String getPackageForLanguage(String language) {
 	// RMF 2/23/2007 - Disabled the following test, so that the package name tracks
 	// changes in the language name, rather than getting set once when the first
@@ -101,4 +115,32 @@ public class GrammarOptions {
 //        }
         return getPackageName();
     }
+    
+    
+    protected String upperCaseFirst(String language) {
+    	return Character.toUpperCase(language.charAt(0)) + language.substring(1);
+    }
+    
+    
+    public String getDefaultQualifiedNameForParseController(String language) {
+        String langClass= upperCaseFirst(language);
+        return getPackageForLanguage(language) + "." + langClass + "ParseController";
+    }
+    
+    public String getDefaultQualifiedNameForNodeLocator(String language) {
+        String langClass= upperCaseFirst(language);
+        return getPackageForLanguage(language) + "." + langClass + "ASTNodeLocator";
+    }
+    
+    
+    public String getDefaultSimpleNameForParseController(String language) {
+        String langClass= upperCaseFirst(language);
+        return langClass + "ParseController";
+    }
+    
+    public String getDefaultSimpleNameForNodeLocator(String language) {
+        String langClass= upperCaseFirst(language);
+        return langClass + "ASTNodeLocator";
+    }
+    
 }
