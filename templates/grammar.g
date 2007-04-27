@@ -86,12 +86,14 @@ $Rules
     compilationUnit$$functionDeclaration ::= $empty
                                            | compilationUnit functionDeclaration
 
-    functionDeclaration ::= Type identifier '(' parameters ')' block 
+    functionDeclaration ::= functionHeader block
     /.
         $action_type.SymbolTable symbolTable;
         public void setSymbolTable($action_type.SymbolTable symbolTable) { this.symbolTable = symbolTable; }
         public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
     ./
+    
+    functionHeader ::= Type identifier '(' parameters ')'
     
     parameters$$declaration ::= $empty
                               | parameterList
@@ -262,10 +264,11 @@ $Headers
             public void endVisit(block n) { symbolTableStack.pop(); }
 
             public boolean visit(functionDeclaration n) {
-                IToken id = n.getidentifier().getIToken();
+                functionHeader fh = n.getfunctionHeader();
+                IToken id = fh.getidentifier().getIToken();
                 SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
                 if (symbol_table.get(id.toString()) == null)
-                     symbol_table.put(id.toString(), n);
+                     symbol_table.put(id.toString(), fh);
                 else emitError(id, "Illegal redeclaration of " + id.toString());
 
                 //
