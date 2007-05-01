@@ -110,7 +110,9 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
         String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
 	    String lexerTemplateName= templateKind + "/LexerTemplate.gi";
 	    String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
-	    String parseCtlrTemplateName= "ParseController.java";
+	    // SMS 01 May 2007
+	    //String parseCtlrTemplateName= "ParseController.java";
+	    String parseCtlrTemplateName = "ParseControllerWithMarkerTypes.java";
 		String locatorTemplateName = "ASTNodeLocator.java";
 
         // SMS 13 Apr 2007:  commenting out as part of move to collectCodeParms()
@@ -194,8 +196,7 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 		subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
 		subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
 		
-		String parseControllerTemplateName = "ParseController.java";
-		return createFileFromTemplate(fileName, parseControllerTemplateName, fPackageFolder, subs, project, monitor);
+		return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
     }
 
     
