@@ -129,16 +129,20 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
 //	final String baseLangServiceImpl= ExtensionPointEnabler.findServiceImplClass(RuntimePlugin.UIDE_RUNTIME + ".parser", baseLang, null);
 //	subs.put("$BASE_CLASS$", baseLangServiceImpl);
 
-		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
-	
-		createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
-        if (hasKeywords) {
-            createKWLexer(fKwlexerFileName, kwLexerTemplateName, hasKeywords, fProject, monitor);
-        }
+
 		createParseController(fControllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
 		createNodeLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
 		
+
+		IFile lexerFile = createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
+		editFile(monitor, lexerFile);
+        if (hasKeywords) {
+            IFile kwLexerFile = createKWLexer(fKwlexerFileName, kwLexerTemplateName, hasKeywords, fProject, monitor);
+            editFile(monitor, kwLexerFile);
+        }
+		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 		editFile(monitor, grammarFile);
+
 		enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
     }
 
@@ -243,6 +247,22 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
     
     
     
+    
+    private String fFileNamePrefix = null;
+    
+    private void setFileNamePrefix() {
+    	String projectLocation = fProject.getLocation().toString();
+    	fFileNamePrefix = projectLocation + '/' +   getProjectSourceLocation() + fPackageName.replace('.', '/') + '/';
+    }
+    
+    private String getFileNamePrefix() {
+    	if (fFileNamePrefix == null) {
+    		setFileNamePrefix();
+    	}
+    	return fFileNamePrefix;
+    }
+    
+    
     /**
      * Return the names of any existing files that would be clobbered by the
      * new files to be generated.
@@ -251,13 +271,57 @@ public class NewUIDEParserWizard extends ExtensionPointWizard implements INewWiz
      * 			the new files to be generated
      */
     protected String[] getFilesThatCouldBeClobbered() {
-    	String prefix = fProject.getLocation().toString() + '/' + getProjectSourceLocation() + fPackageName.replace('.', '/') + '/';
-		return new String[] {
-    			prefix + fGrammarFileName,
-    		    prefix + fLexerFileName,
-    		    prefix + fKwlexerFileName,
-    		    prefix + fControllerFileName
-    	};
+    	String prefix = getFileNamePrefix();
+    	List<String> fileNames = new ArrayList();
+    	
+			fileNames.add(prefix + fGrammarFileName);
+		    fileNames.add(prefix + fLexerFileName);
+		    fileNames.add(prefix + fKwlexerFileName);
+    	
+	    fileNames.add(prefix + fControllerFileName);
+	    fileNames.add(prefix + fLocatorFileName);
+  	
+    	String[] result = fileNames.toArray(new String[0]);
+    	return result;
     }
+    
+    
+    
+    /**
+     * Post a dialog advising the user that finishing the wizard
+     * could lead to the clobbering of previously auto-generated AST
+     * classes.  If the user is OK  with that, continue by calling
+     * oktoClobberFiles in the parent with the list of specific files
+     * that might be clobbered and return the results of that.
+     * 
+     * Current implementation expects that the file names provided will
+     * be the full absolute path names in the file system.
+     * 
+     * @param files		The names of files that would be clobbered by
+     * 					files to be generated
+     * @return			True if the user presses OK in response to
+     * 					all dialogs involved in the check; false
+     *                  if the user presses CANCEL for any of them
+     *                  (presumably)
+     */
+    protected boolean okToClobberFiles(String[] files) {
+    	
+    	String astDir = getFileNamePrefix() + astDirectory;
+    	final File file= new File(astDir);
+    	
+    	
+    	if (fGrammarOptions.getAutoGenerateASTs() && file.exists()) {
+    		String message = "Any previously auto-generated AST classes will be clobbered; proceed?";
+        	Shell parent = this.getShell();
+        	MessageBox messageBox = new MessageBox(parent, (SWT.CANCEL | SWT.OK));
+        	messageBox.setMessage(message);
+        	int result = messageBox.open();
+        	if (result == SWT.CANCEL)
+        		return false;
+    	}
+    	
+    	return super.okToClobberFiles(files);
+    }
+    	
     
 }
