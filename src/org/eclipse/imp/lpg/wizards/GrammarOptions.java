@@ -21,6 +21,8 @@ public class GrammarOptions {
     boolean fRequiresBacktracking;
 
     boolean fAutoGenerateASTs;
+    
+    boolean fGenGrammarFiles;
 
 
     public boolean getAutoGenerateASTs() {
@@ -31,6 +33,16 @@ public class GrammarOptions {
         fAutoGenerateASTs= autoGenerateASTs;
     }
 
+    
+    public boolean getGenGrammarFiles() {
+        return fGenGrammarFiles;
+    }
+
+    public void setGenGrammarFiles(boolean genGrammarFiles) {
+    	fGenGrammarFiles= genGrammarFiles;
+    }
+    
+    
     public boolean getHasKeywords() {
         return fHasKeywords;
     }
