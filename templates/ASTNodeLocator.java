@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.uide.parser.IASTNodeLocator;
 
 import $PACKAGE_NAME$.Ast.AbstractVisitor;
-import lpg.runtime.IToken;
 
 public class $CLASS_NAME_PREFIX$ASTNodeLocator implements IASTNodeLocator
 {
