@@ -1,31 +1,45 @@
 package $PACKAGE_NAME$;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import lpg.runtime.IMessageHandler;
 import lpg.runtime.IToken;
 import lpg.runtime.Monitor;
-import lpg.runtime.IMessageHandler;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.uide.model.ISourceProject;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.ILexer;
-import org.eclipse.uide.parser.IParseController;
+import org.eclipse.uide.parser.IParseControllerWithMarkerTypes;
 import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-
 import $AST_PKG_NODE$;
 
-public class $CLASS_NAME_PREFIX$ParseController implements IParseController
+/**
+ * Implementation of IParseControllerWithMarkerTypes, that is, a
+ * subtype of IParseController that allows problem-marker types
+ * to be associated to and read from a parse controller.
+ * @see org.eclipse.uide.parser.IParseControllerWithMarkerTypes for
+ * an explanation of why this is useful.
+ * 
+ * Note:  the list of marker tpyes is static, so associations of parse
+ * controllers to problem-marker types are by type rather than by instance
+ * (which is probably typical of the usual compiler/parser model).
+ * 
+ * Now also incorporates ISourceProject in place of IProject.
+ * 
+ * @author Stan Sutton (suttons@us.ibm.com)
+ * @since May 1,  2007	Addition of marker types
+ * @since May 10, 2007	Conversion IProject -> ISourceProject
+ */
+public class $CLASS_NAME_PREFIX$ParseController implements IParseControllerWithMarkerTypes
 {
-    private IProject project;
+    private ISourceProject project;
     private IPath filePath;
     private $PARSER_TYPE$ parser;
     private $LEXER_TYPE$ lexer;
@@ -40,16 +54,16 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
      * @param handler		A message handler to receive error messages (or any others)
      * 						from the parser
      */
-    public void initialize(IPath filePath, IProject project, IMessageHandler handler) {
+    public void initialize(IPath filePath, ISourceProject project, IMessageHandler handler) {
     	this.filePath= filePath;
     	this.project= project;
-    	IPath fullFilePath = project.getLocation().append(filePath);
+    	IPath fullFilePath = project.getRawProject().getLocation().append(filePath);
         createLexerAndParser(fullFilePath);
 
     	parser.setMessageHandler(handler);
     }
 
-    public IProject getProject() { return project; }
+    public ISourceProject getProject() { return project; }
     public IPath getPath() { return filePath; }
 
     public IParser getParser() { return parser; }
@@ -148,4 +162,24 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseController
             }
         }
     }
+    
+    
+    /*
+     * For the management of associated problem-marker types
+     */
+    
+    private static List problemMarkerTypes = new ArrayList();
+    
+    public List getProblemMarkerTypes() {
+    	return problemMarkerTypes;
+    }
+    
+    public void addProblemMarkerType(String problemMarkerType) {
+    	problemMarkerTypes.add(problemMarkerType);
+    }
+    
+	public void removeProblemMarkerType(String problemMarkerType) {
+		problemMarkerTypes.remove(problemMarkerType);
+	}
+    
 }
