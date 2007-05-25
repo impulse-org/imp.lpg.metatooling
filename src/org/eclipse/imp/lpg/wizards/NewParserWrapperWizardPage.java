@@ -36,14 +36,7 @@ public class NewParserWrapperWizardPage extends ExtensionPointWizardPage {
 		setDescription("This wizard creates new parser wrapper and AST node locator.");
     }	
 	
-    protected void createAdditionalControls(Composite parent) {
-    	GrammarAndParserPageHelper helper= new GrammarAndParserPageHelper(parent, null, fGrammarOptions, getShell());
-//		helper.createTemplateField();
-//		helper.createImplLanguageField();
-//		helper.createOptionsFields();
-    }	
-
-
+ 
     public void createControl(Composite parent) {
 		super.createControl(parent);
 		setLanguageIfEmpty();
@@ -150,12 +143,7 @@ public class NewParserWrapperWizardPage extends ExtensionPointWizardPage {
     }
 
     public GrammarOptions getOptions() {
-	return fGrammarOptions;
+    	return fGrammarOptions;
     }
-    
-    
-    public void createFields() {
-
-    }
-  
+ 
 }

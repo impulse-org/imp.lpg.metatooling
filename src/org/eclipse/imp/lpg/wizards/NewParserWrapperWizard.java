@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.safari.jikespg.builder.JikesPGBuilder;
 import org.eclipse.swt.SWT;
@@ -19,7 +20,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.uide.core.ErrorHandler;
 import org.eclipse.uide.runtime.RuntimePlugin;
+import org.eclipse.uide.wizards.ExtensionPointEnabler;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
 import org.jikespg.uide.JikesPGPlugin;
@@ -101,53 +104,21 @@ public class NewParserWrapperWizard extends ExtensionPointWizard implements INew
 
 		IFile parseControllerFile = createParseController(fControllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
 		IFile nodeLocatorFile = createNodeLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
+
+		
+        ExtensionPointEnabler.enable(fProject, "org.eclipse.uide.runtime", "parser", new String[][] {
+                { "extension:id", fProject.getName() + ".parserWrapper" },
+                { "extension:name", fLanguageName + " Parser Wrapper" },
+                { "parserWrapper:class", fPackageName + "." + fClassNamePrefix },
+                { "parserWrapper:language", fLanguageName }
+        		}, 	
+        		false, new NullProgressMonitor());
+		
 		editFile(monitor, parseControllerFile);
 		editFile(monitor, nodeLocatorFile);
     }
 
-    //static final String astDirectory= "Ast";
-
     static final String astNode= "ASTNode";
-
-//    static final String sAutoGenTemplate= "%options parent_saved,automatic_ast=toplevel,visitor=preorder,ast_directory=./" + astDirectory
-//	    + ",ast_type=" + astNode;
-//
-//    static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
-
-//    private IFile createGrammar(String fileName, String templateName,
-//	    boolean autoGenerateASTs, IProject project, IProgressMonitor monitor) throws CoreException {
-//
-//	Map subs= getStandardSubstitutions();
-//
-//	subs.put("$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
-//	subs.put("$TEMPLATE$", templateName);
-//
-//	String grammarTemplateFileName = "grammar.g";
-//	return createFileFromTemplate(fileName, grammarTemplateFileName, fPackageFolder, subs, project, monitor);
-//    }
-//
-//    private IFile createLexer(String fileName, String templateName,
-//	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
-//	Map subs= getStandardSubstitutions();
-//
-//	subs.put("$TEMPLATE$", templateName);
-//	subs.put("$KEYWORD_FILTER$",
-//		hasKeywords ? ("%options filter=" + fClassNamePrefix + "KWLexer.gi") : "");
-//	subs.put("$KEYWORD_LEXER$", hasKeywords ? ("$" + fClassNamePrefix + "KWLexer") : "Object");
-//	subs.put("$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
-//
-//	String lexerTemplateName = "lexer.gi";
-//	return createFileFromTemplate(fileName, lexerTemplateName, fPackageFolder, subs, project, monitor);
-//    }
-//
-//    private IFile createKWLexer(String fileName, String templateName,
-//	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException {
-//	Map subs= getStandardSubstitutions();
-//	subs.put("$TEMPLATE$", templateName);
-//
-//	String kwLexerTemplateName = "kwlexer.gi";
-//	return createFileFromTemplate(fileName, kwLexerTemplateName, fPackageFolder, subs, project, monitor);
-//    }
 
     private IFile createParseController(
     	String fileName, String templateName, boolean hasKeywords, IProject project, IProgressMonitor monitor)
@@ -173,12 +144,7 @@ public class NewParserWrapperWizard extends ExtensionPointWizard implements INew
 		String fileName, String templateName, IProject project, IProgressMonitor monitor) throws CoreException
     {
     	Map subs= getStandardSubstitutions();
-
-    	//subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
     	subs.put("$AST_NODE$", astNode);
-    	//subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
-    	//subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
-
     	return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
 	}
 
@@ -203,8 +169,6 @@ public class NewParserWrapperWizard extends ExtensionPointWizard implements INew
         result.put("$PACKAGE_NAME$", fPackageName);
         return result;
     }
-    
-    
     
     
     private String fFileNamePrefix = null;
@@ -233,12 +197,6 @@ public class NewParserWrapperWizard extends ExtensionPointWizard implements INew
     	String prefix = getFileNamePrefix();
     	List<String> fileNames = new ArrayList();
     	
-//	    	if (fGrammarOptions.getGenGrammarFiles()) {
-//				fileNames.add(prefix + fGrammarFileName);
-//			    fileNames.add(prefix + fLexerFileName);
-//			    fileNames.add(prefix + fKwlexerFileName);
-//	    	}
-    	
 	    fileNames.add(prefix + fControllerFileName);
 	    fileNames.add(prefix + fLocatorFileName);
   	
@@ -246,66 +204,33 @@ public class NewParserWrapperWizard extends ExtensionPointWizard implements INew
     	return result;
     }
     
-    
-    
+    // Copied from GeneratedComponentWizard
     /**
-     * Post a dialog advising the user that finishing the wizard
-     * could lead to the clobbering of previously auto-generated AST
-     * classes.  If the user is OK  with that, continue by calling
-     * oktoClobberFiles in the parent with the list of specific files
-     * that might be clobbered and return the results of that.
+     * This method is called when 'Finish' button is pressed in the wizard.
+     * We will create an operation and run it using wizard as execution context.
      * 
-     * Current implementation expects that the file names provided will
-     * be the full absolute path names in the file system.
-     * 
-     * @param files		The names of files that would be clobbered by
-     * 					files to be generated
-     * @return			True if the user presses OK in response to
-     * 					all dialogs involved in the check; false
-     *                  if the user presses CANCEL for any of them
-     *                  (presumably)
+     * This method is quite a bit simpler than the corresponding method for
+     * ExtensionPointWizard since no extensions have to be created here.
      */
-//    protected boolean okToClobberFiles(String[] files)
-//    {
-//
-//    	if (fGrammarOptions.getAutoGenerateASTs() && !fGrammarOptions.getGenGrammarFiles()) {
-//        	// Sanity check to advise user if they seem to be requesting that AST classes
-//        	// be auto-generated when no grammar file is being generated.
-//        	// Note:  That may be a sensible user action if there is an exsiting grammar
-//        	// file that the user doesn't want to clobber; of course, then the user can auto-
-//        	// regenerate AST classes by touching the grammar file, triggering a normal build.
-//    		// Further note:  If we're not updating the grammar files, and thus not touching
-//    		// them, there is no build triggered, and thus no auto-generation, even when
-//    		// the grammar file already exists.
-//    		String message = "Cannot auto-generate AST classes without a grammar file; proceed?\n\n" +
-//    						"Note:  You can trigger auto-regeneration from an existing grammar\n" +
-//    						"file by touching the file, if the 'automatic_ast' option is set in the\n" +
-//    						"file and the JikesPG builder is enabled.";
-//        	Shell parent = this.getShell();
-//        	MessageBox messageBox = new MessageBox(parent, (SWT.CANCEL | SWT.OK));
-//        	messageBox.setMessage(message);
-//        	int result = messageBox.open();
-//        	if (result == SWT.CANCEL)
-//        		return false;
-//    	} else {	
-//            // Safety check to warn the user about the possibility of clobbering existing
-//            // auto-generated AST classes (that may have been modified)
-//	    	String astDir = getFileNamePrefix() + astDirectory;
-//	    	final File file= new File(astDir);
-//	    	
-//	    	if (fGrammarOptions.getAutoGenerateASTs() && file.exists()) {
-//	    		String message = "Any previously auto-generated AST classes will be overwritten; proceed?";
-//	        	Shell parent = this.getShell();
-//	        	MessageBox messageBox = new MessageBox(parent, (SWT.CANCEL | SWT.OK));
-//	        	messageBox.setMessage(message);
-//	        	int result = messageBox.open();
-//	        	if (result == SWT.CANCEL)
-//	        		return false;
-//	    	}
-//    	}
-//    	
-//    	return super.okToClobberFiles(files);
-//    }
-    
+    public boolean performFinish()
+    {
+    	// Do this in the UI thread while the wizard fields are still accessible
+    	collectCodeParms();
+
+		// Invoke after collectCodeParms() so that collectCodeParms()
+		// can collect the names of files from the wizard
+    	if (!okToClobberFiles(getFilesThatCouldBeClobbered()))
+    		return false;
+    	// Do we need to do just this in a runnable?  Evidently not.
+    	try {
+    		generateCodeStubs(new NullProgressMonitor());
+    	} catch (Exception e){
+		    ErrorHandler.reportError("NewParserWrapperWizard.performFinish:  Could not generate code stubs", e);
+		    return false;
+    	}
+    			
+		return true;
+    }
+
     
 }

@@ -111,17 +111,20 @@ public class NewLPGGrammarWithParserWrapperWizard extends ExtensionPointWizard i
 	    String parseCtlrTemplateName= "ParseController.java";
 		String locatorTemplateName = "ASTNodeLocator.java";
 
-		createParseController(fControllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
-		createNodeLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
+		IFile parseControllerFile = createParseController(fControllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
+		IFile nodeLocatorFile = createNodeLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
 		
-        ExtensionPointEnabler.enable(fProject, "org.eclipse.uide.runtime", "parserWrapper", new String[][] {
-                { "extension:id", fLanguageName + ".parserWrapper" },
+        ExtensionPointEnabler.enable(fProject, "org.eclipse.uide.runtime", "parser", new String[][] {
+                { "extension:id", fProject.getName() + ".parserWrapper" },
                 { "extension:name", fLanguageName + " Parser Wrapper" },
                 { "parserWrapper:class", fPackageName + "." + fClassNamePrefix },
                 { "parserWrapper:language", fLanguageName }
         		}, 	
         		false, new NullProgressMonitor());
 		
+		editFile(monitor, parseControllerFile);
+		editFile(monitor, nodeLocatorFile);
+        
 		IFile lexerFile = createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
 		editFile(monitor, lexerFile);
         if (hasKeywords) {
@@ -130,14 +133,6 @@ public class NewLPGGrammarWithParserWrapperWizard extends ExtensionPointWizard i
         }
 		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 		editFile(monitor, grammarFile);
-		
-//		ExtensionPointEnabler.enable(fProject, "org.eclipse.uide.runtime", "lpgGrammar", new String[][] {
-//				{ "extension:id", fLanguageName + ".lpgGrammar"},
-//				{ "extension:name", fLanguageName + " LPG Grammar" },
-//       	    	{ "grammar:folder", fPackageFolder },
-//       	    	{ "grammar:language", fLanguageName }
-//           	    },
-//           	    false, new NullProgressMonitor());
 		
 		enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
     }
@@ -334,22 +329,24 @@ public class NewLPGGrammarWithParserWrapperWizard extends ExtensionPointWizard i
      * This method is quite a bit simpler than the corresponding method for
      * ExtensionPointWizard since no extensions have to be created here.
      */
-//    public boolean performFinish()
-//    {
-//    	collectCodeParms(); // Do this in the UI thread while the wizard fields are still accessible
-//		// NOTE:  Invoke after collectCodeParms() so that collectCodeParms()
-//		// collect collect the names of files from the wizard
-//    	if (!okToClobberFiles(getFilesThatCouldBeClobbered()))
-//    		return false;
-//    	// Do we need to do just this in a runnable?
-//    	try {
-//    		generateCodeStubs(new NullProgressMonitor());
-//    	} catch (Exception e){
-//		    ErrorHandler.reportError("GeneratedComponentWizard.performFinish:  Could not generate code stubs", e);
-//		    return false;
-//    	}
-//    			
-//		return true;
-//    }
+    public boolean performFinish()
+    {
+    	// Do this in the UI thread while the wizard fields are still accessible
+    	collectCodeParms();
+
+		// Invoke after collectCodeParms() so that collectCodeParms()
+		// can collect the names of files from the wizard
+    	if (!okToClobberFiles(getFilesThatCouldBeClobbered()))
+    		return false;
+    	// Do we need to do just this in a runnable?  Evidently not.
+    	try {
+    		generateCodeStubs(new NullProgressMonitor());
+    	} catch (Exception e){
+		    ErrorHandler.reportError("NewLPGGrammarWith	ParserWrapperWizard.performFinish:  Could not generate code stubs", e);
+		    return false;
+    	}
+    			
+		return true;
+    }
     
 }

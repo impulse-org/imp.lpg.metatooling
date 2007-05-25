@@ -117,18 +117,12 @@ public class NewLPGGrammarWithParserWrapperWizardPage extends ExtensionPointWiza
 
             if (field.getText().length() == 0)
                 field.setText(pluginLang);
-            
-//            String parseControllerName = fGrammarOptions.getDefaultQualifiedNameForParseController(pluginLang);
-//            getField("class").setText(parseControllerName);
         } catch (Exception e) {
             ErrorHandler.reportError("NewLPGGrammarWizard.setLanguageIfEmpty:  Cannot set language field (exception)", e);	
         }
     }
 
-    // RMF 10/10/2006 - There *is* no "id" field/attribute; that only exists for builder extensions that actually need one.
-    // SMS 18 Apr 2007:  So no methods like these for "id"
-    
-    
+
     /*
      * Set the wizard's implementation class field (i.e., the name of the parse controller
      * class).
@@ -151,12 +145,9 @@ public class NewLPGGrammarWithParserWrapperWizardPage extends ExtensionPointWiza
     }
 
     public GrammarOptions getOptions() {
-	return fGrammarOptions;
+    	return fGrammarOptions;
     }
     
-    
-    public void createFields() {
-
-    }
+ 
   
 }

@@ -1,4 +1,4 @@
-	package org.jikespg.uide.wizards;
+package org.jikespg.uide.wizards;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,8 +45,6 @@ public class NewLPGGrammarWizard extends ExtensionPointWizard implements INewWiz
     protected String fGrammarFileName;
     protected String fLexerFileName;
     protected String fKwlexerFileName;
-//    protected String fControllerFileName;
-//    protected String fLocatorFileName;
     
     public NewLPGGrammarWizard() {
 		super();
@@ -78,12 +76,8 @@ public class NewLPGGrammarWizard extends ExtensionPointWizard implements INewWiz
         fGrammarOptions= page.fGrammarOptions;
         fGrammarOptions.setLanguageName(page.getValue("language"));
         fGrammarOptions.setProjectName(fProject.getName());
-//        String qualifiedClassName = page.getValue("class");
-//        fGrammarOptions.setPackageName(qualifiedClassName.substring(0, qualifiedClassName.lastIndexOf('.')));
-//
-//	    fPackageName= fGrammarOptions.getPackageName();
+
 	    fLanguageName= fGrammarOptions.getLanguageName();
-//      fPackageFolder= fPackageName.replace('.', File.separatorChar);
         fPackageFolder = page.getValue("folder");
         String folderPrefix = fProject.getLocation().toString() + '/' + getProjectSourceLocation();
         fPackageFolder = fPackageFolder.substring(folderPrefix.length());
@@ -99,8 +93,6 @@ public class NewLPGGrammarWizard extends ExtensionPointWizard implements INewWiz
         fGrammarFileName= fClassNamePrefix + "Parser.g";
 	    fLexerFileName= fClassNamePrefix + "Lexer.gi";
 	    fKwlexerFileName= fClassNamePrefix + "KWLexer.gi";
-//        fControllerFileName = fGrammarOptions.getDefaultSimpleNameForParseController(fLanguageName) + ".java";	//fClassNamePrefix + "ParseController.java";
-//		fLocatorFileName = fGrammarOptions.getDefaultSimpleNameForNodeLocator(fLanguageName) + ".java";			// fClassNamePrefix + "ASTNodeLocator.java";
     }
 
     	
@@ -322,16 +314,18 @@ public class NewLPGGrammarWizard extends ExtensionPointWizard implements INewWiz
      */
     public boolean performFinish()
     {
-    	collectCodeParms(); // Do this in the UI thread while the wizard fields are still accessible
-		// NOTE:  Invoke after collectCodeParms() so that collectCodeParms()
-		// collect collect the names of files from the wizard
+    	// Do this in the UI thread while the wizard fields are still accessible
+    	collectCodeParms();
+
+		// Invoke after collectCodeParms() so that collectCodeParms()
+		// can collect the names of files from the wizard
     	if (!okToClobberFiles(getFilesThatCouldBeClobbered()))
     		return false;
-    	// Do we need to do just this in a runnable?
+    	// Do we need to do just this in a runnable?  Evidently not.
     	try {
     		generateCodeStubs(new NullProgressMonitor());
     	} catch (Exception e){
-		    ErrorHandler.reportError("GeneratedComponentWizard.performFinish:  Could not generate code stubs", e);
+		    ErrorHandler.reportError("NewLPGGrammarWizard.performFinish:  Could not generate code stubs", e);
 		    return false;
     	}
     			

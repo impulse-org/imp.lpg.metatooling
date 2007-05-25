@@ -48,21 +48,7 @@ public class NewLPGGrammarWizardPage extends ExtensionPointWizardPage {
 	super.createControl(parent);
 	setLanguageIfEmpty();
 	try {
-//	    getField("class").setEnabled(false);
-            String lang= getField("language").getText();
-            // RMF 10/10/2006 - fOmitExtensionIDName is true except for builder
-            // extensions, so there *is* no "id" field for the parser extension!
-//          getField("id").setText(lang + ".safari.parser");
-            // SMS 10 May 2007
-            // No class to set, so do we need a listener on the language field?
-//            getField("language").fText.addModifyListener(new ModifyListener() {
-//                public void modifyText(ModifyEvent e) {
-//                    // RMF 10/10/2006 - fOmitExtensionIDName is true except for builder
-//                    // extensions, so there *is* no "id" field for the parser extension!
-////                  setIDIfEmpty();
-//                    //setClassIfEmpty();
-//                }
-//            });
+        String lang= getField("language").getText();
 	    fProjectText.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 		    setLanguageIfEmpty();
@@ -122,46 +108,16 @@ public class NewLPGGrammarWizardPage extends ExtensionPointWizardPage {
 
             if (field.getText().length() == 0)
                 field.setText(pluginLang);
-            
-//            String parseControllerName = fGrammarOptions.getDefaultQualifiedNameForParseController(pluginLang);
-//            getField("class").setText(parseControllerName);
+
         } catch (Exception e) {
             ErrorHandler.reportError("NewLPGGrammarWizard.setLanguageIfEmpty:  Cannot set language field (exception)", e);	
         }
     }
 
-    // RMF 10/10/2006 - There *is* no "id" field/attribute; that only exists for builder extensions that actually need one.
-    // SMS 18 Apr 2007:  So no methods like these for "id"
-    
-    
-    /*
-     * Set the wizard's implementation class field (i.e., the name of the parse controller
-     * class).
-     */
-//    protected void setClassIfEmpty() {
-//        try {
-//            WizardPageField langField= getField("language");
-//            String language= langField.getText();
-//            if (language.length() == 0) {
-//                ErrorHandler.reportError("NewUIDEParserOnlyWizard.setClassIfEmpty:  Cannot set class field (no language given)");
-//                return;
-//            }
-//            
-//            String parseControllerName = fGrammarOptions.getDefaultQualifiedNameForParseController(language);
-//            getField("class").setText(parseControllerName);
-//            
-//        } catch (Exception e) {
-//            ErrorHandler.reportError("NewUIDEParserOnlyWizard.setClassIfEmpty:  Cannot set class field (exception)", e);
-//        }
-//    }
 
     public GrammarOptions getOptions() {
-	return fGrammarOptions;
+    	return fGrammarOptions;
     }
     
-    
-    public void createFields() {
 
-    }
-  
 }
