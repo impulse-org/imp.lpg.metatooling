@@ -1,7 +1,6 @@
 package $PACKAGE_NAME$;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,9 +17,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.uide.model.ISourceProject;
 import org.eclipse.uide.parser.IASTNodeLocator;
 import org.eclipse.uide.parser.ILexer;
-import org.eclipse.uide.parser.IParseControllerWithMarkerTypes;
+import org.eclipse.uide.parser.IParseController;
 import org.eclipse.uide.parser.IParser;
 import org.eclipse.uide.parser.ParseError;
+import org.eclipse.uide.parser.SimpleLPGParseController;
 
 
 /**
@@ -56,7 +56,9 @@ import org.eclipse.uide.parser.ParseError;
  * @since May 10, 2007	Conversion IProject -> ISourceProject
  * @since May 15, 2007	Addition of dummy types
  */
-public class $CLASS_NAME_PREFIX$ParseController implements IParseControllerWithMarkerTypes
+public class $CLASS_NAME_PREFIX$ParseController
+	extends SimpleLPGParseController
+	implements IParseController
 {
     
     public class ASTNodeToken extends $AST_NODE$ implements IASTNodeToken {
@@ -112,10 +114,6 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseControllerWithM
     }
 	
 
-
-	
-    private ISourceProject project;
-    private IPath filePath;
     private $CLASS_NAME_PREFIX$Parser parser;
     private $CLASS_NAME_PREFIX$Lexer lexer;
     private $AST_NODE$ currentAst;
@@ -130,30 +128,16 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseControllerWithM
      * 						from the parser
      */
     public void initialize(IPath filePath, ISourceProject project, IMessageHandler handler) {
-    	this.filePath= filePath;
-    	this.project= project;
-    	IPath fullFilePath = project.getRawProject().getLocation().append(filePath);
+    	super.initialize(filePath, project, handler)
+;    	IPath fullFilePath = project.getRawProject().getLocation().append(filePath);
         createLexerAndParser(fullFilePath);
 
     	parser.setMessageHandler(handler);
     }
-    
-    public ISourceProject getProject() { return project; }
-    public IPath getPath() { return filePath; }
 
     public IParser getParser() { return parser; }
     public ILexer getLexer() { return lexer; }
-    public Object getCurrentAst() { return currentAst; }
-    public char [][] getKeywords() { return keywords; }
-    public boolean isKeyword(int kind) { return isKeyword[kind]; }
-    public int getTokenIndexAtCharacter(int offset)
-    {
-        int index = parser.getParseStream().getTokenIndexAtCharacter(offset);
-        return (index < 0 ? -index : index);
-    }
-    public IToken getTokenAtCharacter(int offset) {
-    	return parser.getParseStream().getTokenAtCharacter(offset);
-    }
+
     public IASTNodeLocator getNodeLocator() { return new $CLASS_NAME_PREFIX$ASTNodeLocator(); }
 
     public boolean hasErrors() { return currentAst == null; }
@@ -172,30 +156,16 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseControllerWithM
         }
     }
 
-    class MyMonitor implements Monitor
-    {
-        IProgressMonitor monitor;
-        boolean wasCancelled= false;
-        MyMonitor(IProgressMonitor monitor)
-        {
-            this.monitor = monitor;	
-        }
-        public boolean isCancelled() {
-        	if (!wasCancelled)
-        		wasCancelled = monitor.isCanceled();
-        	return wasCancelled;
-        }
-    }
     
     /**
      * setFilePath() should be called before calling this method.
      */
     public Object parse(String contents, boolean scanOnly, IProgressMonitor monitor)
     {
-    	MyMonitor my_monitor = new MyMonitor(monitor);
+    	PMMonitor my_monitor = new PMMonitor(monitor);
     	char[] contentsArray = contents.toCharArray();
 
-        lexer.initialize(contentsArray, filePath.toPortableString());
+        lexer.initialize(contentsArray, fFilePath.toPortableString());
         parser.getParseStream().resetTokenStream();
         
         lexer.lexer(my_monitor, parser.getParseStream()); // Lex the stream to produce the token stream
@@ -209,42 +179,6 @@ public class $CLASS_NAME_PREFIX$ParseController implements IParseControllerWithM
 
         return currentAst;
     }
-
-    private void cacheKeywordsOnce() {
-        if (keywords == null) {
-            String tokenKindNames[] = parser.getParseStream().orderedTerminalSymbols();
-            this.isKeyword = new boolean[tokenKindNames.length];
-            this.keywords = new char[tokenKindNames.length][];
-
-            int [] keywordKinds = lexer.getKeywordKinds();
-            for (int i = 1; i < keywordKinds.length; i++)
-            {
-                int index = parser.getParseStream().mapKind(keywordKinds[i]);
-
-                isKeyword[index] = true;
-                keywords[index] = parser.getParseStream().orderedTerminalSymbols()[index].toCharArray();
-            }
-        }
-    }
-    
-    
-    /*
-     * For the management of associated problem-marker types
-     */
-    
-    private static List problemMarkerTypes = new ArrayList();
-    
-    public List getProblemMarkerTypes() {
-    	return problemMarkerTypes;
-    }
-    
-    public void addProblemMarkerType(String problemMarkerType) {
-    	problemMarkerTypes.add(problemMarkerType);
-    }
-    
-	public void removeProblemMarkerType(String problemMarkerType) {
-		problemMarkerTypes.remove(problemMarkerType);
-	}
     
 }
 	
