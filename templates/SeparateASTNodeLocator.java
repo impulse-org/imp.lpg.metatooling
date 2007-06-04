@@ -3,8 +3,8 @@ package $PACKAGE_NAME$;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import $PACKAGE_NAME$.FooParseController.ASTNode;
-import $PACKAGE_NAME$.FooParseController.AbstractVisitor;
+import $PACKAGE_NAME$.$CLASS_NAME_PREFIX$ParseController.ASTNode;
+import $PACKAGE_NAME$.$CLASS_NAME_PREFIX$ParseController.AbstractVisitor;
 
 import org.eclipse.uide.parser.IASTNodeLocator;
 
