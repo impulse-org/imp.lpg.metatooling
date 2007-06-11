@@ -78,10 +78,38 @@ public class NewLPGGrammarWizard extends ExtensionPointWizard implements INewWiz
         fGrammarOptions.setProjectName(fProject.getName());
 
 	    fLanguageName= fGrammarOptions.getLanguageName();
-        fPackageFolder = page.getValue("folder");
+	    fPackageFolder = page.getValue("folder");
         String folderPrefix = fProject.getLocation().toString() + '/' + getProjectSourceLocation();
-        fPackageFolder = fPackageFolder.substring(folderPrefix.length());
-        fPackageName = fPackageFolder.replace('\\', '.');
+        folderPrefix = folderPrefix.replace("/", "\\");
+        String packageFolderForComparison = fPackageFolder;
+        if (!packageFolderForComparison.endsWith("\\")) {
+        	packageFolderForComparison += "\\";
+        }
+
+        // SMS 11 Jun 2007:  Added checks on selection of folder 
+        if (!packageFolderForComparison.startsWith(folderPrefix)) {	
+        	// Selected package is not under project source folder
+    		String message = "Selected folder is not under project source folder; aborting generation.";
+        	Shell parent = this.getShell();
+        	MessageBox messageBox = new MessageBox(parent, (SWT.OK));
+        	messageBox.setMessage(message);
+        	int result = messageBox.open();
+        	throw new IllegalArgumentException(
+        		"NewLPGGrammarWizard.collectCodeParms():  Selected folder is not under project source location.");
+        } else if (folderPrefix.length() == packageFolderForComparison.length()) {
+        	// LPG won't put AST package under the default package
+    		String message = "Default package not allowed as site of grammar files; aborting generation.";
+        	Shell parent = this.getShell();
+        	MessageBox messageBox = new MessageBox(parent, (SWT.OK));
+        	messageBox.setMessage(message);
+        	int result = messageBox.open();
+        	throw new IllegalArgumentException(
+        		"NewLPGGrammarWizard.collectCodeParms():  default package not allowed as site of grammar files.");
+        } else {
+        	// presumably have a package name
+        	fPackageFolder = fPackageFolder.substring(folderPrefix.length());
+        	fPackageName = fPackageFolder.replace('\\', '.');
+        }
         
         
         // SMS 13 Apr 2007 moving this here from generateCodeStubs
@@ -304,7 +332,7 @@ public class NewLPGGrammarWizard extends ExtensionPointWizard implements INewWiz
     }
     	
     
-    // Copied from GeneratedComponentWizard
+    // Adapted from GeneratedComponentWizard
     /**
      * This method is called when 'Finish' button is pressed in the wizard.
      * We will create an operation and run it using wizard as execution context.
@@ -315,8 +343,13 @@ public class NewLPGGrammarWizard extends ExtensionPointWizard implements INewWiz
     public boolean performFinish()
     {
     	// Do this in the UI thread while the wizard fields are still accessible
-    	collectCodeParms();
-
+    	try {
+    		collectCodeParms();
+    	} catch (IllegalArgumentException e) {
+    		// Exception might be thrown if selected package is not acceptable
+		    //ErrorHandler.reportError("NewLPGGrammarWizard.performFinish:  Could not collect parameters for stubs", e);
+		    return false;
+    	}
 		// Invoke after collectCodeParms() so that collectCodeParms()
 		// can collect the names of files from the wizard
     	if (!okToClobberFiles(getFilesThatCouldBeClobbered()))
