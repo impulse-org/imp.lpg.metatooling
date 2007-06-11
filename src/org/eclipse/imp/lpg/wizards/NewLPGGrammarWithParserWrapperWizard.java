@@ -117,7 +117,7 @@ public class NewLPGGrammarWithParserWrapperWizard extends ExtensionPointWizard i
         ExtensionPointEnabler.enable(fProject, "org.eclipse.uide.runtime", "parser", new String[][] {
                 { "extension:id", fProject.getName() + ".parserWrapper" },
                 { "extension:name", fLanguageName + " Parser Wrapper" },
-                { "parserWrapper:class", fPackageName + "." + fClassNamePrefix },
+                { "parserWrapper:class", fPackageName + "." + fClassNamePrefix + "ParseController" },
                 { "parserWrapper:language", fLanguageName }
         		}, 	
         		false, new NullProgressMonitor());
