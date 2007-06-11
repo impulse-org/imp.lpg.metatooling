@@ -27,7 +27,6 @@ public class $CLASS_NAME_PREFIX$ParseController
 {
     private $PARSER_TYPE$ parser;
     private $LEXER_TYPE$ lexer;
-    private $AST_NODE$ currentAst;
 
     private char keywords[][];
     private boolean isKeyword[];
@@ -89,14 +88,14 @@ public class $CLASS_NAME_PREFIX$ParseController
         
         lexer.lexer(my_monitor, parser.getParseStream()); // Lex the stream to produce the token stream
         if (my_monitor.isCancelled())
-            return currentAst; // TODO currentAst might (probably will) be inconsistent wrt the lex stream now
+            return fCurrentAst; // TODO fCurrentAst might (probably will) be inconsistent wrt the lex stream now
 
-        currentAst = ($AST_NODE$) parser.parser(my_monitor, 0);
-        parser.resolve(currentAst);
+        fCurrentAst = ($AST_NODE$) parser.parser(my_monitor, 0);
+        parser.resolve(($AST_NODE$)fCurrentAst);
 
         cacheKeywordsOnce();
 
-        return currentAst;
+        return fCurrentAst;
     }
 
     
