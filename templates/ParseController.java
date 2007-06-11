@@ -16,19 +16,7 @@ import org.eclipse.uide.parser.SimpleLPGParseController;
 import $AST_PKG_NODE$;
 
 /**
- * Implementation of IParseControllerWithMarkerTypes, that is, a
- * subtype of IParseController that allows problem-marker types
- * to be associated to and read from a parse controller.
- * @see org.eclipse.uide.parser.IParseControllerWithMarkerTypes for
- * an explanation of why this is useful.
- * 
- * Note:  the list of marker tpyes is static, so associations of parse
- * controllers to problem-marker types are by type rather than by instance
- * (which is probably typical of the usual compiler/parser model).
- * 
- * Now also incorporates ISourceProject in place of IProject.
- * 
- * @author Stan Sutton (suttons@us.ibm.com)
+ * @author Stan Sutton (suttons@us.ibm.com)	(for the following modifications)
  * @since May 1,  2007	Addition of marker types
  * @since May 10, 2007	Conversion IProject -> ISourceProject
  * @since May 31, 2007  Adapted to extend SimpleLPGParseController
