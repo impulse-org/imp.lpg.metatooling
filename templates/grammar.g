@@ -268,7 +268,9 @@ $Headers
                 IToken id = fh.getidentifier().getIToken();
                 SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
                 if (symbol_table.get(id.toString()) == null)
-                     symbol_table.put(id.toString(), fh);
+               	     // SMS 11 Jun 2007; pursuant to fixing bug #190
+                     //symbol_table.put(id.toString(), fh);
+                     symbol_table.put(id.toString(), n);
                 else emitError(id, "Illegal redeclaration of " + id.toString());
 
                 //
