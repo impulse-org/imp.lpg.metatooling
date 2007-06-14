@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -30,23 +31,10 @@ import org.jikespg.uide.JikesPGPlugin;
  * This wizard creates a JikesPG grammar, a "parser" language service, and a
  * stub IParseController implementation for use with the UIDE.
  */
-public class NewLPGGrammarWithParserWrapperWizard extends ExtensionPointWizard implements INewWizard
+public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWizard
+	implements INewWizard
 {
-    private IProject fProject;
-    private GrammarOptions fGrammarOptions;
 
-    protected String fLanguageName;
-    protected String fPackageName;
-    protected String fPackageFolder;
-    protected String fParserPackage;
-    protected String fClassNamePrefix;
-
-    
-    protected String fGrammarFileName;
-    protected String fLexerFileName;
-    protected String fKwlexerFileName;
-    protected String fControllerFileName;
-    protected String fLocatorFileName;
     
     public NewLPGGrammarWithParserWrapperWizard() {
 		super();
@@ -56,25 +44,26 @@ public class NewLPGGrammarWithParserWrapperWizard extends ExtensionPointWizard i
     public void addPages() {
     	addPages(new ExtensionPointWizardPage[] { new NewLPGGrammarWithParserWrapperWizardPage(this) });
     }
-
-    private final static List/*<String pluginID>*/ dependencies= new ArrayList();
-
-    static {
-		dependencies.add(RuntimePlugin.UIDE_RUNTIME);
-		dependencies.add("org.eclipse.core.runtime");
-		dependencies.add("org.eclipse.core.resources");
-		dependencies.add("org.eclipse.uide.runtime");
-		dependencies.add("lpg.runtime");
-    }
-
-    protected List getPluginDependencies() {
-	return dependencies;
-    }
+    
 
     protected void collectCodeParms() {
     	NewLPGGrammarWithParserWrapperWizardPage page= (NewLPGGrammarWithParserWrapperWizardPage) pages[0];
+
+    	IProject project = null;
+    	String projectName = page.getProjectNameFromField();
+    	if (projectName != null) {
+    		project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+    	}
+    	if (project ==  null) {
+    		project= page.getProject();
+    	}
+        if (project == null) {
+        	throw new IllegalStateException(
+        		"NewLPGGrammarWithParserWrapperWizard.collectCodeParms():  project cannot be identified.");
+        }
+    	fProject = project;
         
-        fProject= page.getProject();
+        
         fGrammarOptions= page.fGrammarOptions;
         fGrammarOptions.setLanguageName(page.getValue("language"));
         fGrammarOptions.setProjectName(fProject.getName());
@@ -135,125 +124,6 @@ public class NewLPGGrammarWithParserWrapperWizard extends ExtensionPointWizard i
 		editFile(monitor, grammarFile);
 		
 		enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
-    }
-
-    static final String astDirectory= "Ast";
-
-    static final String astNode= "ASTNode";
-
-    static final String sAutoGenTemplate= "%options parent_saved,automatic_ast=toplevel,visitor=preorder,ast_directory=./" + astDirectory
-	    + ",ast_type=" + astNode;
-
-    static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
-
-    private IFile createGrammar(String fileName, String templateName,
-	    boolean autoGenerateASTs, IProject project, IProgressMonitor monitor) throws CoreException
-    {
-		Map subs= getStandardSubstitutions();
-	
-		subs.put("$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
-		subs.put("$TEMPLATE$", templateName);
-	
-		String grammarTemplateFileName = "grammar.g";
-		return createFileFromTemplate(fileName, grammarTemplateFileName, fPackageFolder, subs, project, monitor);
-    }
-
-    private IFile createLexer(String fileName, String templateName,
-	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException
-    {
-		Map subs= getStandardSubstitutions();
-	
-		subs.put("$TEMPLATE$", templateName);
-		subs.put("$KEYWORD_FILTER$",
-			hasKeywords ? ("%options filter=" + fClassNamePrefix + "KWLexer.gi") : "");
-		subs.put("$KEYWORD_LEXER$", hasKeywords ? ("$" + fClassNamePrefix + "KWLexer") : "Object");
-		subs.put("$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
-	
-		String lexerTemplateName = "lexer.gi";
-		return createFileFromTemplate(fileName, lexerTemplateName, fPackageFolder, subs, project, monitor);
-    }
-
-    private IFile createKWLexer(String fileName, String templateName,
-	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException
-    {
-		Map subs= getStandardSubstitutions();
-		subs.put("$TEMPLATE$", templateName);
-	
-		String kwLexerTemplateName = "kwlexer.gi";
-		return createFileFromTemplate(fileName, kwLexerTemplateName, fPackageFolder, subs, project, monitor);
-    }
-
-    private IFile createParseController(
-    	String fileName, String templateName, boolean hasKeywords, IProject project, IProgressMonitor monitor)
-    	throws CoreException
-    {
-		Map subs= getStandardSubstitutions();
-	
-		subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
-		subs.put("$AST_NODE$", astNode);
-		subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
-		subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
-		
-		return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
-    }
-
-    	
-	// SMS 29 Sep 2006
-    // All this node locator stuff, to provide one that has the same AST node type
-    // as is generated for the parser by the other parts of this wizard (and unlike
-    // the node type assumed in org.eclipse.uide.parser)
-    
-	
-    private IFile createNodeLocator(
-		String fileName, String templateName, IProject project, IProgressMonitor monitor) throws CoreException
-    {
-    	Map subs= getStandardSubstitutions();
-
-    	subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
-    	subs.put("$AST_NODE$", astNode);
-    	subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
-    	subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
-
-    	return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
-	}
-
-    
-    protected String getTemplateBundleID() {
-        return JikesPGPlugin.kPluginID;
-    }
-
-    /**
-     * We will accept the selection in the workbench to see if
-     * we can initialize from it.
-     * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
-     */
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
-        // this.selection = selection;
-    }
-
-    protected Map getStandardSubstitutions() {
-        Map result= new HashMap();
-        result.put("$LANG_NAME$", fLanguageName);
-        result.put("$CLASS_NAME_PREFIX$", fClassNamePrefix);
-        result.put("$PACKAGE_NAME$", fPackageName);
-        return result;
-    }
-    
-    
-    
-    
-    private String fFileNamePrefix = null;
-    
-    private void setFileNamePrefix() {
-    	String projectLocation = fProject.getLocation().toString();
-    	fFileNamePrefix = projectLocation + '/' +   getProjectSourceLocation() + fPackageName.replace('.', '/') + '/';
-    }
-    
-    private String getFileNamePrefix() {
-    	if (fFileNamePrefix == null) {
-    		setFileNamePrefix();
-    	}
-    	return fFileNamePrefix;
     }
     
     
@@ -320,33 +190,4 @@ public class NewLPGGrammarWithParserWrapperWizard extends ExtensionPointWizard i
     	return super.okToClobberFiles(files);
     }
     	
-    
-    // Copied from GeneratedComponentWizard
-    /**
-     * This method is called when 'Finish' button is pressed in the wizard.
-     * We will create an operation and run it using wizard as execution context.
-     * 
-     * This method is quite a bit simpler than the corresponding method for
-     * ExtensionPointWizard since no extensions have to be created here.
-     */
-    public boolean performFinish()
-    {
-    	// Do this in the UI thread while the wizard fields are still accessible
-    	collectCodeParms();
-
-		// Invoke after collectCodeParms() so that collectCodeParms()
-		// can collect the names of files from the wizard
-    	if (!okToClobberFiles(getFilesThatCouldBeClobbered()))
-    		return false;
-    	// Do we need to do just this in a runnable?  Evidently not.
-    	try {
-    		generateCodeStubs(new NullProgressMonitor());
-    	} catch (Exception e){
-		    ErrorHandler.reportError("NewLPGGrammarWith	ParserWrapperWizard.performFinish:  Could not generate code stubs", e);
-		    return false;
-    	}
-    			
-		return true;
-    }
-    
 }

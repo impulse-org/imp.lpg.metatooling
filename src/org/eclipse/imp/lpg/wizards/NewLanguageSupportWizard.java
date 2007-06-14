@@ -1,0 +1,207 @@
+package org.jikespg.uide.wizards;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.uide.core.ErrorHandler;
+import org.eclipse.uide.runtime.RuntimePlugin;
+import org.eclipse.uide.wizards.ExtensionPointWizard;
+import org.jikespg.uide.JikesPGPlugin;
+
+public class NewLanguageSupportWizard extends ExtensionPointWizard
+{
+
+    protected IProject fProject;
+    protected GrammarOptions fGrammarOptions;
+    
+    protected String fGrammarFileName;
+    protected String fLexerFileName;
+    protected String fKwlexerFileName;
+    protected String fControllerFileName;
+    protected String fLocatorFileName;
+    
+    static final String astDirectory= "Ast";
+    static final String astNode= "ASTNode";
+    
+    static final String sAutoGenTemplate= "%options parent_saved,automatic_ast=toplevel,visitor=preorder,ast_directory=./" + astDirectory
+	    + ",ast_type=" + astNode;
+    static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
+ 
+    
+    private final static List/*<String pluginID>*/ dependencies= new ArrayList();
+
+    static {
+		dependencies.add(RuntimePlugin.UIDE_RUNTIME);
+		dependencies.add("org.eclipse.core.runtime");
+		dependencies.add("org.eclipse.core.resources");
+		dependencies.add("org.eclipse.uide.runtime");
+		dependencies.add("lpg.runtime");
+    }
+
+    protected List getPluginDependencies() {
+    	return dependencies;
+    }
+
+    
+    
+	@Override
+	protected void generateCodeStubs(IProgressMonitor mon) throws CoreException {
+		// TODO Auto-generated method stub
+
+	}
+
+	
+	
+   protected String getTemplateBundleID() {
+        return JikesPGPlugin.kPluginID;
+    }
+
+    /**
+     * We will accept the selection in the workbench to see if
+     * we can initialize from it.
+     * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
+     */
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        // this.selection = selection;
+    }
+
+    protected Map getStandardSubstitutions() {
+        Map result= new HashMap();
+        result.put("$LANG_NAME$", fLanguageName);
+        result.put("$CLASS_NAME_PREFIX$", fClassNamePrefix);
+        result.put("$PACKAGE_NAME$", fPackageName);
+        return result;
+    }
+    
+
+    protected String fFileNamePrefix = null;
+    
+    protected void setFileNamePrefix() {
+    	String projectLocation = fProject.getLocation().toString();
+    	fFileNamePrefix = projectLocation + '/' +   getProjectSourceLocation() + fPackageName.replace('.', '/') + '/';
+    }
+    
+    protected String getFileNamePrefix() {
+    	if (fFileNamePrefix == null) {
+    		setFileNamePrefix();
+    	}
+    	return fFileNamePrefix;
+    }
+    
+
+
+    protected IFile createParseController(
+    	String fileName, String templateName, boolean hasKeywords, IProject project, IProgressMonitor monitor)
+    	throws CoreException
+    {
+    	// Note:  Not all substitution parameters may be used in all templates
+		Map subs= getStandardSubstitutions();
+		subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
+		subs.put("$AST_NODE$", astNode);
+		subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
+		subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
+		
+		return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
+    }
+
+	
+    protected IFile createNodeLocator(
+		String fileName, String templateName, IProject project, IProgressMonitor monitor) throws CoreException
+    {
+    	// Note:  Not all substitution parameters may be used in all templates
+    	Map subs= getStandardSubstitutions();
+    	subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
+    	subs.put("$AST_NODE$", astNode);
+    	subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
+    	subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
+
+    	return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
+	}
+    
+    
+    protected IFile createKWLexer(String fileName, String templateName,
+    	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException
+    {
+		Map subs= getStandardSubstitutions();
+		subs.put("$TEMPLATE$", templateName);
+	
+		String kwLexerTemplateName = "kwlexer.gi";
+		return createFileFromTemplate(fileName, kwLexerTemplateName, fPackageFolder, subs, project, monitor);
+    }
+
+    
+    protected IFile createLexer(String fileName, String templateName,
+    	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException
+    {
+		Map subs= getStandardSubstitutions();
+	
+		subs.put("$TEMPLATE$", templateName);
+		subs.put("$KEYWORD_FILTER$",
+			hasKeywords ? ("%options filter=" + fClassNamePrefix + "KWLexer.gi") : "");
+		subs.put("$KEYWORD_LEXER$", hasKeywords ? ("$" + fClassNamePrefix + "KWLexer") : "Object");
+		subs.put("$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
+	
+		String lexerTemplateName = "lexer.gi";
+		return createFileFromTemplate(fileName, lexerTemplateName, fPackageFolder, subs, project, monitor);
+    }
+    
+    
+    
+    protected IFile createGrammar(String fileName, String templateName,
+    	    boolean autoGenerateASTs, IProject project, IProgressMonitor monitor) throws CoreException
+    {
+		Map subs= getStandardSubstitutions();
+	
+		subs.put("$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
+		subs.put("$TEMPLATE$", templateName);
+	
+		String grammarTemplateFileName = "grammar.g";
+		return createFileFromTemplate(fileName, grammarTemplateFileName, fPackageFolder, subs, project, monitor);
+    }
+    
+    
+    
+    // Adapted from GeneratedComponentWizard
+    /**
+     * This method is called when 'Finish' button is pressed in the wizard.
+     * We will create an operation and run it using wizard as execution context.
+     * 
+     * This method is quite a bit simpler than the corresponding method for
+     * ExtensionPointWizard since no extensions have to be created here.
+     */
+    public boolean performFinish()
+    {
+    	// Do this in the UI thread while the wizard fields are still accessible
+    	try {
+    		collectCodeParms();
+    	} catch (IllegalArgumentException e) {
+    		// Exception might be thrown if selected package is not acceptable
+		    //ErrorHandler.reportError("NewLPGGrammarWizard.performFinish:  Could not collect parameters for stubs", e);
+		    return false;
+    	}
+		// Invoke after collectCodeParms() so that collectCodeParms()
+		// can collect the names of files from the wizard
+    	if (!okToClobberFiles(getFilesThatCouldBeClobbered()))
+    		return false;
+    	// Do we need to do just this in a runnable?  Evidently not.
+    	try {
+    		generateCodeStubs(new NullProgressMonitor());
+    	} catch (Exception e){
+		    ErrorHandler.reportError("NewLPGGrammarWizard.performFinish:  Could not generate code stubs", e);
+		    return false;
+    	}
+    			
+		return true;
+    }
+
+}
