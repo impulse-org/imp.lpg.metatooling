@@ -96,7 +96,7 @@ public class GrammarAndParserPageHelper {
 		Label optionsLabel= new Label(fParent, SWT.NULL);
 	
 		optionsLabel.setText("Options:");
-		optionsLabel.setToolTipText("JikesPG Options");
+		optionsLabel.setToolTipText("LPG Options");
 	
 		final Button cbKeywords= new Button(fParent, SWT.CHECK);
 	
@@ -131,9 +131,9 @@ public class GrammarAndParserPageHelper {
 	
 		final Button cbAutoASTs= new Button(fParent, SWT.CHECK);
 	
-		cbAutoASTs.setText("JikesPG auto-generated AST classes");
+		cbAutoASTs.setText("LPG auto-generated AST classes");
 		cbAutoASTs
-			.setToolTipText("Check this if you want JikesPG to generate a set of AST classes for your grammar's non-terminals.");
+			.setToolTipText("Check this if you want LPG to generate a set of AST classes for your grammar's non-terminals.");
 		cbAutoASTs.addSelectionListener(new SelectionListener() {
 		    public void widgetSelected(SelectionEvent e) {
 			fGrammarOptions.setAutoGenerateASTs(cbAutoASTs.getSelection());
@@ -148,10 +148,10 @@ public class GrammarAndParserPageHelper {
 //		new Label(parent, SWT.NULL).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 //	
 //		final Button cbGenGrammarFiles= new Button(parent, SWT.CHECK);
-//		cbGenGrammarFiles.setText("JikesPG grammar template files");
+//		cbGenGrammarFiles.setText("LPG grammar template files");
 //		cbGenGrammarFiles
-//			.setToolTipText("Check this if you want JikesPG to provide grammar template files.\n" +
-//					"(If the JikesPG builder is active, this will also entail the generation\n" +
+//			.setToolTipText("Check this if you want LPG to provide grammar template files.\n" +
+//					"(If the LPG builder is active, this will also entail the generation\n" +
 //					"of a lexer and parser");
 //		cbGenGrammarFiles.addSelectionListener(new SelectionListener() {
 //		    public void widgetSelected(SelectionEvent e) {
