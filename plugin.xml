@@ -4,39 +4,26 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="org.jikespg.uide.wizards"
+            id="org.jikespg.uide.wizards.LPG"
+            parentCategory="org.eclipse.uide.wizards"
             name="LPG"/>
-      <!-- Superceded by separate wizards for grammar, parser wrapper, and grammar + parser wrapper -->
-      <!--wizard
-            class="org.jikespg.uide.wizards.NewUIDEParserWizard"
-            icon="icons/newgrammarfile.gif"
-            category="org.eclipse.uide.wizards/org.eclipse.uide.wizards.parser"
-            name="JikesPG Grammar and Parser for SAFARI"
-            id="org.jikespg.uide.NewJikesPGParserWizard"/ -->
       <wizard
             class="org.jikespg.uide.wizards.NewLPGGrammarWizard"
             icon="icons/newgrammarfile.gif"
-            category="org.eclipse.uide.wizards/org.eclipse.uide.wizards.parser"
+            category="org.eclipse.uide.wizards/org.jikespg.uide.wizards.LPG"
             name="New LPG Grammar"
             id="org.jikespg.uide.NewLPGGrammarWizard"/>
 	  <wizard
             class="org.jikespg.uide.wizards.NewParserWrapperWizard"
             icon="icons/newgrammarfile.gif"
-            category="org.eclipse.uide.wizards/org.eclipse.uide.wizards.parser"
+            category="org.eclipse.uide.wizards/org.jikespg.uide.wizards.LPG"
             name="New Parser Wrapper"
             id="org.jikespg.uide.NewParserWrapperWizard"/>
 	  <wizard
             class="org.jikespg.uide.wizards.NewLPGGrammarWithParserWrapperWizard"
             icon="icons/newgrammarfile.gif"
-            category="org.eclipse.uide.wizards/org.eclipse.uide.wizards.parser"
+            category="org.eclipse.uide.wizards/org.jikespg.uide.wizards.LPG"
             name="New LPG Grammar with Parser Wrapper"
             id="org.jikespg.uide.NewLPGGrammarParserWrapperWizard"/>
-      <!-- Doesn't seem to have ever worked; probably superceded by above grammar wizard -->
-      <wizard
-            class="org.jikespg.uide.wizards.NewGrammarWizard"
-            icon="icons/newgrammarfile.gif"
-            category="org.jikespg.uide.wizards"
-            name="JikesPG Grammar and Parser"
-            id="org.jikespg.uide.NewJikesPGGrammarWizard"/>
    </extension>
 </plugin>
