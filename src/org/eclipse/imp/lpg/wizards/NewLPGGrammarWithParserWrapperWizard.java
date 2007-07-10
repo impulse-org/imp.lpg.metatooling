@@ -2,9 +2,7 @@ package org.jikespg.uide.wizards;
 	
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -12,20 +10,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.safari.jikespg.builder.JikesPGBuilder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.uide.core.ErrorHandler;
-import org.eclipse.uide.runtime.RuntimePlugin;
 import org.eclipse.uide.wizards.ExtensionPointEnabler;
-import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
-import org.jikespg.uide.JikesPGPlugin;
 
 /**
  * This wizard creates a JikesPG grammar, a "parser" language service, and a
@@ -109,8 +101,9 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
                 { "parserWrapper:class", fPackageName + "." + fClassNamePrefix + "ParseController" },
                 { "parserWrapper:language", fLanguageName }
         		}, 	
-        		false, new NullProgressMonitor());
-		
+        		false,
+        		getPluginDependencies(),
+        		new NullProgressMonitor());
 		editFile(monitor, parseControllerFile);
 		editFile(monitor, nodeLocatorFile);
         

@@ -91,7 +91,9 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
                 { "parserWrapper:class", fPackageName + "." + fClassNamePrefix + "ParseController" },
                 { "parserWrapper:language", fLanguageName }
         		}, 	
-        		false, new NullProgressMonitor());
+        		false,
+        		getPluginDependencies(),
+        		new NullProgressMonitor());
 		
 		editFile(monitor, parseControllerFile);
 		editFile(monitor, nodeLocatorFile);
