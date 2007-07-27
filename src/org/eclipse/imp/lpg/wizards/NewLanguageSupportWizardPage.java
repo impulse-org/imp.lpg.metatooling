@@ -1,18 +1,12 @@
 package org.jikespg.uide.wizards;
 
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.uide.core.ErrorHandler;
-import org.eclipse.uide.runtime.RuntimePlugin;
 import org.eclipse.uide.wizards.ExtensionPointEnabler;
 import org.eclipse.uide.wizards.ExtensionPointWizard;
 import org.eclipse.uide.wizards.ExtensionPointWizardPage;
@@ -134,8 +128,8 @@ public class NewLanguageSupportWizardPage extends ExtensionPointWizardPage
     
     public String determineLanguage() {
     	try {
-    		// SMS 13 Jun 2007 try getting project this way
-    		// instead of calling getProject in getPluginModel below
+    		// SMS 13 Jun 2007 try getting project based on	 the currently set
+    		// project instead of by calling getProject()
     		// May be okay, since, if the project is set, the langauge should
     		// depend on that.  And if it's not set, then getProject() should
     		// look for the current selection.
@@ -148,32 +142,31 @@ public class NewLanguageSupportWizardPage extends ExtensionPointWizardPage
         		project= getProject();
         	}
         	
-        	// SMS 13 Jun 2007
-        	//IPluginModel pluginModel= ExtensionPointEnabler.getPluginModel(getProject());
         	IPluginModel pluginModel= ExtensionPointEnabler.getPluginModel(project);
-
     	    if (pluginModel != null) {
-    		IPluginExtension[] extensions= pluginModel.getExtensions().getExtensions();
+    	    	// SMS  26 Jul 2007:  Load the extensions model in detail from the
+    	    	// plugin.xml file using our customized method; loading the model
+    	    	// in detail is necessary to make the children of an extension available
+    	    	// (as needed below)
+    	    	ExtensionPointEnabler.loadImpExtensionsModel(pluginModel, project);
+    	    	
+	    		IPluginExtension[] extensions= pluginModel.getExtensions().getExtensions();
+	    		for(int n= 0; n < extensions.length; n++) {
+	    		    IPluginExtension extension= extensions[n];
+                    if (!extension.getPoint().equals("org.eclipse.uide.runtime.languageDescription"))
+                        continue;
 
-    		for(int n= 0; n < extensions.length; n++) {
-    		    IPluginExtension extension= extensions[n];
-
-                        if (!extension.getPoint().equals("org.eclipse.uide.runtime.languageDescription"))
-                            continue;
-
-                        IPluginObject[] children= extension.getChildren();
-
-    		    for(int k= 0; k < children.length; k++) {
-    			IPluginObject object= children[k];
-
-    			if (object.getName().equals("language")) {
-    			    return ((IPluginElement) object).getAttribute("language").getValue();
-    			}
-    		    }
-    		    System.out.println("Unable to determine language for plugin '" + pluginModel.getBundleDescription().getName() + "': no languageDescription extension.");
-    		}
+                    IPluginObject[] children= extension.getChildren();
+	    		    for(int k= 0; k < children.length; k++) {
+		    			IPluginObject object= children[k];
+		    			if (object.getName().equals("language")) {
+		    			    return ((IPluginElement) object).getAttribute("language").getValue();
+		    			}
+	    		    }
+	    		    System.out.println("Unable to determine language for plugin '" + pluginModel.getBundleDescription().getName() + "': no languageDescription extension.");
+	    		}
     	    } else if (getProject() != null)
-    		System.out.println("Not a plugin project: " + getProject().getName());
+    	    	System.out.println("Not a plugin project: " + getProject().getName());
     	} catch (Exception e) {
     	    e.printStackTrace();
     	}
