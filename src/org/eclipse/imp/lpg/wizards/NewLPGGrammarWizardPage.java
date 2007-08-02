@@ -1,11 +1,11 @@
-package org.jikespg.uide.wizards;
+package org.eclipse.imp.lpg.uide.wizards;
 
+import org.eclipse.imp.core.ErrorHandler;
+import org.eclipse.imp.runtime.RuntimePlugin;
+import org.eclipse.imp.wizards.ExtensionPointWizard;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.uide.core.ErrorHandler;
-import org.eclipse.uide.runtime.RuntimePlugin;
-import org.eclipse.uide.wizards.ExtensionPointWizard;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well as the

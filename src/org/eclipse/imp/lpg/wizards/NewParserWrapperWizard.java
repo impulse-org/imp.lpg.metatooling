@@ -1,4 +1,4 @@
-package org.jikespg.uide.wizards;
+package org.eclipse.imp.lpg.uide.wizards;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.imp.wizards.ExtensionPointEnabler;
+import org.eclipse.imp.wizards.ExtensionPointWizardPage;
 import org.eclipse.ui.INewWizard;
-import org.eclipse.uide.wizards.ExtensionPointEnabler;
-import org.eclipse.uide.wizards.ExtensionPointWizardPage;
 
 /**
  * This wizard creates a JikesPG grammar, a "parser" language service, and a

@@ -1,14 +1,12 @@
-package org.jikespg.uide;
+package org.eclipse.imp.lpg.uide;
 
 import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.imp.runtime.SAFARIPluginBase;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.uide.preferences.SafariPreferencesService;
-import org.eclipse.uide.runtime.SAFARIPluginBase;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

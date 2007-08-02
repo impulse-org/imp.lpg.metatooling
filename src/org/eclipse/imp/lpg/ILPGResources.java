@@ -1,4 +1,4 @@
-package org.jikespg.uide;
+package org.eclipse.imp.lpg.uide;
 
 public interface IJikesPGResources {
 }

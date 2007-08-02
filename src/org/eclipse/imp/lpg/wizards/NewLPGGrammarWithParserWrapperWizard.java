@@ -1,4 +1,4 @@
-package org.jikespg.uide.wizards;
+package org.eclipse.imp.lpg.uide.wizards;
 	
 import java.io.File;
 import java.util.ArrayList;
@@ -10,13 +10,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.safari.jikespg.builder.JikesPGBuilder;
+import org.eclipse.imp.lpg.builder.LPGBuilder;
+import org.eclipse.imp.wizards.ExtensionPointEnabler;
+import org.eclipse.imp.wizards.ExtensionPointWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
-import org.eclipse.uide.wizards.ExtensionPointEnabler;
-import org.eclipse.uide.wizards.ExtensionPointWizardPage;
 
 /**
  * This wizard creates a JikesPG grammar, a "parser" language service, and a
@@ -115,7 +115,7 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
 		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 		editFile(monitor, grammarFile);
 		
-		enableBuilders(monitor, fProject, new String[] { JikesPGBuilder.BUILDER_ID });
+		enableBuilders(monitor, fProject, new String[] { LPGBuilder.BUILDER_ID });
     }
     
     

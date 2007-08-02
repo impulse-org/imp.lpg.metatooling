@@ -1,7 +1,7 @@
-Bundle-SymbolicName: org.jikespg.uide; singleton=true
-Bundle-Name: JikesPG IDE
-Bundle-Version: 1.0.57
-Bundle-Activator: org.jikespg.uide.JikesPGPlugin
+Bundle-SymbolicName: org.eclipse.imp.lpg.metatooling;singleton=true
+Bundle-Name: LPG IDE
+Bundle-Version: 1.0.58
+Bundle-Activator: org.eclipse.imp.lpg.LPGPlugin
 Eclipse-AutoStart: true
 Bundle-Vendor: rfuhrer@watson.ibm.com
 Require-Bundle: org.eclipse.core.resources,
@@ -13,8 +13,6 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ui.ide,
  org.eclipse.ui.views,
  org.eclipse.ui.workbench.texteditor,
- org.eclipse.uide.runtime,
- org.eclipse.uide,
  lpg.runtime,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
@@ -22,8 +20,10 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.search,
  org.eclipse.ltk.core.refactoring,
  org.eclipse.ltk.ui.refactoring,
- com.ibm.watson.safari.xform,
  com.ibm.watson.smapifier,
- org.eclipse.safari.jikespg.runtime
-Provide-Package: org.jikespg.uide,
- org.jikespg.uide.wizards
+ org.eclipse.imp.runtime,
+ org.eclipse.imp.metatooling,
+ org.eclipse.imp.xform,
+ org.eclipse.imp.lpg.runtime
+Provide-Package: org.eclipse.imp.lpg.uide,
+ org.eclipse.imp.lpg.uide.wizards

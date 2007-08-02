@@ -1,7 +1,7 @@
 /*
  * Created on Feb 28, 2006
  */
-package org.jikespg.uide.wizards;
+package org.eclipse.imp.lpg.uide.wizards;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

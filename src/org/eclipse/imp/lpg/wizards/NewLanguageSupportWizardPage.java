@@ -1,16 +1,16 @@
-package org.jikespg.uide.wizards;
+package org.eclipse.imp.lpg.uide.wizards;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.imp.core.ErrorHandler;
+import org.eclipse.imp.wizards.ExtensionPointEnabler;
+import org.eclipse.imp.wizards.ExtensionPointWizard;
+import org.eclipse.imp.wizards.ExtensionPointWizardPage;
+import org.eclipse.imp.wizards.WizardPageField;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.uide.core.ErrorHandler;
-import org.eclipse.uide.wizards.ExtensionPointEnabler;
-import org.eclipse.uide.wizards.ExtensionPointWizard;
-import org.eclipse.uide.wizards.ExtensionPointWizardPage;
-import org.eclipse.uide.wizards.WizardPageField;
 
 public class NewLanguageSupportWizardPage extends ExtensionPointWizardPage
 {

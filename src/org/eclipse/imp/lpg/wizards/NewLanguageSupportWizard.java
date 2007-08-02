@@ -1,4 +1,4 @@
-package org.jikespg.uide.wizards;
+package org.eclipse.imp.lpg.uide.wizards;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,13 +10,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.imp.core.ErrorHandler;
+import org.eclipse.imp.lpg.uide.JikesPGPlugin;
+import org.eclipse.imp.runtime.RuntimePlugin;
+import org.eclipse.imp.wizards.ExtensionPointWizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.uide.core.ErrorHandler;
-import org.eclipse.uide.runtime.RuntimePlugin;
-import org.eclipse.uide.wizards.ExtensionPointWizard;
-import org.jikespg.uide.JikesPGPlugin;
 
 public class NewLanguageSupportWizard extends ExtensionPointWizard
 {
