@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.imp.core.ErrorHandler;
-import org.eclipse.imp.lpg.uide.JikesPGPlugin;
+import org.eclipse.imp.lpg.uide.LPGPlugin;
 import org.eclipse.imp.runtime.RuntimePlugin;
 import org.eclipse.imp.wizards.ExtensionPointWizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -63,7 +63,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 	
 	
    protected String getTemplateBundleID() {
-        return JikesPGPlugin.kPluginID;
+        return LPGPlugin.kPluginID;
     }
 
     /**

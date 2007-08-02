@@ -10,19 +10,19 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-public class JikesPGPlugin extends SAFARIPluginBase {
+public class LPGPlugin extends SAFARIPluginBase {
     public static final String kPluginID= "org.jikespg.uide";
 
     /**
      * The unique instance of this plugin class
      */
-    protected static JikesPGPlugin sPlugin;
+    protected static LPGPlugin sPlugin;
 
-    public static JikesPGPlugin getInstance() {
+    public static LPGPlugin getInstance() {
         return sPlugin;
     }
 
-    public JikesPGPlugin() {
+    public LPGPlugin() {
         super();
         sPlugin= this;
     }
