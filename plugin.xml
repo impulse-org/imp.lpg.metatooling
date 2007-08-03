@@ -4,26 +4,26 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="org.jikespg.uide.wizards.LPG"
-            parentCategory="org.eclipse.uide.wizards"
+            id="org.eclipse.imp.lpg.wizards.LPG"
+            parentCategory="org.eclipse.imp.wizards"
             name="LPG"/>
       <wizard
-            class="org.jikespg.uide.wizards.NewLPGGrammarWizard"
+            class="org.eclipse.imp.lpg.wizards.NewLPGGrammarWizard"
             icon="icons/newgrammarfile.gif"
-            category="org.eclipse.uide.wizards/org.jikespg.uide.wizards.LPG"
+            category="org.eclipse.imp.wizards/org.eclipse.imp.lpg.wizards.LPG"
             name="New LPG Grammar"
-            id="org.jikespg.uide.NewLPGGrammarWizard"/>
+            id="org.eclipse.imp.lpg.NewLPGGrammarWizard"/>
 	  <wizard
-            class="org.jikespg.uide.wizards.NewParserWrapperWizard"
+            class="org.eclipse.imp.lpg.wizards.NewParserWrapperWizard"
             icon="icons/newgrammarfile.gif"
-            category="org.eclipse.uide.wizards/org.jikespg.uide.wizards.LPG"
+            category="org.eclipse.imp.wizards/org.eclipse.imp.lpg.wizards.LPG"
             name="New Parser Wrapper"
-            id="org.jikespg.uide.NewParserWrapperWizard"/>
+            id="org.eclipse.imp.lpg.NewParserWrapperWizard"/>
 	  <wizard
-            class="org.jikespg.uide.wizards.NewLPGGrammarWithParserWrapperWizard"
+            class="org.eclipse.imp.lpg.wizards.NewLPGGrammarWithParserWrapperWizard"
             icon="icons/newgrammarfile.gif"
-            category="org.eclipse.uide.wizards/org.jikespg.uide.wizards.LPG"
+            category="org.eclipse.imp.wizards/org.eclipse.imp.lpg.wizards.LPG"
             name="New LPG Grammar with Parser Wrapper"
-            id="org.jikespg.uide.NewLPGGrammarParserWrapperWizard"/>
+            id="org.eclipse.imp.lpg.NewLPGGrammarParserWrapperWizard"/>
    </extension>
 </plugin>
