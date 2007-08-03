@@ -41,7 +41,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
     private final static List/*<String pluginID>*/ dependencies= new ArrayList();
 
     static {
-		dependencies.add(RuntimePlugin.UIDE_RUNTIME);
+		dependencies.add(RuntimePlugin.IMP_RUNTIME);
 		dependencies.add("org.eclipse.core.runtime");
 		dependencies.add("org.eclipse.core.resources");
 		dependencies.add("org.eclipse.uide.runtime");

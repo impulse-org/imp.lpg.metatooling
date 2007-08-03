@@ -16,7 +16,7 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
 {
 
     public NewLPGGrammarWizardPage(ExtensionPointWizard wizard) {
-		super(wizard, RuntimePlugin.UIDE_RUNTIME, "lpgGrammar");
+		super(wizard, RuntimePlugin.IMP_RUNTIME, "lpgGrammar");
 		setTitle("LPG Grammar");
 		setDescription("This wizard creates new LPG grammar and grammar-include files with '.g' and '.gi' extensions.");
     }

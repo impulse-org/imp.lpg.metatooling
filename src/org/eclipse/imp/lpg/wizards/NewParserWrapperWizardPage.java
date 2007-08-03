@@ -16,7 +16,7 @@ public class NewParserWrapperWizardPage extends NewLanguageSupportWizardPage
 {
 
     public NewParserWrapperWizardPage(ExtensionPointWizard wizard) {
-		super(wizard, RuntimePlugin.UIDE_RUNTIME, "parserWrapper");
+		super(wizard, RuntimePlugin.IMP_RUNTIME, "parserWrapper");
 		setTitle("Parser Wrapper");
 		setDescription("This wizard creates new parser wrapper and AST node locator.");
     }	
