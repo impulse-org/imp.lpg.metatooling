@@ -6,12 +6,12 @@ import lpg.runtime.IMessageHandler;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.uide.model.ISourceProject;
-import org.eclipse.uide.parser.IASTNodeLocator;
-import org.eclipse.uide.parser.ILexer;
-import org.eclipse.uide.parser.IParseController;
-import org.eclipse.uide.parser.IParser;
-import org.eclipse.uide.parser.SimpleLPGParseController;
+import org.eclipse.imp.model.ISourceProject;
+import org.eclipse.imp.parser.IASTNodeLocator;
+import org.eclipse.imp.parser.ILexer;
+import org.eclipse.imp.parser.IParseController;
+import org.eclipse.imp.parser.IParser;
+import org.eclipse.imp.parser.SimpleLPGParseController;
 
 import $AST_PKG_NODE$;
 

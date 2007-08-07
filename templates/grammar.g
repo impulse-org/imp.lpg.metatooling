@@ -7,7 +7,7 @@ $AUTO_GENERATE$
 --
 
 $Globals
-    /.import org.eclipse.uide.parser.IParser;
+    /.import org.eclipse.imp.parser.IParser;
     import java.util.Hashtable;
     import java.util.Stack;
     ./

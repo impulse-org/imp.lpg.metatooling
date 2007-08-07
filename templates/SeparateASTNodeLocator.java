@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.Path;
 import $PACKAGE_NAME$.$CLASS_NAME_PREFIX$ParseController.ASTNode;
 import $PACKAGE_NAME$.$CLASS_NAME_PREFIX$ParseController.AbstractVisitor;
 
-import org.eclipse.uide.parser.IASTNodeLocator;
+import org.eclipse.imp.parser.IASTNodeLocator;
 
 /**
  * NOTE:  This version of the Node Locator is for use when the Node

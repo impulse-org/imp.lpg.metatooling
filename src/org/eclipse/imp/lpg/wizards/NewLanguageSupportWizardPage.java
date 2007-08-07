@@ -153,7 +153,7 @@ public class NewLanguageSupportWizardPage extends ExtensionPointWizardPage
 	    		IPluginExtension[] extensions= pluginModel.getExtensions().getExtensions();
 	    		for(int n= 0; n < extensions.length; n++) {
 	    		    IPluginExtension extension= extensions[n];
-                    if (!extension.getPoint().equals("org.eclipse.uide.runtime.languageDescription"))
+                    if (!extension.getPoint().equals("org.eclipse.imp.runtime.languageDescription"))
                         continue;
 
                     IPluginObject[] children= extension.getChildren();

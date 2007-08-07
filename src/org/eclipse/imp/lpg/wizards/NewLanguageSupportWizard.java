@@ -44,7 +44,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		dependencies.add(RuntimePlugin.IMP_RUNTIME);
 		dependencies.add("org.eclipse.core.runtime");
 		dependencies.add("org.eclipse.core.resources");
-		dependencies.add("org.eclipse.uide.runtime");
+		dependencies.add("org.eclipse.imp.runtime");
 		dependencies.add("lpg.runtime");
     }
 

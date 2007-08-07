@@ -7,7 +7,7 @@ $KEYWORD_FILTER$
 
 $Globals
     /.import java.util.*;
-    import org.eclipse.uide.parser.ILexer;
+    import org.eclipse.imp.parser.ILexer;
     ./
 $End
 

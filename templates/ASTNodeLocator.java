@@ -5,7 +5,7 @@ import $AST_PKG_NODE$;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.uide.parser.IASTNodeLocator;
+import org.eclipse.imp.parser.IASTNodeLocator;
 
 import $PACKAGE_NAME$.Ast.AbstractVisitor;
 

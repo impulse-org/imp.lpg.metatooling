@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.jikespg.uide</name>
+	<name>org.eclipse.imp.lpg.metatooling</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -24,6 +24,5 @@
 	<natures>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.jikespg.uide.jikesPGNature</nature>
 	</natures>
 </projectDescription>
