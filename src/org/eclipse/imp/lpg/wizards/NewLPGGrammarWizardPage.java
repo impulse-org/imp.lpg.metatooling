@@ -1,4 +1,4 @@
-package org.eclipse.imp.lpg.uide.wizards;
+package org.eclipse.imp.lpg.wizards;
 
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.runtime.RuntimePlugin;

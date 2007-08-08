@@ -1,4 +1,4 @@
-package org.eclipse.imp.lpg.uide.wizards;
+package org.eclipse.imp.lpg.wizards;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.imp.core.ErrorHandler;
-import org.eclipse.imp.lpg.uide.LPGPlugin;
+import org.eclipse.imp.lpg.LPGPlugin;
 import org.eclipse.imp.runtime.RuntimePlugin;
 import org.eclipse.imp.wizards.ExtensionPointWizard;
 import org.eclipse.jface.viewers.IStructuredSelection;

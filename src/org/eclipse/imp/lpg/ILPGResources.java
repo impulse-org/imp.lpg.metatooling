@@ -1,4 +1,4 @@
-package org.eclipse.imp.lpg.uide;
+package org.eclipse.imp.lpg;
 
 public interface ILPGResources {
 }

@@ -1,4 +1,4 @@
-package org.eclipse.imp.lpg.uide.wizards;
+package org.eclipse.imp.lpg.wizards;
 
 import java.io.File;
 import java.util.ArrayList;

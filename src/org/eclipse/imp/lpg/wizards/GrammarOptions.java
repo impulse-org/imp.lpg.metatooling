@@ -1,7 +1,7 @@
 /*
  * Created on Feb 28, 2006
  */
-package org.eclipse.imp.lpg.uide.wizards;
+package org.eclipse.imp.lpg.wizards;
 
 public class GrammarOptions {
     String fLanguageName;
