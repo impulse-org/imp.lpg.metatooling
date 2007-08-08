@@ -1,7 +1,7 @@
 Bundle-SymbolicName: org.eclipse.imp.lpg.metatooling;singleton:=true
 Bundle-Name: LPG IDE
 Bundle-Version: 1.0.58
-Bundle-Activator: org.eclipse.imp.lpg.uide.LPGPlugin
+Bundle-Activator: org.eclipse.imp.lpg.LPGPlugin
 Eclipse-LazyStart: true
 Bundle-Vendor: rfuhrer@watson.ibm.com
 Require-Bundle: org.eclipse.core.resources,
@@ -25,5 +25,5 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.imp.metatooling,
  org.eclipse.imp.xform,
  org.eclipse.imp.lpg.runtime
-Provide-Package: org.eclipse.imp.lpg.uide,
- org.eclipse.imp.lpg.uide.wizards
+Provide-Package: org.eclipse.imp.lpg,
+ org.eclipse.imp.lpg.wizards
