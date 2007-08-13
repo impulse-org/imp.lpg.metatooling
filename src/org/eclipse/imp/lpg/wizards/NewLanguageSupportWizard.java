@@ -1,5 +1,7 @@
 package org.eclipse.imp.lpg.wizards;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,15 +10,24 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.lpg.LPGPlugin;
+import org.eclipse.imp.lpg.preferences.PreferenceConstants;
+import org.eclipse.imp.preferences.IPreferencesService;
+import org.eclipse.imp.preferences.PreferencesService;
 import org.eclipse.imp.runtime.RuntimePlugin;
 import org.eclipse.imp.wizards.ExtensionPointWizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.osgi.framework.Bundle;
 
 public class NewLanguageSupportWizard extends ExtensionPointWizard
 {
@@ -202,6 +213,22 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
     	}
     			
 		return true;
+    }
+
+
+
+    protected void setIncludeDirPreference() {
+        String lpgIncDirKey= PreferenceConstants.P_LPG_INCLUDE_DIRS;
+        Bundle lpgMetaToolingBundle= Platform.getBundle(LPGPlugin.kPluginID);
+        URL templateDirURL= FileLocator.find(lpgMetaToolingBundle, new Path("/templates"), null);
+        try {
+            String lpgTemplatesDir= FileLocator.toFileURL(templateDirURL).getPath();
+            IPreferencesService ps= new PreferencesService(fProject);
+            ps.setLanguageName("lpg");
+            ps.setStringPreference(IPreferencesService.PROJECT_LEVEL, lpgIncDirKey, lpgTemplatesDir);
+        } catch (IOException e) {
+            LPGPlugin.getInstance().getLog().log(new Status(IStatus.ERROR, LPGPlugin.kPluginID, 0, "Unable to resolve 'templates' directory in LPG metatooling plugin", null));
+        }
     }
 
 }

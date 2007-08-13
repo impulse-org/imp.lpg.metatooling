@@ -10,6 +10,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.imp.lpg.LPGRuntimePlugin;
 import org.eclipse.imp.lpg.builder.LPGBuilder;
 import org.eclipse.imp.wizards.ExtensionPointEnabler;
 import org.eclipse.imp.wizards.ExtensionPointWizardPage;
@@ -83,11 +84,10 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
 		boolean hasKeywords= fGrammarOptions.getHasKeywords();
 		boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
 		boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
-		String templateKind= fGrammarOptions.getTemplateKind();
 
-        String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
-	    String lexerTemplateName= templateKind + "/LexerTemplate.gi";
-	    String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
+        String parserTemplateName= (requiresBacktracking ? "bt" : "dt") + "ParserTemplate.gi";
+	    String lexerTemplateName= "LexerTemplate.gi";
+	    String kwLexerTemplateName= "KeywordTemplate.gi";
 	    String parseCtlrTemplateName= "ParseController.java";
 		String locatorTemplateName = "ASTNodeLocator.java";
 
@@ -114,11 +114,12 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
         }
 		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 		editFile(monitor, grammarFile);
-		
+
+		setIncludeDirPreference();
+
 		enableBuilders(monitor, fProject, new String[] { LPGBuilder.BUILDER_ID });
     }
-    
-    
+
     /**
      * Return the names of any existing files that would be clobbered by the
      * new files to be generated.

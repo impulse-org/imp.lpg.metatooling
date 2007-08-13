@@ -83,14 +83,6 @@ public class GrammarOptions {
         fTargetLanguage= targetLanguage;
     }
 
-    public String getTemplateKind() {
-        return fTemplateKind;
-    }
-
-    public void setTemplateKind(String templateKind) {
-        fTemplateKind= templateKind;
-    }
-
     public String getProjectName() {
         return fProjectName;
     }

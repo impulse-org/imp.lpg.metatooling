@@ -17,7 +17,7 @@ $Define
 $End
 
 $Include
-    uide/$LEXER_MAP$.gi
+    $LEXER_MAP$.gi
 $End
 
 $Export

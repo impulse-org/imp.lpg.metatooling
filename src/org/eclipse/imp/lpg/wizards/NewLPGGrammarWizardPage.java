@@ -23,7 +23,6 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
 	
     protected void createAdditionalControls(Composite parent) {
     	GrammarAndParserPageHelper helper= new GrammarAndParserPageHelper(parent, null, fGrammarOptions, getShell());
-		helper.createTemplateField();
 		helper.createImplLanguageField();
 		helper.createOptionsFields();
     }	

@@ -100,11 +100,10 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
 		boolean hasKeywords= fGrammarOptions.getHasKeywords();
 		boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
 		boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
-		String templateKind= fGrammarOptions.getTemplateKind();
 
-        String parserTemplateName= templateKind + (requiresBacktracking ? "/bt" : "/dt") + "ParserTemplate.gi";
-	    String lexerTemplateName= templateKind + "/LexerTemplate.gi";
-	    String kwLexerTemplateName= templateKind + "/KeywordTemplate.gi";
+        String parserTemplateName= (requiresBacktracking ? "bt" : "dt") + "ParserTemplate.gi";
+	    String lexerTemplateName= "LexerTemplate.gi";
+	    String kwLexerTemplateName= "KeywordTemplate.gi";
 		
 		IFile lexerFile = createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
 		editFile(monitor, lexerFile);
@@ -115,6 +114,7 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
 		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 		editFile(monitor, grammarFile);
 
+		setIncludeDirPreference();
 		enableBuilders(monitor, fProject, new String[] { LPGBuilder.BUILDER_ID });
     }   
     

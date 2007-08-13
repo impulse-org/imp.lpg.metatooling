@@ -40,32 +40,6 @@ public class GrammarAndParserPageHelper {
 		fShell= shell;
     }
 
-
-    public void createTemplateField() {
-		Label label= new Label(fParent, SWT.NULL);
-		label.setText("Template:");
-		label.setToolTipText("Select the parser/lexer template to use");
-		label.setBackground(fParent.getBackground());
-	
-		final int defaultTemplate= 1; // UIDE
-		Combo combo= new Combo(fParent, SWT.READ_ONLY);
-	
-		combo.setFont(fParent.getFont());
-		combo.setItems(new String[] { "none", "UIDE" });
-		combo.setLayoutData(new GridData(GridData.BEGINNING));
-		combo.select(defaultTemplate);
-		combo.addSelectionListener(new SelectionListener() {
-		    public void widgetSelected(SelectionEvent e) {
-			fGrammarOptions.setTemplateKind(e.text);
-		    }
-	
-		    public void widgetDefaultSelected(SelectionEvent e) {}
-		});
-		fGrammarOptions.setTemplateKind(combo.getItem(defaultTemplate));
-	
-		new Label(fParent, SWT.NULL).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    }
-
     public void createImplLanguageField() {
 		Label label= new Label(fParent, SWT.NULL);
 		label.setText("Implementation:");

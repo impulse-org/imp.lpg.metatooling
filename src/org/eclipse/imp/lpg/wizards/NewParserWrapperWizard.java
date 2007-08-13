@@ -76,7 +76,6 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
 		boolean hasKeywords= fGrammarOptions.getHasKeywords();
 		boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
 		boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
-		String templateKind= fGrammarOptions.getTemplateKind();
 
 	    String parseCtlrTemplateName= "SeparateParseController.java";
 		String locatorTemplateName = "SeparateASTNodeLocator.java";

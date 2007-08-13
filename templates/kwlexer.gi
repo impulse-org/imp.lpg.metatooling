@@ -5,7 +5,7 @@
 %options template=$TEMPLATE$
 
 $Include
-    UIDE/KWLexerLowerCaseMap.gi
+    KWLexerLowerCaseMap.gi
 $End
 
 $Export
