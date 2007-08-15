@@ -18,6 +18,7 @@
         static
         {
             tokenKind['$'] = Char_DollarSign;
+            tokenKind['%'] = Char_Percent;
             tokenKind['_'] = Char__;
 
             tokenKind['a'] = Char_a;
