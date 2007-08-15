@@ -1,4 +1,4 @@
-$Headers
+%Headers
     --
     -- Additional methods for the action class not provided in the template
     --
@@ -199,4 +199,4 @@ $Headers
                            : Char_AfterASCII);
         }
     ./
-$End
+%End

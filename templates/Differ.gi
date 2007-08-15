@@ -1,4 +1,4 @@
-$Headers
+%Headers
 /.
         //
         // These functions are only needed in order to use a lexer as
@@ -204,4 +204,4 @@ $Headers
             return;
         }
 ./
-$End
+%End

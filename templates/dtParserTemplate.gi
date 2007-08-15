@@ -16,15 +16,15 @@
 -- This template requires that the name of the EOF token be set
 -- to EOF_TOKEN to be consistent with LexerTemplateD and LexerTemplateE
 --
-$EOF
+%EOF
     EOF_TOKEN
-$End
+%End
 
-$ERROR
+%ERROR
     ERROR_TOKEN
-$End
+%End
 
-$Define
+%Define
     $Header
     /.
                 //
@@ -107,14 +107,14 @@ $Define
                    getParser().getFirstToken./
     $getRightSpan /. // macro getRightSpan is deprecated. Use function getRightSpan
                     getParser().getLastToken./
-$End
+%End
 
-$Globals
+%Globals
     /.import lpg.runtime.*;
     ./
-$End
+%End
 
-$Headers
+%Headers
     /.
     public class $action_type extends PrsStream implements RuleAction$additional_interfaces
     {
@@ -307,18 +307,18 @@ $Headers
 
     ./
 
-$End
+%End
 
-$Rules
+%Rules
     /.$BeginActions./
-$End
+%End
 
-$Trailers
+%Trailers
     /.
         $EndActions
     }
     ./
-$End
+%End
 
 --
 -- E N D   O F   T E M P L A T E

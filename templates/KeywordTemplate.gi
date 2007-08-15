@@ -22,11 +22,11 @@
 -- to EOF and that the prefix be "Char_" to be consistent with
 -- LexerTemplateD.
 --
-$Eof
+%Eof
     EOF
-$End
+%End
 
-$Define
+%Define
     --
     -- Macro that may be respecified in an instance of this template
     --
@@ -50,14 +50,14 @@ $Define
     $BeginJava /.$BeginAction./
 
     $EndJava /.$EndAction./
-$End
+%End
 
-$Globals
+%Globals
     /.import lpg.runtime.*;
     ./
-$End
+%End
 
-$Headers
+%Headers
     /.
     public class $action_type extends $prs_type implements $exp_type
     {
@@ -93,9 +93,9 @@ $Headers
         public void setInputChars(char[] inputChars) { this.inputChars = inputChars; }
 
     ./
-$End
+%End
 
-$Rules
+%Rules
     /.
 
         public $action_type(char[] inputChars, int identifierKind)
@@ -103,9 +103,9 @@ $Rules
             this.inputChars = inputChars;
             keywordKind[0] = identifierKind;
     ./
-$End
+%End
 
-$Trailers
+%Trailers
     /.
 
             for (int i = 0; i < keywordKind.length; i++)
@@ -116,7 +116,7 @@ $Trailers
         }
     }
     ./
-$End
+%End
 
 --
 -- E N D   O F   T E M P L A T E

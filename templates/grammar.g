@@ -6,21 +6,21 @@ $AUTO_GENERATE$
 -- This is just a sample grammar and not a real grammar for $LANG_NAME$
 --
 
-$Globals
+%Globals
     /.import org.eclipse.imp.parser.IParser;
     import java.util.Hashtable;
     import java.util.Stack;
     ./
-$End
+%End
 
 
 
-$Define
+%Define
     $ast_class /.Object./
     $additional_interfaces /., IParser./
-$End
+%End
 
-$Terminals
+%Terminals
     --            
     -- Here, you may list terminals needed by this grammar.
     -- Furthermore, a terminal may be mapped into an alias
@@ -67,17 +67,17 @@ $Terminals
     -- Note that the terminals that do not have aliases are declared
     -- above only for documentation purposes.
     --
-$End
+%End
 
-$Start
+%Start
     compilationUnit
-$End
+%End
 
-$Recover
+%Recover
    MissingExpression
-$End
+%End
 
-$Rules
+%Rules
     -- In this section you list all the rules for your grammar.
     -- When reduced, each rule will produce one Ast node.
     -- 
@@ -173,7 +173,7 @@ $Rules
     ./
 
     BadAssignment ::= identifier '=' MissingExpression 
-$End
+%End
 
 $Headers
     /.
@@ -302,4 +302,4 @@ $Headers
             }
         } // End SymbolTableVisitor
     ./
-$End
+%End

@@ -1,4 +1,4 @@
-$Terminals
+%Terminals
     DollarSign ::= '$'
     _
     
@@ -7,9 +7,9 @@ $Terminals
 
     A    B    C    D    E    F    G    H    I    J    K    L    M
     N    O    P    Q    R    S    T    U    V    W    X    Y    Z
-$End
+%End
 
-$Headers
+%Headers
     /.
         final static int tokenKind[] = new int[128];
         static
@@ -77,5 +77,4 @@ $Headers
             return (c < 128 ? tokenKind[c] : 0);
         }
     ./
-$End
-
+%End

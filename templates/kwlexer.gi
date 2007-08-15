@@ -4,11 +4,11 @@
 %options package=$PACKAGE_NAME$
 %options template=$TEMPLATE$
 
-$Include
+%Include
     KWLexerLowerCaseMap.gi
-$End
+%End
 
-$Export
+%Export
 
     -- List all the keywords the kwlexer will export to the lexer and parser
     boolean
@@ -21,18 +21,18 @@ $Export
     true
     void
     while
-$End
+%End
 
-$Terminals
+%Terminals
     a    b    c    d    e    f    g    h    i    j    k    l    m
     n    o    p    q    r    s    t    u    v    w    x    y    z
-$End
+%End
 
-$Start
+%Start
     Keyword
-$End
+%End
 
-$Rules
+%Rules
 
     -- The Goal for the parser is a single Keyword
 
@@ -95,4 +95,4 @@ $Rules
             $setResult($_while);
           $EndAction
         ./
-$End
+%End

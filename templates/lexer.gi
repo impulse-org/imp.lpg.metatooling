@@ -5,22 +5,22 @@ $KEYWORD_FILTER$
 -- This is just a sample lexer and not a real lexer for $LANG_NAME$
 --
 
-$Globals
+%Globals
     /.import java.util.*;
     import org.eclipse.imp.parser.ILexer;
     ./
-$End
+%End
 
-$Define
+%Define
     $additional_interfaces /., ILexer./
     $kw_lexer_class /.$KEYWORD_LEXER$./
-$End
+%End
 
-$Include
+%Include
     $LEXER_MAP$.gi
-$End
+%End
 
-$Export
+%Export
     --
     -- List all the token types the lexer will directly process
     -- and export to the parser. If a keyword lexer is used as
@@ -48,9 +48,9 @@ $Export
         RIGHTPAREN
         LEFTBRACE
         RIGHTBRACE
-$End
+%End
 
-$Terminals
+%Terminals
     CtlCharNotWS
 
     LF   CR   HT   FF
@@ -101,13 +101,13 @@ $Terminals
     LeftParen    ::= '('
     RightParen   ::= ')'
     Equal        ::= '='
-$End
+%End
 
-$Start
+%Start
     Token
-$End
+%End
 
-$Rules
+%Rules
     Token ::= identifier
         /.$BeginJava
                     checkForKeyWord();
@@ -292,4 +292,4 @@ $Rules
                 '/' | '$'
 
     notEOL ::= letter | digit | special | Space | HT | FF
-$End
+%End
