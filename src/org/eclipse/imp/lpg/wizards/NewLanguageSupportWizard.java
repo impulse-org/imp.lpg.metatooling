@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.lpg.LPGPlugin;
-import org.eclipse.imp.lpg.preferences.PreferenceConstants;
+import org.eclipse.imp.lpg.preferences.LPGPreferencesDialogConstants;
 import org.eclipse.imp.preferences.IPreferencesService;
 import org.eclipse.imp.preferences.PreferencesService;
 import org.eclipse.imp.runtime.RuntimePlugin;
@@ -218,7 +218,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 
 
     protected void setIncludeDirPreference() {
-        String lpgIncDirKey= PreferenceConstants.P_LPG_INCLUDE_DIRS;
+        String lpgIncDirKey= LPGPreferencesDialogConstants.P_INCLUDEPATHTOUSE;
         Bundle lpgMetaToolingBundle= Platform.getBundle(LPGPlugin.kPluginID);
         URL templateDirURL= FileLocator.find(lpgMetaToolingBundle, new Path("/templates"), null);
         try {
