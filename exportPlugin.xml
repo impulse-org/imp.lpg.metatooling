@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="org.jikespg.uide" default="build.update.jar" basedir=".">
-	<import file="../org.eclipse.safari.jikespg.feature/buildCommon.xml"/>
-	<import file="../org.eclipse.safari.update/buildPluginCommon.xml"/>
+<project name="org.eclipse.imp.lpg.metatooling" default="build.update.jar" basedir=".">
+	<import file="../org.eclipse.imp.lpg.feature/buildCommon.xml"/>
+	<import file="../org.eclipse.imp.update/buildPluginCommon.xml"/>
 
 	<target name="init" depends="properties">
-		<property name="plugin.name" value="org.jikespg.uide"/>
+		<property name="plugin.name" value="org.eclipse.imp.lpg.metatooling"/>
 		<property name="plugin.version" value="${plugins.version.31}"/>
 		<property name="plugin.jar.name" value="${plugin.name}_${plugin.version}.jar"/>
 		<property name="plugin.zip.name" value="${plugin.name}_${plugin.version}.zip"/>
@@ -38,10 +38,10 @@
 			<compilerarg line="${compilerArg}"/>
 			<classpath>
 				<pathelement location="../lpg.runtime.java/bin"/>
-				<pathelement location="../org.eclipse.uide.runtime/bin"/>
-				<pathelement location="../org.eclipse.safari.jikespg.runtime/bin"/>
-				<pathelement location="../com.ibm.watson.safari.xform/bin"/>
-				<pathelement location="../org.eclipse.uide/bin"/>
+				<pathelement location="../org.eclipse.imp.runtime/bin"/>
+				<pathelement location="../org.eclipse.imp.lpg.runtime/bin"/>
+				<pathelement location="../org.eclipse.imp.xform/bin"/>
+				<pathelement location="../org.eclipse.imp.metatooling/bin"/>
 				<pathelement path="${eclipse.build.path}"/>
 			</classpath>
 			<src path="src/"/>
