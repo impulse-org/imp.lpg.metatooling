@@ -32,7 +32,6 @@ import org.osgi.framework.Bundle;
 
 public class NewLanguageSupportWizard extends ExtensionPointWizard
 {
-    protected IProject fProject;
     protected GrammarOptions fGrammarOptions;
     
     protected String fGrammarFileName;
