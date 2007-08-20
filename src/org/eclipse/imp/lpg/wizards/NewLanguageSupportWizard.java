@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.lpg.LPGPlugin;
+import org.eclipse.imp.lpg.LPGRuntimePlugin;
 import org.eclipse.imp.lpg.preferences.LPGPreferencesDialogConstants;
 import org.eclipse.imp.preferences.IPreferencesService;
 import org.eclipse.imp.preferences.PreferencesService;
@@ -31,7 +32,6 @@ import org.osgi.framework.Bundle;
 
 public class NewLanguageSupportWizard extends ExtensionPointWizard
 {
-
     protected IProject fProject;
     protected GrammarOptions fGrammarOptions;
     
@@ -48,8 +48,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 	    + ",ast_type=" + astNode;
     static final String sKeywordTemplate= "%options filter=kwTemplate.gi";
  
-    
-    private final static List/*<String pluginID>*/ dependencies= new ArrayList();
+    private final static List<String /*pluginID*/> dependencies= new ArrayList<String>();
 
     static {
 		dependencies.add(RuntimePlugin.IMP_RUNTIME);
@@ -63,17 +62,12 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
     	return dependencies;
     }
 
-    
-    
-	@Override
-	protected void generateCodeStubs(IProgressMonitor mon) throws CoreException {
-		// TODO Auto-generated method stub
-
-	}
-
+    @Override
+    protected void generateCodeStubs(IProgressMonitor mon) throws CoreException {
+	// TODO Auto-generated method stub
+    }
 	
-	
-   protected String getTemplateBundleID() {
+    protected String getTemplateBundleID() {
         return LPGPlugin.kPluginID;
     }
 
@@ -86,15 +80,14 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
         // this.selection = selection;
     }
 
-    protected Map getStandardSubstitutions() {
-        Map result= new HashMap();
+    protected Map<String,String> getStandardSubstitutions() {
+        Map<String,String> result= new HashMap<String,String>();
         result.put("$LANG_NAME$", fLanguageName);
         result.put("$CLASS_NAME_PREFIX$", fClassNamePrefix);
         result.put("$PACKAGE_NAME$", fPackageName);
         return result;
     }
     
-
     protected String fFileNamePrefix = null;
     
     protected void setFileNamePrefix() {
@@ -108,15 +101,13 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
     	}
     	return fFileNamePrefix;
     }
-    
-
 
     protected IFile createParseController(
     	String fileName, String templateName, boolean hasKeywords, IProject project, IProgressMonitor monitor)
     	throws CoreException
     {
     	// Note:  Not all substitution parameters may be used in all templates
-		Map subs= getStandardSubstitutions();
+		Map<String,String> subs= getStandardSubstitutions();
 		subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
 		subs.put("$AST_NODE$", astNode);
 		subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
@@ -125,36 +116,33 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
     }
 
-	
     protected IFile createNodeLocator(
 		String fileName, String templateName, IProject project, IProgressMonitor monitor) throws CoreException
     {
     	// Note:  Not all substitution parameters may be used in all templates
-    	Map subs= getStandardSubstitutions();
+    	Map<String,String> subs= getStandardSubstitutions();
     	subs.put("$AST_PKG_NODE$", fPackageName + "." + astDirectory + "." + astNode);
     	subs.put("$AST_NODE$", astNode);
     	subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
     	subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
 
     	return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
-	}
-    
-    
+    }
+
     protected IFile createKWLexer(String fileName, String templateName,
     	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException
     {
-		Map subs= getStandardSubstitutions();
+		Map<String,String> subs= getStandardSubstitutions();
 		subs.put("$TEMPLATE$", templateName);
 	
 		String kwLexerTemplateName = "kwlexer.gi";
 		return createFileFromTemplate(fileName, kwLexerTemplateName, fPackageFolder, subs, project, monitor);
     }
 
-    
     protected IFile createLexer(String fileName, String templateName,
     	    boolean hasKeywords, IProject project, IProgressMonitor monitor) throws CoreException
     {
-		Map subs= getStandardSubstitutions();
+		Map<String,String> subs= getStandardSubstitutions();
 	
 		subs.put("$TEMPLATE$", templateName);
 		subs.put("$KEYWORD_FILTER$",
@@ -165,13 +153,11 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		String lexerTemplateName = "lexer.gi";
 		return createFileFromTemplate(fileName, lexerTemplateName, fPackageFolder, subs, project, monitor);
     }
-    
-    
-    
+
     protected IFile createGrammar(String fileName, String templateName,
     	    boolean autoGenerateASTs, IProject project, IProgressMonitor monitor) throws CoreException
     {
-		Map subs= getStandardSubstitutions();
+		Map<String,String> subs= getStandardSubstitutions();
 	
 		subs.put("$AUTO_GENERATE$", autoGenerateASTs ? sAutoGenTemplate : "");
 		subs.put("$TEMPLATE$", templateName);
@@ -179,9 +165,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		String grammarTemplateFileName = "grammar.g";
 		return createFileFromTemplate(fileName, grammarTemplateFileName, fPackageFolder, subs, project, monitor);
     }
-    
-    
-    
+
     // Adapted from GeneratedComponentWizard
     /**
      * This method is called when 'Finish' button is pressed in the wizard.
@@ -200,8 +184,8 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		    //ErrorHandler.reportError("NewLPGGrammarWizard.performFinish:  Could not collect parameters for stubs", e);
 		    return false;
     	}
-		// Invoke after collectCodeParms() so that collectCodeParms()
-		// can collect the names of files from the wizard
+    	// Invoke after collectCodeParms() so that collectCodeParms()
+    	// can collect the names of files from the wizard
     	if (!okToClobberFiles(getFilesThatCouldBeClobbered()))
     		return false;
     	// Do we need to do just this in a runnable?  Evidently not.
@@ -211,11 +195,8 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		    ErrorHandler.reportError("NewLPGGrammarWizard.performFinish:  Could not generate code stubs", e);
 		    return false;
     	}
-    			
-		return true;
+    	return true;
     }
-
-
 
     protected void setIncludeDirPreference() {
         String lpgIncDirKey= LPGPreferencesDialogConstants.P_INCLUDEPATHTOUSE;
@@ -224,11 +205,10 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
         try {
             String lpgTemplatesDir= FileLocator.toFileURL(templateDirURL).getPath();
             IPreferencesService ps= new PreferencesService(fProject);
-            ps.setLanguageName("lpg");
+            ps.setLanguageName(LPGRuntimePlugin.getLanguageID());
             ps.setStringPreference(IPreferencesService.PROJECT_LEVEL, lpgIncDirKey, lpgTemplatesDir);
         } catch (IOException e) {
             LPGPlugin.getInstance().getLog().log(new Status(IStatus.ERROR, LPGPlugin.kPluginID, 0, "Unable to resolve 'templates' directory in LPG metatooling plugin", null));
         }
     }
-
 }
