@@ -207,10 +207,11 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
             	if (lpgTemplatesDir.startsWith("/")) {
             		lpgTemplatesDir = lpgTemplatesDir.substring(1);            	}
             }
-            
+
             IPreferencesService ps= new PreferencesService(fProject);
             ps.setLanguageName(LPGRuntimePlugin.getLanguageID());
             ps.setStringPreference(IPreferencesService.PROJECT_LEVEL, lpgIncDirKey, lpgTemplatesDir);
+            ps.setBooleanPreference(IPreferencesService.PROJECT_LEVEL, LPGPreferencesDialogConstants.P_USEDEFAULTINCLUDEPATH, false);
         } catch (IOException e) {
             LPGPlugin.getInstance().getLog().log(new Status(IStatus.ERROR, LPGPlugin.kPluginID, 0, "Unable to resolve 'templates' directory in LPG metatooling plugin", null));
         }
