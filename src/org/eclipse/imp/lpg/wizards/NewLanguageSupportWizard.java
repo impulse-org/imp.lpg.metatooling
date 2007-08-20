@@ -203,6 +203,11 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
         URL templateDirURL= FileLocator.find(lpgMetaToolingBundle, new Path("/templates"), null);
         try {
             String lpgTemplatesDir= FileLocator.toFileURL(templateDirURL).getPath();
+            if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            	if (lpgTemplatesDir.startsWith("/")) {
+            		lpgTemplatesDir = lpgTemplatesDir.substring(1);            	}
+            }
+            
             IPreferencesService ps= new PreferencesService(fProject);
             ps.setLanguageName(LPGRuntimePlugin.getLanguageID());
             ps.setStringPreference(IPreferencesService.PROJECT_LEVEL, lpgIncDirKey, lpgTemplatesDir);
