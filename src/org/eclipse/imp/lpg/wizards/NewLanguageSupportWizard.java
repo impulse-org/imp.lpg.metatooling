@@ -71,7 +71,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 	// TODO Auto-generated method stub
     }
 	
-    protected String getTemplateBundleID() {
+    protected static String getTemplateBundleID() {
         return LPGPlugin.kPluginID;
     }
 
@@ -117,7 +117,11 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
 		subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
 		
-		return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
+		// SMS 9 Sep 2007
+		// Added parameter for plugin id to take advantage of an alternative
+		// form of createFileFromTemplate
+		// (Did the same for similar invocations in other methods)
+		return createFileFromTemplate(fileName, LPGPlugin.kPluginID, templateName, fPackageFolder, subs, project, monitor);
     }
 
     protected IFile createNodeLocator(
@@ -130,7 +134,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
     	subs.put("$PARSER_TYPE$", fClassNamePrefix + "Parser");
     	subs.put("$LEXER_TYPE$", fClassNamePrefix + "Lexer");
 
-    	return createFileFromTemplate(fileName, templateName, fPackageFolder, subs, project, monitor);
+    	return createFileFromTemplate(fileName, LPGPlugin.kPluginID, templateName, fPackageFolder, subs, project, monitor);
     }
 
     protected IFile createKWLexer(String fileName, String templateName,
@@ -140,7 +144,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		subs.put("$TEMPLATE$", templateName);
 	
 		String kwLexerTemplateName = "kwlexer.gi";
-		return createFileFromTemplate(fileName, kwLexerTemplateName, fPackageFolder, subs, project, monitor);
+		return createFileFromTemplate(fileName, LPGPlugin.kPluginID, kwLexerTemplateName, fPackageFolder, subs, project, monitor);
     }
 
     protected IFile createLexer(String fileName, String templateName,
@@ -155,7 +159,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		subs.put("$LEXER_MAP$", (hasKeywords ? "LexerBasicMap" : "LexerVeryBasicMap"));
 	
 		String lexerTemplateName = "lexer.gi";
-		return createFileFromTemplate(fileName, lexerTemplateName, fPackageFolder, subs, project, monitor);
+		return createFileFromTemplate(fileName, LPGPlugin.kPluginID, lexerTemplateName, fPackageFolder, subs, project, monitor);
     }
 
     protected IFile createGrammar(String fileName, String templateName,
@@ -167,7 +171,7 @@ public class NewLanguageSupportWizard extends ExtensionPointWizard
 		subs.put("$TEMPLATE$", templateName);
 	
 		String grammarTemplateFileName = "grammar.g";
-		return createFileFromTemplate(fileName, grammarTemplateFileName, fPackageFolder, subs, project, monitor);
+		return createFileFromTemplate(fileName, LPGPlugin.kPluginID, grammarTemplateFileName, fPackageFolder, subs, project, monitor);
     }
 
     // Adapted from GeneratedComponentWizard
