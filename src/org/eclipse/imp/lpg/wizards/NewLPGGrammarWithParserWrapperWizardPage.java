@@ -24,7 +24,7 @@ public class NewLPGGrammarWithParserWrapperWizardPage extends NewLanguageSupport
 		super(wizard, RuntimePlugin.IMP_RUNTIME, "lpgGrammarWithParserWrapper");
 		setTitle("LPG Grammar with ParserWrapper");
 		setDescription("This wizard creates new LPG grammar and grammar-include files with '.g' and '.gi' extensions.\n" +
-				"It also creates SAFARI parser-wrapper and AST node-locator classes.  Grammar files are created in the\n" +
+				"It also creates IMP parser-wrapper and AST node-locator classes.  Grammar files are created in the\n" +
 				"same directory as the parser wrapper");
 	
     }
