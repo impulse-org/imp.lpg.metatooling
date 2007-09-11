@@ -119,7 +119,7 @@ public class GrammarOptions {
         	if (Character.isJavaIdentifierPart(c))
         	    buffer.append(c);
             }
-            buffer.append(".safari.parser");
+            buffer.append(".imp.parser");
             setPackageName(buffer.toString());
 //        }
         return getPackageName();
