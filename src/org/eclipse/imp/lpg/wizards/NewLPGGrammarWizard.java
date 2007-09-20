@@ -18,7 +18,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.imp.lpg.builder.LPGBuilder;
+import org.eclipse.imp.wizards.ExtensionPointEnabler;
 import org.eclipse.imp.wizards.ExtensionPointWizardPage;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -42,11 +44,11 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
 
 
     protected void collectCodeParms() {
+
     	NewLPGGrammarWizardPage page= (NewLPGGrammarWizardPage) pages[0];
-    	
     	// SMS 13 Jun 2007
         //fProject=page.getProject();
-		    	IProject project = null;
+		IProject project = null;
     	String projectName = page.getProjectNameFromField();
     	if (projectName != null) {
     		project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -110,6 +112,15 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
 	    String lexerTemplateName= "LexerTemplate.gi";
 	    String kwLexerTemplateName= "KeywordTemplate.gi";
 		
+	    // SMS 20 Sep 2007
+	    // Need to update plug-in dependencies even though not creating an extension
+	    // (previously we've relied on the enabling of extensions to do this)
+	    //
+	    // fProject should be set by this point
+	    System.out.println("SMS:  NewLPGGrammarWizard.generateCodeStubs():  addding required imports");
+	    IPluginModel pluginModel = ExtensionPointEnabler.getPluginModelForProject(fProject);
+	    ExtensionPointEnabler.addRequiredPluginImports(pluginModel, fProject, getPluginDependencies());
+	    
 		IFile lexerFile = createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
 		editFile(monitor, lexerFile);
         if (hasKeywords) {
