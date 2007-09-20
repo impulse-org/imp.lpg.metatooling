@@ -117,7 +117,6 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
 	    // (previously we've relied on the enabling of extensions to do this)
 	    //
 	    // fProject should be set by this point
-	    System.out.println("SMS:  NewLPGGrammarWizard.generateCodeStubs():  addding required imports");
 	    IPluginModel pluginModel = ExtensionPointEnabler.getPluginModelForProject(fProject);
 	    ExtensionPointEnabler.addRequiredPluginImports(pluginModel, fProject, getPluginDependencies());
 	    
