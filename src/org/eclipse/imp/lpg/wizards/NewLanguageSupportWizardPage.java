@@ -9,31 +9,45 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.wizards.ExtensionPointEnabler;
-import org.eclipse.imp.wizards.ExtensionPointWizard;
-import org.eclipse.imp.wizards.ExtensionPointWizardPage;
+import org.eclipse.imp.wizards.GeneratedComponentAttribute;
+import org.eclipse.imp.wizards.GeneratedComponentWizard;
+import org.eclipse.imp.wizards.GeneratedComponentWizardPage;
 import org.eclipse.imp.wizards.WizardPageField;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 
-public class NewLanguageSupportWizardPage extends ExtensionPointWizardPage
+public class NewLanguageSupportWizardPage extends GeneratedComponentWizardPage //ExtensionPointWizardPage
 {
 
     GrammarOptions fGrammarOptions= new GrammarOptions();
 	
+		
+//   public NewLanguageSupportWizardPage(GeneratedComponentWizard owner, String pluginID, String pointID) {
+//		//super(owner, pluginID, pointID);
+//	   super(owner, /*RuntimePlugin.IMP_RUNTIME,*/ "compiler", false, compilerAttributes, thisWizardName, thisWizardDescription);
+//
+//    }
 	
-   public NewLanguageSupportWizardPage(ExtensionPointWizard owner, String pluginID, String pointID) {
-		super(owner, pluginID, pointID);
+   
+   public NewLanguageSupportWizardPage(
+	    	GeneratedComponentWizard owner, /*String pluginID,*/ String componentID, boolean omitIDName,
+	    	GeneratedComponentAttribute[] attributes, String wizardName, String wizardDescription)
+    {
+        super(owner, /*pluginID,*/ componentID, omitIDName, attributes, wizardName, wizardDescription);
     }
-	
+   
    
    
    /*
     * Set the wizard's implementation class field (i.e., the name of the parse controller
     * class), but only if the field is currently empty.
     * 
-    * SMS 14 Jun 2007:  This method actually set the class field in any case, and that
+    * SMS 14 Jun 2007:  This method actually sets the class field in any case, and that
     * hasn't seemed to be a problem.  For consistency with its name, I've changed the
     * implementation here to only set the class if the field is empty and created a
     * second method, setClass(), to set the class in any case.
@@ -84,9 +98,7 @@ public class NewLanguageSupportWizardPage extends ExtensionPointWizardPage
            ErrorHandler.reportError("NewUIDEParserOnlyWizard.setClassIfEmpty:  Cannot set class field (exception)", e);
        }
    }
-   
-   
-   
+
 	   
     /*
      * Set the wizard's language field from the value recorded in the plugin,
@@ -103,7 +115,9 @@ public class NewLanguageSupportWizardPage extends ExtensionPointWizardPage
 
             WizardPageField field= getField("Language");
 
-            if (field.getText().length() == 0)
+            // Field might be null if we haven't defined the language yet
+            // (which here we might very well not have)
+            if (field != null && field.getText().length() == 0)
                 field.setText(pluginLang);
 
         } catch (Exception e) {
