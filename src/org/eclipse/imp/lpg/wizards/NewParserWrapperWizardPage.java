@@ -6,8 +6,8 @@
 package org.eclipse.imp.lpg.wizards;
 
 import org.eclipse.imp.core.ErrorHandler;
-import org.eclipse.imp.runtime.RuntimePlugin;
-import org.eclipse.imp.wizards.ExtensionPointWizard;
+import org.eclipse.imp.wizards.GeneratedComponentAttribute;
+import org.eclipse.imp.wizards.GeneratedComponentWizard;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
@@ -19,13 +19,27 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class NewParserWrapperWizardPage extends NewLanguageSupportWizardPage
 {
+    protected static final String thisWizardName = "New IMP Parser Wrapper";
+    protected static final String thisWizardDescription =
+    	"This wizard creates new IMP parser wrapper and AST node locator.";
+ 
 
-    public NewParserWrapperWizardPage(ExtensionPointWizard wizard) {
-		super(wizard, RuntimePlugin.IMP_RUNTIME, "parserWrapper");
-		setTitle("Parser Wrapper");
-		setDescription("This wizard creates new parser wrapper and AST node locator.");
+    public NewParserWrapperWizardPage(GeneratedComponentWizard wizard, GeneratedComponentAttribute[] wizardAttributes) {
+//		super(wizard, RuntimePlugin.IMP_RUNTIME, "parserWrapper");
+//		setTitle("");
+//		setDescription("This wizard creates new parser wrapper and AST node locator.");
+		super(wizard, /*RuntimePlugin.IMP_RUNTIME,*/ "lpgGrammar", true,
+				wizardAttributes, thisWizardName, thisWizardDescription);
+    	
     }	
 	
+    
+    protected void createAdditionalControls(Composite parent) {
+    	createTextField(parent, "ParserWrapper", "class",
+    		"The qualified name of the parser-wrapper class to be generated", 
+    		"", "ClassBrowse", true);    	       	
+    }	
+    
  
     public void createControl(Composite parent) {
 		super.createControl(parent);
