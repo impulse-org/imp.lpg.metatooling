@@ -7,7 +7,8 @@ package org.eclipse.imp.lpg.wizards;
 
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.runtime.RuntimePlugin;
-import org.eclipse.imp.wizards.ExtensionPointWizard;
+import org.eclipse.imp.wizards.GeneratedComponentAttribute;
+import org.eclipse.imp.wizards.GeneratedComponentWizard;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
@@ -19,11 +20,16 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
 {
+    protected static final String thisWizardName = "New LPG Grammar Wizard";
+    protected static final String thisWizardDescription =
+    	"This wizard creates new LPG grammar and grammar-include files with '.g' and '.gi' extensions.";
 
-    public NewLPGGrammarWizardPage(ExtensionPointWizard wizard) {
-		super(wizard, RuntimePlugin.IMP_RUNTIME, "lpgGrammar");
-		setTitle("LPG Grammar");
-		setDescription("This wizard creates new LPG grammar and grammar-include files with '.g' and '.gi' extensions.");
+    public NewLPGGrammarWizardPage(GeneratedComponentWizard wizard, GeneratedComponentAttribute[] wizardAttributes) {
+		//super(wizard, RuntimePlugin.IMP_RUNTIME, "lpgGrammar");
+		//setTitle("LPG Grammar");
+		//setDescription("This wizard creates new LPG grammar and grammar-include files with '.g' and '.gi' extensions.");
+		super(wizard, /*RuntimePlugin.IMP_RUNTIME,*/ "lpgGrammar", true,
+				wizardAttributes, thisWizardName, thisWizardDescription);
     }
 	
     protected void createAdditionalControls(Composite parent) {
