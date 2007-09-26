@@ -29,13 +29,13 @@ import org.eclipse.imp.lpg.preferences.LPGPreferencesDialogConstants;
 import org.eclipse.imp.preferences.IPreferencesService;
 import org.eclipse.imp.preferences.PreferencesService;
 import org.eclipse.imp.runtime.RuntimePlugin;
-import org.eclipse.imp.wizards.ExtensionPointWizard;
+import org.eclipse.imp.wizards.GeneratedComponentWizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.osgi.framework.Bundle;
 
-public class NewLanguageSupportWizard extends ExtensionPointWizard
+public class NewLanguageSupportWizard extends GeneratedComponentWizard //ExtensionPointWizard
 {
     protected GrammarOptions fGrammarOptions;
     
