@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.imp.wizards.ExtensionPointEnabler;
-import org.eclipse.imp.wizards.ExtensionPointWizardPage;
+import org.eclipse.imp.wizards.GeneratedComponentWizardPage;
 import org.eclipse.ui.INewWizard;
 
 /**
@@ -33,7 +33,8 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
     }
 
     public void addPages() {
-    	addPages(new ExtensionPointWizardPage[] { new NewParserWrapperWizardPage(this) });
+    	fWizardAttributes = setupAttributes();
+    	addPages(new GeneratedComponentWizardPage[] { new NewParserWrapperWizardPage(this, fWizardAttributes) });
     }
 
     protected void collectCodeParms() {

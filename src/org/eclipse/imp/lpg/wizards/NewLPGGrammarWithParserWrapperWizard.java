@@ -15,10 +15,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.imp.lpg.LPGRuntimePlugin;
 import org.eclipse.imp.lpg.builder.LPGBuilder;
 import org.eclipse.imp.wizards.ExtensionPointEnabler;
-import org.eclipse.imp.wizards.ExtensionPointWizardPage;
+import org.eclipse.imp.wizards.GeneratedComponentWizardPage;
+import org.eclipse.imp.wizards.WizardUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -31,7 +31,6 @@ import org.eclipse.ui.INewWizard;
 public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWizard
 	implements INewWizard
 {
-
     
     public NewLPGGrammarWithParserWrapperWizard() {
 		super();
@@ -39,7 +38,8 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
     }
 
     public void addPages() {
-    	addPages(new ExtensionPointWizardPage[] { new NewLPGGrammarWithParserWrapperWizardPage(this) });
+    	fWizardAttributes = setupAttributes();
+    	addPages(new GeneratedComponentWizardPage[] { new NewLPGGrammarWithParserWrapperWizardPage(this, fWizardAttributes) });
     }
     
 
@@ -122,9 +122,12 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
 
 		setIncludeDirPreference();
 
-		enableBuilders(monitor, fProject, new String[] { LPGBuilder.BUILDER_ID });
+		WizardUtilities.enableBuilders(monitor, fProject, new String[] { LPGBuilder.BUILDER_ID });
     }
 
+    
+    
+    
     /**
      * Return the names of any existing files that would be clobbered by the
      * new files to be generated.

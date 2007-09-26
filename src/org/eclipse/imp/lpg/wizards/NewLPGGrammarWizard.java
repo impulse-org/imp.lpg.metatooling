@@ -19,7 +19,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.imp.lpg.builder.LPGBuilder;
 import org.eclipse.imp.wizards.ExtensionPointEnabler;
-import org.eclipse.imp.wizards.ExtensionPointWizardPage;
+import org.eclipse.imp.wizards.GeneratedComponentWizardPage;
+import org.eclipse.imp.wizards.WizardUtilities;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -39,7 +40,8 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
     }
 
     public void addPages() {
-    	addPages(new ExtensionPointWizardPage[] { new NewLPGGrammarWizardPage(this) });
+    	fWizardAttributes = setupAttributes();
+    	addPages(new GeneratedComponentWizardPage[] { new NewLPGGrammarWizardPage(this, fWizardAttributes) });
     }
 
 
@@ -130,7 +132,7 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
 		editFile(monitor, grammarFile);
 
 		setIncludeDirPreference();
-		enableBuilders(monitor, fProject, new String[] { LPGBuilder.BUILDER_ID });
+		WizardUtilities.enableBuilders(monitor, fProject, new String[] { LPGBuilder.BUILDER_ID });
     }   
     
     
