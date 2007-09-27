@@ -33,6 +33,9 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
     }
 	
     protected void createAdditionalControls(Composite parent) {
+    	createTextField(parent, "LPGGrammar", NewLPGGrammarWizard.PACKAGE_FIELD_NAME,
+        		"The package in which the grammar templates are to be instantiated", 
+        		"", "PackageBrowse", true);    
     	GrammarAndParserPageHelper helper= new GrammarAndParserPageHelper(parent, null, fGrammarOptions, getShell());
 		helper.createImplLanguageField();
 		helper.createOptionsFields();
@@ -61,7 +64,7 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
 			}
 		    });
 		} catch (Exception e) {
-		    ErrorHandler.reportError("NewLanguageSupportWizardPage.createControl(..):  Internal error, extension point schema may have changed", e);
+		    ErrorHandler.reportError("NewLPGGrammarWizardPage.createControl(..):  Internal error, extension point schema may have changed", e);
 		}
     }
 
