@@ -200,7 +200,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
     	try {
     		generateCodeStubs(new NullProgressMonitor());
     	} catch (Exception e){
-		    ErrorHandler.reportError("NewLPGGrammarWizard.performFinish:  Could not generate code stubs", e);
+		    ErrorHandler.reportError("NewLanguageSupportrWizard.performFinish:  Could not generate code stubs", e);
 		    return false;
     	}
     	return true;
