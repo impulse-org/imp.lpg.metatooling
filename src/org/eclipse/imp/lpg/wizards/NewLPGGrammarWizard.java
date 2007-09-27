@@ -34,6 +34,9 @@ import org.eclipse.ui.INewWizard;
 public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPointWizard 
 	implements INewWizard
 {
+	
+	public final static String PACKAGE_FIELD_NAME = "Package";
+	
     public NewLPGGrammarWizard() {
 		super();
 		setNeedsProgressMonitor(true);
@@ -70,7 +73,7 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
         
 	    fLanguageName= fGrammarOptions.getLanguageName();
 	    
-	    fPackageName = page.getValue("Package");
+	    fPackageName = page.getValue(PACKAGE_FIELD_NAME);
 	    fPackageFolder = fPackageName.replace('.', '/');
 	    fPackageFolder = getProjectSourceLocation() + fPackageFolder;
 	    IPath packageFolderPath = new Path(fPackageFolder);
