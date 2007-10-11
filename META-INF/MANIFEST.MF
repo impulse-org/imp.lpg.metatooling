@@ -1,6 +1,6 @@
 Bundle-SymbolicName: org.eclipse.imp.lpg.metatooling;singleton:=true
 Bundle-Name: LPG IDE
-Bundle-Version: 1.0.65
+Bundle-Version: 1.0.66
 Bundle-Activator: org.eclipse.imp.lpg.LPGPlugin
 Eclipse-LazyStart: true
 Bundle-Vendor: rfuhrer@watson.ibm.com
