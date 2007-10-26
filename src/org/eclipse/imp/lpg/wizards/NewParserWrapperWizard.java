@@ -39,15 +39,11 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
 
     protected void collectCodeParms() {
     	NewParserWrapperWizardPage page= (NewParserWrapperWizardPage) pages[0];
-        
-        //fProject=page.getProject();
+
     	IProject project = null;
-    	String projectName = page.getProjectNameFromField();
-    	if (projectName != null) {
-    		project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-    	}
+    	project = page.getProjectBasedOnNameField();
     	if (project ==  null) {
-    		project= page.getProject();
+    		project= page.getSelectedProject();
     	}
         if (project == null) {
         	throw new IllegalStateException(
