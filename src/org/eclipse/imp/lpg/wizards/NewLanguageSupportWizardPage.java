@@ -26,14 +26,7 @@ public class NewLanguageSupportWizardPage extends GeneratedComponentWizardPage /
 
     GrammarOptions fGrammarOptions= new GrammarOptions();
 	
-		
-//   public NewLanguageSupportWizardPage(GeneratedComponentWizard owner, String pluginID, String pointID) {
-//		//super(owner, pluginID, pointID);
-//	   super(owner, /*RuntimePlugin.IMP_RUNTIME,*/ "compiler", false, compilerAttributes, thisWizardName, thisWizardDescription);
-//
-//    }
-	
-   
+  
    public NewLanguageSupportWizardPage(
 	    	GeneratedComponentWizard owner, /*String pluginID,*/ String componentID, boolean omitIDName,
 	    	GeneratedComponentAttribute[] attributes, String wizardName, String wizardDescription)
@@ -147,20 +140,6 @@ public class NewLanguageSupportWizardPage extends GeneratedComponentWizardPage /
     
     public String determineLanguage() {
     	try {
-    		// SMS 13 Jun 2007 try getting project based on	 the currently set
-    		// project instead of by calling getProject()
-    		// May be okay, since, if the project is set, the langauge should
-    		// depend on that.  And if it's not set, then getProject() should
-    		// look for the current selection.
-//        	IProject project = null;
-//        	String projectName = fProjectText.getText();
-//        	if (projectName != null) {
-//        		project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-//        	}
-//        	if (project ==  null) {
-//        		project= getProject();
-//        	}
-        	
         	// SMS 9 Oct 2007
             IProject project = null;
             if (fProject != null)
