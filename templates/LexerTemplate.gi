@@ -142,6 +142,21 @@
         public String[] orderedExportedSymbols() { return $exp_type.orderedTerminalSymbols; }
         public LexStream getLexStream() { return (LexStream) this; }
 
+        private void initializeLexer($prs_stream_class prsStream)
+        {
+            if (getInputChars() == null)
+                throw new NullPointerException("LexStream was not initialized");
+            setPrsStream(prsStream);
+            prsStream.makeToken(0, -1, 0); // Token list must start with a bad token
+        }
+
+        private void addEOF($prs_stream_class prsStream)
+        {
+            int i = getStreamIndex();
+            prsStream.makeToken(i, i, $eof_token); // and end with the end of file token
+            prsStream.setStreamLength(prsStream.getSize());
+        }
+
         public void lexer($prs_stream_class prsStream)
         {
             lexer(null, prsStream);
@@ -149,20 +164,21 @@
         
         public void lexer(Monitor monitor, $prs_stream_class prsStream)
         {
-            if (getInputChars() == null)
-                throw new NullPointerException("LexStream was not initialized");
-
-            setPrsStream(prsStream);
-
-            prsStream.makeToken(0, -1, 0); // Token list must start with a bad token
-                
+            initializeLexer(prsStream);
             lexParser.parseCharacters(monitor);  // Lex the input characters
-                
-            int i = getStreamIndex();
-            prsStream.makeToken(i, i, $eof_token); // and end with the end of file token
-            prsStream.setStreamLength(prsStream.getSize());
-                
-            return;
+            addEOF(prsStream);
+        }
+
+        public void lexer($prs_stream_class prsStream, int start_offset, int end_offset)
+        {
+            lexer(null, prsStream, start_offset, end_offset);
+        }
+        
+        public void lexer(Monitor monitor, $prs_stream_class prsStream, int start_offset, int end_offset)
+        {
+            initializeLexer(prsStream);
+            lexParser.parseCharacters(monitor, start_offset, end_offset);
+            addEOF(prsStream);
         }
     ./
 %End

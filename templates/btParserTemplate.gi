@@ -96,6 +96,54 @@
             return;
         }./
 
+    $entry_declarations
+    /.
+        public $ast_class parse$entry_name()
+        {
+            return parse$entry_name(null, Integer.MAX_VALUE);
+        }
+        
+        public $ast_class parse$entry_name(Monitor monitor)
+        {
+            return parse$entry_name(monitor, Integer.MAX_VALUE);
+        }
+        
+        public $ast_class parse$entry_name(int error_repair_count)
+        {
+            return parse$entry_name(null, error_repair_count);
+        }
+
+        public $ast_class parse$entry_name(Monitor monitor, int error_repair_count)
+        {
+            try
+            {
+                btParser = new BacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            }
+            catch (NotBacktrackParseTableException e)
+            {
+                throw new Error(new NotBacktrackParseTableException
+                                    ("Regenerate $prs_type.java with -BACKTRACK option"));
+            }
+            catch (BadParseSymFileException e)
+            {
+                throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- $sym_type.java"));
+            }
+
+            try
+            {
+                return ($ast_class) btParser.fuzzyParseEntry($sym_type.$entry_marker, error_repair_count);
+            }
+            catch (BadParseException e)
+            {
+                reset(e.error_token); // point to error token
+                DiagnoseParser diagnoseParser = new DiagnoseParser(this, prs);
+                diagnoseParser.diagnoseEntry($sym_type.$entry_marker, e.error_token);
+            }
+
+            return null;
+        }
+    ./
+
     --
     -- Macros that may be needed in a parser using this template
     --
@@ -298,6 +346,10 @@
             return null;
         }
 
+        //
+        // Additional entry points, if any
+        //
+        $entry_declarations
     ./
 
 %End

@@ -90,6 +90,55 @@
             return;
         }./
 
+    $entry_declarations
+    /.
+        public $ast_class parse$entry_name()
+        {
+            return parse$entry_name(null, 0);
+        }
+            
+        public $ast_class parse$entry_name(Monitor monitor)
+        {
+            return parse$entry_name(monitor, 0);
+        }
+            
+        public $ast_class parse$entry_name(int error_repair_count)
+        {
+            return parse$entry_name(null, error_repair_count);
+        }
+            
+        public $ast_class parse$entry_name(Monitor monitor, int error_repair_count)
+        {
+            try
+            {
+                dtParser = new DeterministicParser(monitor, (TokenStream)this, prs, (RuleAction)this);
+            }
+            catch (NotDeterministicParseTableException e)
+            {
+                throw new Error(new NotDeterministicParseTableException
+                                    ("Regenerate $prs_type.java with -NOBACKTRACK option"));
+            }
+            catch (BadParseSymFileException e)
+            {
+                throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- $sym_type.java. Regenerate $prs_type.java"));
+            }
+
+            try
+            {
+                return ($ast_class) dtParser.parseEntry($sym_type.$entry_marker);
+            }
+            catch (BadParseException e)
+            {
+                reset(e.error_token); // point to error token
+
+                DiagnoseParser diagnoseParser = new DiagnoseParser(this, prs);
+                diagnoseParser.diagnoseEntry($sym_type.$entry_marker, e.error_token);
+            }
+
+            return null;
+        }
+    ./
+    
     $additional_interfaces /../
     $ast_class /.$ast_type./
 
@@ -305,6 +354,10 @@
             return null;
         }
 
+        //
+        // Additional entry points, if any
+        //
+        $entry_declarations
     ./
 
 %End
