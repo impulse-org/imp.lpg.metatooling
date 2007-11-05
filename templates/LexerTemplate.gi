@@ -82,17 +82,17 @@
 
     $SplitActions
     /.
-	            default:
-	                ruleAction$rule_number(ruleNumber);
-	                break;
-	        }
-	        return;
-	    }
-	
-	    public void ruleAction$rule_number(int ruleNumber)
-	    {
-	        switch (ruleNumber)
-	        {./
+                    default:
+                        ruleAction$rule_number(ruleNumber);
+                        break;
+                }
+                return;
+            }
+
+            public void ruleAction$rule_number(int ruleNumber)
+            {
+                switch (ruleNumber)
+                {./
 
     $EndActions
     /.
@@ -179,6 +179,29 @@
             initializeLexer(prsStream);
             lexParser.parseCharacters(monitor, start_offset, end_offset);
             addEOF(prsStream);
+        }
+
+        /**
+         * If a parse stream was not passed to this Lexical analyser then we
+         * simply report a lexical error. Otherwise, we produce a bad token.
+         */
+        public void reportLexicalError(int startLoc, int endLoc) {
+            IPrsStream prs_stream = getPrsStream();
+            if (prs_stream == null)
+                super.reportLexicalError(startLoc, endLoc);
+            else {
+                //
+                // Remove any token that may have been processed that fall in the
+                // range of the lexical error... then add one error token that spans
+                // the error range.
+                //
+                for (int i = prs_stream.getSize() - 1; i > 0; i--) {
+                    if (prs_stream.getStartOffset(i) >= startLoc)
+                         prs_stream.removeLastToken();
+                    else break;
+                }
+                prs_stream.makeToken(startLoc, endLoc, 0); // add an error token to the prsStream
+            }        
         }
     ./
 %End
