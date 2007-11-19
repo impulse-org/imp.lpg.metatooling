@@ -16,6 +16,7 @@
 %options action_block=("*.java", "/.", "./")
 %options ParseTable=lpg.runtime.ParseTable
 %Options prefix=Char_
+%Options single-productions
 
 --
 -- This template requires that the name of the EOF token be set

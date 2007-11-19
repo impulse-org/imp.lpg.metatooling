@@ -8,11 +8,6 @@
 
 %Headers
     /.
-        //
-        // Each upper case letter is mapped into is corresponding
-        // lower case counterpart. For example, if an 'A' appears
-        // in the input, it is mapped into Char_a just like 'a'.
-        //
         final static int tokenKind[] = new int[128];
         static
         {
