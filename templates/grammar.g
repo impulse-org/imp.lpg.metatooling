@@ -83,7 +83,7 @@ $AUTO_GENERATE$
     -- 
     --  Here are some example rules:
     -- 
-    compilationUnit$$functionDeclaration ::= $empty
+    compilationUnit$$functionDeclaration ::= %empty
                                            | compilationUnit functionDeclaration
 
     functionDeclaration ::= functionHeader block
@@ -95,7 +95,7 @@ $AUTO_GENERATE$
     
     functionHeader ::= Type identifier '(' parameters ')'
     
-    parameters$$declaration ::= $empty
+    parameters$$declaration ::= %empty
                               | parameterList
 
     parameterList$$declaration ::= declaration
@@ -103,7 +103,7 @@ $AUTO_GENERATE$
                                                             
     declaration ::= primitiveType identifier
 
-    stmtList$$statement ::= $empty
+    stmtList$$statement ::= %empty
                           | stmtList statement
     statement ::= declarationStmt
                 | assignmentStmt
@@ -160,7 +160,7 @@ $AUTO_GENERATE$
 
     functionStmt ::= functionCall ';'
     
-    expressions$$expression ::= $empty
+    expressions$$expression ::= %empty
                               | expressionList
     expressionList$$expression ::= expression
                                  | expressionList ',' expression
@@ -175,7 +175,7 @@ $AUTO_GENERATE$
     BadAssignment ::= identifier '=' MissingExpression 
 %End
 
-$Headers
+%Headers
     /.
         public class SymbolTable extends Hashtable {
             SymbolTable parent;
