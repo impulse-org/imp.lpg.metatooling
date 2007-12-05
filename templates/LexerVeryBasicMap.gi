@@ -14,7 +14,7 @@
         boolean printTokens;
         private final static int ECLIPSE_TAB_VALUE = 4;
 
-        public int [] getKeywordKinds() { return keywords; }
+        public int [] getKeywordKinds() { return new int[0]; }
 
         public $action_type(String filename) throws java.io.IOException
         {
