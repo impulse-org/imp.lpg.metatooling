@@ -9,7 +9,7 @@
 %Options programming_language=java,margin=4,backtrack
 %Options table,error_maps,scopes
 %options prefix=TK_
-%options action_block=("*.java", "/.", "./")
+%options action-block=("*.java", "/.", "./")
 %options ParseTable=lpg.runtime.ParseTable
 %options nt-check
 
@@ -115,19 +115,7 @@
 
         public $ast_class parse$entry_name(Monitor monitor, int error_repair_count)
         {
-            try
-            {
-                btParser = new BacktrackingParser(monitor, prsStream, prsTable, (RuleAction) this);
-            }
-            catch (NotBacktrackParseTableException e)
-            {
-                throw new Error(new NotBacktrackParseTableException
-                                    ("Regenerate $prs_type.java with -BACKTRACK option"));
-            }
-            catch (BadParseSymFileException e)
-            {
-                throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- $sym_type.java"));
-            }
+            btParser.setMonitor(monitor);
 
             try
             {
@@ -149,6 +137,7 @@
     --
     $additional_interfaces /../
     $ast_class /.$ast_type./
+    $unimplemented_symbols_warning /.false./
 %End
 
 %Globals
@@ -160,12 +149,16 @@
     /.
     public class $action_type implements RuleAction$additional_interfaces
     {
-        private PrsStream prsStream;
+        private PrsStream prsStream = null;
         
-        private static ParseTable prsTable = new $prs_type();
-        private BacktrackingParser btParser;
+        private boolean unimplementedSymbolsWarning = $unimplemented_symbols_warning;
 
+        private static ParseTable prsTable = new $prs_type();
+        public ParseTable getParseTable() { return prsTable; }
+
+        private BacktrackingParser btParser = null;
         public BacktrackingParser getParser() { return btParser; }
+
         private void setResult(Object object) { btParser.setSym1(object); }
         public Object getRhsSym(int i) { return btParser.getSym(i); }
 
@@ -200,6 +193,7 @@
         public void reset(ILexStream lexStream)
         {
             prsStream = new PrsStream(lexStream);
+            btParser.reset(prsStream);
 
             try
             {
@@ -211,14 +205,16 @@
             }
             catch(UnimplementedTerminalsException e)
             {
-                java.util.ArrayList unimplemented_symbols = e.getSymbols();
-                System.out.println("The Lexer will not scan the following token(s):");
-                for (int i = 0; i < unimplemented_symbols.size(); i++)
-                {
-                    Integer id = (Integer) unimplemented_symbols.get(i);
-                    System.out.println("    " + $sym_type.orderedTerminalSymbols[id.intValue()]);               
+                if (unimplementedSymbolsWarning) {
+                    java.util.ArrayList unimplemented_symbols = e.getSymbols();
+                    System.out.println("The Lexer will not scan the following token(s):");
+                    for (int i = 0; i < unimplemented_symbols.size(); i++)
+                    {
+                        Integer id = (Integer) unimplemented_symbols.get(i);
+                        System.out.println("    " + $sym_type.orderedTerminalSymbols[id.intValue()]);               
+                    }
+                    System.out.println();
                 }
-                System.out.println();                        
             }
             catch(UndefinedEofSymbolException e)
             {
@@ -227,11 +223,27 @@
                                      $sym_type.orderedTerminalSymbols[$prs_type.EOFT_SYMBOL]));
             } 
         }
-
-        public $action_type() {}
+        
+        public $action_type()
+        {
+            try
+            {
+                btParser = new BacktrackingParser(prsStream, prsTable, (RuleAction) this);
+            }
+            catch (NotBacktrackParseTableException e)
+            {
+                throw new Error(new NotBacktrackParseTableException
+                                    ("Regenerate $prs_type.java with -BACKTRACK option"));
+            }
+            catch (BadParseSymFileException e)
+            {
+                throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- $sym_type.java"));
+            }
+        }
         
         public $action_type(ILexStream lexStream)
         {
+            this();
             reset(lexStream);
         }
         
@@ -257,20 +269,8 @@
 
         public $ast_class parser(Monitor monitor, int error_repair_count)
         {
-            try
-            {
-                btParser = new BacktrackingParser(monitor, prsStream, prsTable, (RuleAction) this);
-            }
-            catch (NotBacktrackParseTableException e)
-            {
-                throw new Error(new NotBacktrackParseTableException
-                                    ("Regenerate $prs_type.java with -BACKTRACK option"));
-            }
-            catch (BadParseSymFileException e)
-            {
-                throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- $sym_type.java"));
-            }
-
+            btParser.setMonitor(monitor);
+            
             try
             {
                 return ($ast_class) btParser.fuzzyParse(error_repair_count);

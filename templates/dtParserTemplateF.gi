@@ -4,12 +4,12 @@
 --     $additional_interfaces
 --     $ast_class
 --
--- B E G I N N I N G   O F   T E M P L A T E   dtParserTemplateD
+-- B E G I N N I N G   O F   T E M P L A T E   dtParserTemplateF
 --
 %Options programming_language=java,margin=4
 %Options table,error_maps,scopes
 %options prefix=TK_
-%options action_block=("*.java", "/.", "./")
+%options action-block=("*.java", "/.", "./")
 %options ParseTable=lpg.runtime.ParseTable
 
 --
@@ -107,22 +107,15 @@
             return parse$entry_name(null, error_repair_count);
         }
             
+        public void resetParse$entry_name()
+        {
+            dtParser.resetParserEntry($sym_type.$entry_marker);
+        }
+        
         public $ast_class parse$entry_name(Monitor monitor, int error_repair_count)
         {
-            try
-            {
-                dtParser = new DeterministicParser(monitor, prsStream, prsTable, (RuleAction) this);
-            }
-            catch (NotDeterministicParseTableException e)
-            {
-                throw new Error(new NotDeterministicParseTableException
-                                    ("Regenerate $prs_type.java with -NOBACKTRACK option"));
-            }
-            catch (BadParseSymFileException e)
-            {
-                throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- $sym_type.java. Regenerate $prs_type.java"));
-            }
-
+            dtParser.setMonitor(monitor);
+            
             try
             {
                 return ($ast_class) dtParser.parseEntry($sym_type.$entry_marker);
@@ -138,10 +131,11 @@
             return null;
         }
     ./
-    
+        
     $additional_interfaces /../
     $ast_class /.$ast_type./
-
+    $unimplemented_symbols_warning /.false./
+    
     $setSym1 /. // macro setSym1 is deprecated. Use function setResult
                 getParser().setSym1./
     $setResult /. // macro setResult is deprecated. Use function setResult
@@ -167,12 +161,16 @@
     /.
     public class $action_type implements RuleAction$additional_interfaces
     {
-        private PrsStream prsStream;
+        private PrsStream prsStream = null;
         
-        private static ParseTable prsTable = new $prs_type();
-        private DeterministicParser dtParser;
+        private boolean unimplementedSymbolsWarning = $unimplemented_symbols_warning;
 
+        private static ParseTable prsTable = new $prs_type();
+        public ParseTable getParseTable() { return prsTable; }
+
+        private DeterministicParser dtParser = null;
         public DeterministicParser getParser() { return dtParser; }
+
         private void setResult(Object object) { dtParser.setSym1(object); }
         public Object getRhsSym(int i) { return dtParser.getSym(i); }
 
@@ -207,6 +205,7 @@
         public void reset(ILexStream lexStream)
         {
             prsStream = new PrsStream(lexStream);
+            dtParser.reset(prsStream);
 
             try
             {
@@ -218,30 +217,48 @@
             }
             catch(UnimplementedTerminalsException e)
             {
-                java.util.ArrayList unimplemented_symbols = e.getSymbols();
-                System.out.println("The Lexer will not scan the following token(s):");
-                for (int i = 0; i < unimplemented_symbols.size(); i++)
-                {
-                    Integer id = (Integer) unimplemented_symbols.get(i);
-                    System.out.println("    " + $sym_type.orderedTerminalSymbols[id.intValue()]);               
+                if (unimplementedSymbolsWarning) {
+                    java.util.ArrayList unimplemented_symbols = e.getSymbols();
+                    System.out.println("The Lexer will not scan the following token(s):");
+                    for (int i = 0; i < unimplemented_symbols.size(); i++)
+                    {
+                        Integer id = (Integer) unimplemented_symbols.get(i);
+                        System.out.println("    " + $sym_type.orderedTerminalSymbols[id.intValue()]);               
+                    }
+                    System.out.println();
                 }
-                System.out.println();                        
             }
             catch(UndefinedEofSymbolException e)
             {
                 throw new Error(new UndefinedEofSymbolException
                                     ("The Lexer does not implement the Eof symbol " +
                                      $sym_type.orderedTerminalSymbols[$prs_type.EOFT_SYMBOL]));
-            } 
+            }
         }
-            
-        public $action_type() {}
+        
+        public $action_type()
+        {
+            try
+            {
+                dtParser = new DeterministicParser(prsStream, prsTable, (RuleAction) this);
+            }
+            catch (NotDeterministicParseTableException e)
+            {
+                throw new Error(new NotDeterministicParseTableException
+                                    ("Regenerate $prs_type.java with -NOBACKTRACK option"));
+            }
+            catch (BadParseSymFileException e)
+            {
+                throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- $sym_type.java. Regenerate $prs_type.java"));
+            }
+        }
 
         public $action_type(ILexStream lexStream)
         {
+            this();
             reset(lexStream);
         }
- 
+
         public String[] orderedTerminalSymbols() { return $sym_type.orderedTerminalSymbols; }
         public String getTokenKindName(int kind) { return $sym_type.orderedTerminalSymbols[kind]; }            
         public int getEOFTokenKind() { return $prs_type.EOFT_SYMBOL; }
@@ -264,19 +281,7 @@
             
         public $ast_class parser(Monitor monitor, int error_repair_count)
         {
-            try
-            {
-                dtParser = new DeterministicParser(monitor, prsStream, prsTable, (RuleAction) this);
-            }
-            catch (NotDeterministicParseTableException e)
-            {
-                throw new Error(new NotDeterministicParseTableException
-                                    ("Regenerate $prs_type.java with -NOBACKTRACK option"));
-            }
-            catch (BadParseSymFileException e)
-            {
-                throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- $sym_type.java. Regenerate $prs_type.java"));
-            }
+            dtParser.setMonitor(monitor);
 
             try
             {
