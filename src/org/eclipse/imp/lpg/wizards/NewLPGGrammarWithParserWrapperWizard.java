@@ -87,9 +87,9 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
 		boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
 		boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
 
-        String parserTemplateName= (requiresBacktracking ? "bt" : "dt") + "ParserTemplate.gi";
-	    String lexerTemplateName= "LexerTemplate.gi";
-	    String kwLexerTemplateName= "KeywordTemplate.gi";
+        String parserTemplateName= (requiresBacktracking ? "bt" : "dt") + "ParserTemplate";
+	    String lexerTemplateName= "LexerTemplate";
+	    String kwLexerTemplateName= "KeywordTemplate";
 	    String parseCtlrTemplateName= "ParseController.java";
 		String locatorTemplateName = "ASTNodeLocator.java";
 

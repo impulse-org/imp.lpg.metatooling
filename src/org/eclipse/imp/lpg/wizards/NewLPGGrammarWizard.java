@@ -108,9 +108,9 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
 		boolean requiresBacktracking= fGrammarOptions.getRequiresBacktracking();
 		boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
 
-        String parserTemplateName= (requiresBacktracking ? "bt" : "dt") + "ParserTemplate.gi";
-	    String lexerTemplateName= "LexerTemplate.gi";
-	    String kwLexerTemplateName= "KeywordTemplate.gi";
+        String parserTemplateName= (requiresBacktracking ? "bt" : "dt") + "ParserTemplate";
+	    String lexerTemplateName= "LexerTemplate";
+	    String kwLexerTemplateName= "KeywordTemplate";
 		
 	    // SMS 20 Sep 2007
 	    // Need to update plug-in dependencies even though not creating an extension
