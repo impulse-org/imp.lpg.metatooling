@@ -23,14 +23,19 @@
 
         public void initialize(char [] content, String filename)
         {
-            super.initialize(content, filename);
+            reset(content, filename);
+        }
+        
+        final void makeToken(int left_token, int right_token, int kind)
+        {
+            lexStream.makeToken(left_token, right_token, kind);
         }
         
         final void makeToken(int kind)
         {
             int startOffset = getLeftSpan(),
                 endOffset = getRightSpan();
-            makeToken(startOffset, endOffset, kind);
+            lexStream.makeToken(startOffset, endOffset, kind);
             if (printTokens) printValue(startOffset, endOffset);
         }
 
@@ -38,7 +43,7 @@
         {
             int startOffset = getLeftSpan(),
                 endOffset = getRightSpan();
-            super.getPrsStream().makeAdjunct(startOffset, endOffset, kind);
+            lexStream.getPrsStream().makeAdjunct(startOffset, endOffset, kind);
         }
 
         final void skipToken()
@@ -48,7 +53,7 @@
         
         final void printValue(int startOffset, int endOffset)
         {
-            String s = new String(getInputChars(), startOffset, endOffset - startOffset + 1);
+            String s = new String(lexStream.getInputChars(), startOffset, endOffset - startOffset + 1);
             System.out.print(s);
         }
 

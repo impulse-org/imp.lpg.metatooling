@@ -1,5 +1,5 @@
 %options package=$PACKAGE_NAME$
-%options template=$TEMPLATE$
+%options template=$TEMPLATE$F.gi
 $KEYWORD_FILTER$
 --
 -- This is just a sample lexer and not a real lexer for $LANG_NAME$
@@ -17,7 +17,7 @@ $KEYWORD_FILTER$
 %End
 
 %Include
-    $LEXER_MAP$.gi
+    $LEXER_MAP$F.gi
 %End
 
 %Export

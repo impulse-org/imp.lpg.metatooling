@@ -12,7 +12,7 @@
 --
 %Options programming_language=java,margin=4
 %Options table
-%options action_block=("*.java", "/.", "./")
+%options action-block=("*.java", "/.", "./")
 %options ParseTable=lpg.runtime.ParseTable
 %Options prefix=Char_
 
@@ -75,7 +75,7 @@
 
     $BeginActions
     /.
-        public void ruleAction( int ruleNumber)
+        public void ruleAction(int ruleNumber)
         {
             switch(ruleNumber)
             {./
@@ -113,7 +113,10 @@
     public class $action_type extends $super_stream_class implements $exp_type, $sym_type, RuleAction$additional_interfaces
     {
         private static ParseTable prs = new $prs_type();
+        public ParseTable getParseTable() { return prs; }
+
         private LexParser lexParser = new LexParser(this, prs, this);
+        public LexParser getParser() { return lexParser; }
 
         public int getToken(int i) { return lexParser.getToken(i); }
         public int getRhsFirstTokenIndex(int i) { return lexParser.getFirstToken(i); }
@@ -142,18 +145,17 @@
         public String[] orderedExportedSymbols() { return $exp_type.orderedTerminalSymbols; }
         public LexStream getLexStream() { return (LexStream) this; }
 
-        private void initializeLexer($prs_stream_class prsStream)
+        private void initializeLexer($prs_stream_class prsStream, int start_offset, int end_offset)
         {
             if (getInputChars() == null)
                 throw new NullPointerException("LexStream was not initialized");
             setPrsStream(prsStream);
-            prsStream.makeToken(0, -1, 0); // Token list must start with a bad token
+            prsStream.makeToken(start_offset, end_offset, 0); // Token list must start with a bad token
         }
 
-        private void addEOF($prs_stream_class prsStream)
+        private void addEOF($prs_stream_class prsStream, int end_offset)
         {
-            int i = getStreamIndex();
-            prsStream.makeToken(i, i, $eof_token); // and end with the end of file token
+            prsStream.makeToken(end_offset, end_offset, $eof_token); // and end with the end of file token
             prsStream.setStreamLength(prsStream.getSize());
         }
 
@@ -164,9 +166,9 @@
         
         public void lexer(Monitor monitor, $prs_stream_class prsStream)
         {
-            initializeLexer(prsStream);
+            initializeLexer(prsStream, 0, -1);
             lexParser.parseCharacters(monitor);  // Lex the input characters
-            addEOF(prsStream);
+            addEOF(prsStream, getStreamIndex());
         }
 
         public void lexer($prs_stream_class prsStream, int start_offset, int end_offset)
@@ -176,9 +178,13 @@
         
         public void lexer(Monitor monitor, $prs_stream_class prsStream, int start_offset, int end_offset)
         {
-            initializeLexer(prsStream);
+            if (start_offset <= 1)
+                 initializeLexer(prsStream, 0, -1);
+            else initializeLexer(prsStream, start_offset - 1, start_offset - 1);
+
             lexParser.parseCharacters(monitor, start_offset, end_offset);
-            addEOF(prsStream);
+
+            addEOF(prsStream, (end_offset >= getStreamIndex() ? getStreamIndex() : end_offset + 1));
         }
 
         /**

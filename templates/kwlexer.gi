@@ -2,7 +2,7 @@
 -- The Java KeyWord Lexer
 --
 %options package=$PACKAGE_NAME$
-%options template=$TEMPLATE$
+%options template=$TEMPLATE$.gi
 
 %Include
     KWLexerLowerCaseMap.gi
