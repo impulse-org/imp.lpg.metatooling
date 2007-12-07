@@ -1,5 +1,5 @@
 %options package=$PACKAGE_NAME$
-%options template=$TEMPLATE$
+%options template=$TEMPLATE$F.gi
 %options import_terminals=$CLASS_NAME_PREFIX$Lexer.gi
 $AUTO_GENERATE$
 --
@@ -225,33 +225,36 @@ $AUTO_GENERATE$
          * for declared symbols and resolved identifier in expressions.
          */
         private final class SymbolTableVisitor extends AbstractVisitor {
+            PrsStream prs = getParseStream();
+            LexStream lex = prs.getLexStream();
+
             public void unimplementedVisitor(String s) { /* Useful for debugging: System.out.println(s); */ }
             
             public void emitError(IToken id, String message) {
-                getMessageHandler().handleMessage(ParseErrorCodes.NO_MESSAGE_CODE,
-                                                  getLexStream().getLocation(id.getStartOffset(), id.getEndOffset()),
-                                                  getLexStream().getLocation(0, 0),
-                                                  getFileName(),
-                                                  new String [] { message });
+                prs.getMessageHandler().handleMessage(ParseErrorCodes.NO_MESSAGE_CODE,
+                                                      lex.getLocation(id.getStartOffset(), id.getEndOffset()),
+                                                      lex.getLocation(0, 0),
+                                                      prs.getFileName(),
+                                                      new String [] { message });
             }
             
             
             public void emitError(ASTNode node, String message) {
-                getMessageHandler().handleMessage(
-                    ParseErrorCodes.NO_MESSAGE_CODE,
-                    getLexStream().getLocation(
+                pre.getMessageHandler().handleMessage(
+                    prs.ParseErrorCodes.NO_MESSAGE_CODE,
+                    lex.getLocation(
                         node.getLeftIToken().getStartOffset(), node.getRightIToken().getEndOffset()),
-                    getLexStream().getLocation(0, 0),
-                    getFileName(),
+                    lex.getLocation(0, 0),
+                    prs.getFileName(),
                     new String [] { message });
             }
 
            public void emitError(int startOffset, int endOffset, String message) {
-                getMessageHandler().handleMessage(
-                    ParseErrorCodes.NO_MESSAGE_CODE,
-                    getLexStream().getLocation(startOffset, endOffset),
-                    getLexStream().getLocation(0, 0),
-                    getFileName(),
+                prs.getMessageHandler().handleMessage(
+                    prs.ParseErrorCodes.NO_MESSAGE_CODE,
+                    lex.getLocation(startOffset, endOffset),
+                    lex.getLocation(0, 0),
+                    prs.getFileName(),
                     new String [] { message });
             }
 
