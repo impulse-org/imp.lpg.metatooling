@@ -59,7 +59,7 @@
     $BeginAction /.$DefaultAction./
 
     $EndAction
-    /.          break;
+    /.                break;
                 }./
 
     $BeginJava

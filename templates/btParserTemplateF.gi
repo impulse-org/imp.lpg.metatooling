@@ -39,7 +39,7 @@
                     //#line $next_line "$input_file$"./
 
     $EndAction
-    /.          break;
+    /.                break;
                 }./
 
     $BeginJava
