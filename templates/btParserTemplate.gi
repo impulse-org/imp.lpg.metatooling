@@ -226,6 +226,7 @@
             } 
         }
 
+        public int numTokenKinds() { return $sym_type.orderedTerminalSymbols.length; }
         public String[] orderedTerminalSymbols() { return $sym_type.orderedTerminalSymbols; }
         public String getTokenKindName(int kind) { return $sym_type.orderedTerminalSymbols[kind]; }
         public int getEOFTokenKind() { return $prs_type.EOFT_SYMBOL; }
