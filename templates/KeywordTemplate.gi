@@ -43,7 +43,7 @@
             //
             // Rule $rule_number:  $rule_text
             //
-    ./
+            ./
 
     $BeginAction /.$Header./
 
@@ -109,7 +109,6 @@
 
 %Trailers
     /.
-
             for (int i = 0; i < keywordKind.length; i++)
             {
                 if (keywordKind[i] == 0)
