@@ -108,120 +108,26 @@ $KEYWORD_FILTER$
 %End
 
 %Rules
-    Token ::= identifier
-        /.$BeginJava
-                    checkForKeyWord();
-          $EndJava
-        ./
-    Token ::= number
-        /.$BeginJava
-                    makeToken($_NUMBER);
-          $EndJava
-        ./
-    Token ::= DoubleLiteral
-        /.$BeginJava
-                    makeToken($_DoubleLiteral);
-          $EndJava
-        ./
-    Token ::= white
-        /.$BeginJava
-                    skipToken();
-          $EndJava
-        ./
-    Token ::= slc
-        /.$BeginJava
-                    makeComment($_SINGLE_LINE_COMMENT);
-          $EndJava
-        ./
-    Token ::= ';'
-        /.$BeginJava
-                    makeToken($_SEMICOLON);
-          $EndJava
-        ./
-
-    Token ::= ','
-        /.$BeginJava
-                    makeToken($_COMMA);
-          $EndJava
-        ./
-
-    Token ::= '+'
-        /.$BeginJava
-                    makeToken($_PLUS);
-          $EndJava
-        ./
-
-    Token ::= '-'
-        /.$BeginJava
-                    makeToken($_MINUS);
-          $EndJava
-        ./
-
-    Token ::= '='
-        /.$BeginJava
-                    makeToken($_ASSIGN);
-          $EndJava
-        ./
-
-    Token ::= '('
-        /.$BeginJava
-                    makeToken($_LEFTPAREN);
-          $EndJava
-        ./
-
-    Token ::= ')'
-        /.$BeginJava
-                    makeToken($_RIGHTPAREN);
-          $EndJava
-        ./
-
-    Token ::= '{'
-        /.$BeginJava
-                    makeToken($_LEFTBRACE);
-          $EndJava
-        ./
-
-    Token ::= '}'
-        /.$BeginJava
-                    makeToken($_RIGHTBRACE);
-          $EndJava
-        ./
-
-    Token ::= '*'
-        /.$BeginJava
-                    makeToken($_TIMES);
-          $EndJava
-        ./
-
-    Token ::= '/'
-        /.$BeginJava
-                    makeToken($_DIVIDE);
-          $EndJava
-        ./
-
-    Token ::= '>'
-        /.$BeginJava
-                    makeToken($_GREATER);
-          $EndJava
-        ./
-
-    Token ::= '<'
-        /.$BeginJava
-                    makeToken($_LESS);
-          $EndJava
-        ./
-
-    Token ::= '=' '='
-        /.$BeginJava
-                    makeToken($_EQUAL);
-          $EndJava
-        ./
-
-    Token ::= '!' '='
-        /.$BeginJava
-                    makeToken($_NOTEQUAL);
-          $EndJava
-        ./
+    Token ::= identifier    /.    checkForKeyWord();./
+            | number        /.    makeToken($_NUMBER);./
+            | DoubleLiteral /.    makeToken($_DoubleLiteral);./
+            | white         /.    skipToken();./
+            | slc           /.    makeComment($_SINGLE_LINE_COMMENT);./
+            | ';'           /.    makeToken($_SEMICOLON);./
+            | ','           /.    makeToken($_COMMA);./
+            | '+'           /.    makeToken($_PLUS);./
+            | '-'           /.    makeToken($_MINUS);./
+            | '='           /.    makeToken($_ASSIGN);./
+            | '('           /.    makeToken($_LEFTPAREN);./
+            | ')'           /.    makeToken($_RIGHTPAREN);./
+            | '{'           /.    makeToken($_LEFTBRACE);./
+            | '}'           /.    makeToken($_RIGHTBRACE);./
+            | '*'           /.    makeToken($_TIMES);./
+            | '/'           /.    makeToken($_DIVIDE);./
+            | '>'           /.    makeToken($_GREATER);./
+            | '<'           /.    makeToken($_LESS);./
+            | '=' '='       /.    makeToken($_EQUAL);./
+            | '!' '='       /.    makeToken($_NOTEQUAL);./
 
     identifier -> letter
                 | identifier letter

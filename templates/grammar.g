@@ -225,13 +225,13 @@ $AUTO_GENERATE$
          * for declared symbols and resolved identifier in expressions.
          */
         private final class SymbolTableVisitor extends AbstractVisitor {
-            PrsStream prs = getParseStream();
-            LexStream lex = prs.getLexStream();
+            IPrsStream prs = getParseStream();
+            ILexStream lex = prs.getLexStream();
 
             public void unimplementedVisitor(String s) { /* Useful for debugging: System.out.println(s); */ }
             
             public void emitError(IToken id, String message) {
-                prs.getMessageHandler().handleMessage(ParseErrorCodes.NO_MESSAGE_CODE,
+                lex.getMessageHandler().handleMessage(ParseErrorCodes.NO_MESSAGE_CODE,
                                                       lex.getLocation(id.getStartOffset(), id.getEndOffset()),
                                                       lex.getLocation(0, 0),
                                                       prs.getFileName(),
@@ -240,8 +240,8 @@ $AUTO_GENERATE$
             
             
             public void emitError(ASTNode node, String message) {
-                pre.getMessageHandler().handleMessage(
-                    prs.ParseErrorCodes.NO_MESSAGE_CODE,
+                lex.getMessageHandler().handleMessage(
+                    ParseErrorCodes.NO_MESSAGE_CODE,
                     lex.getLocation(
                         node.getLeftIToken().getStartOffset(), node.getRightIToken().getEndOffset()),
                     lex.getLocation(0, 0),
@@ -250,8 +250,8 @@ $AUTO_GENERATE$
             }
 
            public void emitError(int startOffset, int endOffset, String message) {
-                prs.getMessageHandler().handleMessage(
-                    prs.ParseErrorCodes.NO_MESSAGE_CODE,
+                lex.getMessageHandler().handleMessage(
+                    ParseErrorCodes.NO_MESSAGE_CODE,
                     lex.getLocation(startOffset, endOffset),
                     lex.getLocation(0, 0),
                     prs.getFileName(),

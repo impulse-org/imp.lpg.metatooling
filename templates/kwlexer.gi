@@ -36,63 +36,14 @@
 
     -- The Goal for the parser is a single Keyword
 
-    Keyword ::= b o o l e a n
-        /.$BeginAction
-            $setResult($_boolean);
-          $EndAction
-        ./
-
-    Keyword ::= d o u b l e
-        /.$BeginAction
-            $setResult($_double);
-          $EndAction
-        ./
-        
-    Keyword ::= e l s e
-        /.$BeginAction
-            $setResult($_else);
-          $EndAction
-        ./
-
-    Keyword ::= f a l s e
-        /.$BeginAction
-            $setResult($_false);
-          $EndAction
-        ./
-
-    Keyword ::= i f
-        /.$BeginAction
-            $setResult($_if);
-          $EndAction
-        ./
-
-    Keyword ::= i n t
-        /.$BeginAction
-            $setResult($_int);
-          $EndAction
-        ./
-
-    Keyword ::= v o i d
-        /.$BeginAction
-            $setResult($_void);
-          $EndAction
-        ./
-
-    Keyword ::= r e t u r n
-        /.$BeginAction
-            $setResult($_return);
-          $EndAction
-        ./
-
-    Keyword ::= t r u e
-        /.$BeginAction
-            $setResult($_true);
-          $EndAction
-        ./
-
-    Keyword ::= w h i l e
-        /.$BeginAction
-            $setResult($_while);
-          $EndAction
-        ./
+    Keyword ::= b o o l e a n  /.$setResult($_boolean);./
+    Keyword ::= d o u b l e    /.$setResult($_double);./
+    Keyword ::= e l s e        /.$setResult($_else);./
+    Keyword ::= f a l s e      /.$setResult($_false);./
+    Keyword ::= i f            /.$setResult($_if);./
+    Keyword ::= i n t          /.$setResult($_int);./
+    Keyword ::= v o i d        /.$setResult($_void);./
+    Keyword ::= r e t u r n    /.$setResult($_return);./
+    Keyword ::= t r u e        /.$setResult($_true);./
+    Keyword ::= w h i l e      /.$setResult($_while);./
 %End
