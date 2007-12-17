@@ -37,13 +37,13 @@
     -- The Goal for the parser is a single Keyword
 
     Keyword ::= b o o l e a n  /.$setResult($_boolean);./
-    Keyword ::= d o u b l e    /.$setResult($_double);./
-    Keyword ::= e l s e        /.$setResult($_else);./
-    Keyword ::= f a l s e      /.$setResult($_false);./
-    Keyword ::= i f            /.$setResult($_if);./
-    Keyword ::= i n t          /.$setResult($_int);./
-    Keyword ::= v o i d        /.$setResult($_void);./
-    Keyword ::= r e t u r n    /.$setResult($_return);./
-    Keyword ::= t r u e        /.$setResult($_true);./
-    Keyword ::= w h i l e      /.$setResult($_while);./
+              | d o u b l e    /.$setResult($_double);./
+              | e l s e        /.$setResult($_else);./
+              | f a l s e      /.$setResult($_false);./
+              | i f            /.$setResult($_if);./
+              | i n t          /.$setResult($_int);./
+              | v o i d        /.$setResult($_void);./
+              | r e t u r n    /.$setResult($_return);./
+              | t r u e        /.$setResult($_true);./
+              | w h i l e      /.$setResult($_while);./
 %End
