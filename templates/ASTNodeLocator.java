@@ -76,7 +76,7 @@ public class $CLASS_NAME_PREFIX$ASTNodeLocator implements ISourcePositionLocator
 	public int getEndOffset(Object entity) {
                 if (entity instanceof IAst) {
                     IAst n= (IAst) entity;
-                    return n.getLeftIToken().getEndOffset();
+                    return n.getRightIToken().getEndOffset();
                 } else if (entity instanceof IToken) {
                     IToken t= (IToken) entity;
                     return t.getEndOffset();
