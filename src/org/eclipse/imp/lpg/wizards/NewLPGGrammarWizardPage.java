@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ISelectionValidator;
 
 /**
@@ -39,7 +40,7 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
     }
 	
     protected void createAdditionalControls(Composite parent) {
-    	createTextField(parent, "LPGGrammar", NewLPGGrammarWizard.PACKAGE_FIELD_NAME,
+    	createTextField(parent, "LPGGrammar", NewLPGGrammarForIMPWizard.PACKAGE_FIELD_NAME,
         		"The package in which the grammar templates are to be instantiated", 
         		"", "PackageBrowse", true);    
     	GrammarAndParserPageHelper helper= new GrammarAndParserPageHelper(parent, null, fGrammarOptions, getShell());
@@ -49,36 +50,17 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
 
 
     public void createControl(Composite parent) {
+    	
 		super.createControl(parent);
-		// Possible (or desirable?) here to set language even if not empty?
-		setLanguageIfEmpty();
+	    
+		// SMS 11 Feb 2008
+		// Don't worry about setting the language, based on the
+		// project or otherwise, since in this case the name of
+		// the language is totally open.
 		
-		adjustLanguageByProject(fProject, getField("Language"));
-
-
-		try {
-	
-			// Don't worry about changing the Package field if the language
-			// changes (so long as the project hasn't changed), since the language
-			// name and the target package for the grammar can vary independently
-	        
-		    fProjectText.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					// SMS 13 Jun 2007
-				    //setLanguageIfEmpty();
-					// Need a new language with a new project	
-					//setLanguage();
-					
-					adjustLanguageByProject(fProject, getField("Language"));
-						
-					// Clear target package for grammar; it must change whent
-					// the project changes, but we don't presume a default value
-					getField("Package").setText("");
-				}
-		    });
-		} catch (Exception e) {
-		    ErrorHandler.reportError("NewLPGGrammarWizardPage.createControl(..):  Internal error, extension point schema may have changed", e);
-		}
+		// SMS 11 Feb 2008
+		// Also, don't worry about listening for changes to the project,
+		// since the project is not presumed to define a language
     }
     
     
@@ -105,4 +87,33 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
 		return new SelectionValidatorForJavaProjects();
 	}
     
+	
+	
+	
+	/*
+	 * Overrides the corresponding method in IMPWizardPage.
+	 * 
+	 * Here we need to create the field but we do not want to initialize it with
+	 * a language name and we want it to be enabled so that it can be edited
+	 * (since the user has to provide a name).
+	 * 
+	 * Also, since this field is independent of any others on the page, there
+	 * is no need for a listener to the project field and no need to be able to
+	 * add listeners from other fields.
+	 * 
+	 * @see org.eclipse.imp.wizards.IMPWizardPage#createLanguageFieldForComponent(org.eclipse.swt.widgets.Composite, java.lang.String)
+	 */
+    protected void createLanguageFieldForComponent(Composite parent, String componentID) {
+        WizardPageField languageField= new WizardPageField(
+        	componentID, "language", "Language", "", 0, true, "Language for which to create " + componentID);
+
+        fLanguageText= createLabelTextBrowse(parent, languageField, null);
+        fLanguageText.setData(languageField);
+
+        fLanguageText.setEnabled(true);
+        
+        fFields.add(languageField);    
+    }
+	
+	
 }
