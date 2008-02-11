@@ -11,19 +11,25 @@
             class="org.eclipse.imp.lpg.wizards.NewLPGGrammarWizard"
             icon="icons/newgrammarfile.gif"
             category="org.eclipse.imp.wizards/org.eclipse.imp.lpg.wizards.LPG"
-            name="New LPG Grammar"
+            name="New LPG Grammar (non-IMP)"
             id="org.eclipse.imp.lpg.NewLPGGrammarWizard"/>
+      <wizard
+            class="org.eclipse.imp.lpg.wizards.NewLPGGrammarForIMPWizard"
+            icon="icons/newgrammarfile.gif"
+            category="org.eclipse.imp.wizards/org.eclipse.imp.lpg.wizards.LPG"
+            name="New LPG Grammar for IMP"
+            id="org.eclipse.imp.lpg.NewLPGGrammarForIMPWizard"/>
 	  <wizard
             class="org.eclipse.imp.lpg.wizards.NewParserWrapperWizard"
             icon="icons/newgrammarfile.gif"
             category="org.eclipse.imp.wizards/org.eclipse.imp.lpg.wizards.LPG"
-            name="New Parser Wrapper"
+            name="New Parser Wrapper for IMP"
             id="org.eclipse.imp.lpg.NewParserWrapperWizard"/>
 	  <wizard
             class="org.eclipse.imp.lpg.wizards.NewLPGGrammarWithParserWrapperWizard"
             icon="icons/newgrammarfile.gif"
             category="org.eclipse.imp.wizards/org.eclipse.imp.lpg.wizards.LPG"
-            name="New LPG Grammar with Parser Wrapper"
+            name="New LPG Grammar with Parser Wrapper for IMP"
             id="org.eclipse.imp.lpg.NewLPGGrammarParserWrapperWizard"/>
    </extension>
 </plugin>
