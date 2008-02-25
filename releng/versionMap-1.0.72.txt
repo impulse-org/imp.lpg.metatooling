@@ -2,7 +2,7 @@
 <version pluginID="org.eclipse.imp.lpg.metatooling"
          versionID="1.0.72">
     <file path="/org.eclipse.imp.lpg.metatooling/META-INF/MANIFEST.MF"
-          version="1.67"/>
+          version="1.68"/>
     <file path="/org.eclipse.imp.lpg.metatooling/icons/default.gif"
           version="1.1"/>
     <file path="/org.eclipse.imp.lpg.metatooling/icons/newgrammarfile.gif"
