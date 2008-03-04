@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.Path;
 import $PACKAGE_NAME$.$CLASS_NAME_PREFIX$ParseController.ASTNode;
 import $PACKAGE_NAME$.$CLASS_NAME_PREFIX$ParseController.AbstractVisitor;
 
-import org.eclipse.imp.parser.IASTNodeLocator;
+import org.eclipse.imp.parser.ISourcePositionLocator;
 
 /**
  * NOTE:  This version of the Node Locator is for use when the Node
@@ -27,7 +27,7 @@ import org.eclipse.imp.parser.IASTNodeLocator;
  * @since May 15, 2007
  * 
  */  
-public class $CLASS_NAME_PREFIX$ASTNodeLocator implements IASTNodeLocator
+public class $CLASS_NAME_PREFIX$ASTNodeLocator implements ISourcePositionLocator
 {
     private final Object[] fNode= new Object[1];
 
@@ -43,7 +43,7 @@ public class $CLASS_NAME_PREFIX$ASTNodeLocator implements IASTNodeLocator
             // System.out.println("NodeVisitor.unimplementedVisitor:  Unimplemented");
         }
 
-        public boolean preVisit(IAst element)
+        public boolean preVisit(ASTNode element)
         {
             int nodeStartOffset = element.getLeftIToken().getStartOffset();
             int nodeEndOffset = element.getRightIToken().getEndOffset();
@@ -73,7 +73,7 @@ public class $CLASS_NAME_PREFIX$ASTNodeLocator implements IASTNodeLocator
         // The following could be treated as an IASTNodeToken, but $AST_NODE$
         // is required for the visit/preVisit method, and there's no reason
         // to use both of those types
-        ((IAst) ast).accept(fVisitor);
+        ((ASTNode) ast).accept(fVisitor);
         if (fNode[0] == null) {
             //System.out.println("Selected node:  null");
         } else {
@@ -84,17 +84,17 @@ public class $CLASS_NAME_PREFIX$ASTNodeLocator implements IASTNodeLocator
     }
 
     public int getStartOffset(Object node) {
-        IAst n = (IAst) node;
+        ASTNode n = (ASTNode) node;
         return n.getLeftIToken().getStartOffset();
     }
 
     public int getEndOffset(Object node) {
-        IAst n = (IAst) node;
+        ASTNode n = (ASTNode) node;
         return n.getRightIToken().getEndOffset();
     }
 
     public int getLength(Object  node) {
-        IAst n = (IAst) node;
+        ASTNode n = (ASTNode) node;
         return getEndOffset(n) - getStartOffset(n);
     }
 

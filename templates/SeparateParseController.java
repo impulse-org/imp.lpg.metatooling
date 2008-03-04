@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import lpg.runtime.IMessageHandler;
 import lpg.runtime.IPrsStream;
 import lpg.runtime.IToken;
 import lpg.runtime.LexStream;
@@ -15,12 +14,14 @@ import lpg.runtime.PrsStream;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.imp.model.ISourceProject;
-import org.eclipse.imp.parser.IASTNodeLocator;
 import org.eclipse.imp.parser.ILexer;
+import org.eclipse.imp.parser.IMessageHandler;
 import org.eclipse.imp.parser.IParseController;
 import org.eclipse.imp.parser.IParser;
-import org.eclipse.imp.parser.ParseError;
+import org.eclipse.imp.parser.ISourcePositionLocator;
+import org.eclipse.imp.parser.MessageHandlerAdapter;
 import org.eclipse.imp.parser.SimpleLPGParseController;
+import org.eclipse.imp.services.ILanguageSyntaxProperties;
 
 
 /**
@@ -94,6 +95,7 @@ public class $CLASS_NAME_PREFIX$ParseController
     
     public class $CLASS_NAME_PREFIX$Parser extends PrsStream implements IParser
     {
+        public int numTokenKinds() { return 0; }
         public $CLASS_NAME_PREFIX$Parser(LexStream lexStream) {    }
         public PrsStream getParseStream() { return (PrsStream) this; }
         public Object parser(Monitor monitor, int error_repair_count) { return null; }
@@ -127,11 +129,14 @@ public class $CLASS_NAME_PREFIX$ParseController
     public IParser getParser() { return parser; }
     public ILexer getLexer() { return lexer; }
 
-    public IASTNodeLocator getNodeLocator() { return new $CLASS_NAME_PREFIX$ASTNodeLocator(); }
+	public ISourcePositionLocator getNodeLocator() {
+		return new $CLASS_NAME_PREFIX$ASTNodeLocator();
+	}
 
-    public boolean hasErrors() { return currentAst == null; }
-    public List getErrors() { return Collections.singletonList(new ParseError("parse error", null)); }
-    
+    public ILanguageSyntaxProperties getSyntaxProperties() {
+            return null;
+    }
+
     public $CLASS_NAME_PREFIX$ParseController()
     {
     }
