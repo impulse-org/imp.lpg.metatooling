@@ -70,7 +70,7 @@ public class NewLPGGrammarForIMPWizard extends NewLanguageSupportWizard	//Extens
 	    
 	    fPackageName = page.getValue(PACKAGE_FIELD_NAME);
 	    fPackageFolder = fPackageName.replace('.', '/');
-	    fPackageFolder = getProjectSourceLocation() + fPackageFolder;
+	    fPackageFolder = getProjectSourceLocation(fProject) + fPackageFolder;
 	    IPath packageFolderPath = new Path(fPackageFolder);
 	    IResource packageFolderResource = fProject.findMember(packageFolderPath);
 
@@ -87,7 +87,7 @@ public class NewLPGGrammarForIMPWizard extends NewLanguageSupportWizard	//Extens
         		"NewLPGGrammarWizard.collectCodeParms():  Selected package is not under project source location.");
         } else {
         	// presumably have a package name
-        	fPackageFolder = fPackageFolder.substring(getProjectSourceLocation().length(), fPackageFolder.length());
+        	fPackageFolder = fPackageFolder.substring(getProjectSourceLocation(fProject).length(), fPackageFolder.length());
         }
         
         
