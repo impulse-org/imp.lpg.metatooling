@@ -13,7 +13,7 @@
 --
 %Options Programming_Language=java,margin=4
 %Options table
-%options action_block=("*.java", "/.", "./")
+%options action-block=("*.java", "/.", "./")
 %options ParseTable=lpg.runtime.ParseTable
 %Options prefix=Char_
 %Options single-productions
@@ -31,7 +31,7 @@
     --
     -- Macro that may be respecified in an instance of this template
     --
-    $eof_char /.Char_EOF./
+    $eof_char /.$sym_type$.$prefix$EOF$suffix$./
 
     --
     -- Macros useful for specifying actions

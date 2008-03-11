@@ -60,9 +60,11 @@
             if (printTokens) printValue(startOffset, endOffset);
         }
         
+        //
         // This flavor of checkForKeyWord is necessary when the default kind
         // (which is returned when the keyword filter doesn't match) is something
         // other than _IDENTIFIER.
+        //
         final void checkForKeyWord(int defaultKind)
         {
             int startOffset = getLeftSpan(),
@@ -85,136 +87,136 @@
         //
         public final static int tokenKind[] =
         {
-            Char_CtlCharNotWS,    // 000    0x00
-            Char_CtlCharNotWS,    // 001    0x01
-            Char_CtlCharNotWS,    // 002    0x02
-            Char_CtlCharNotWS,    // 003    0x03
-            Char_CtlCharNotWS,    // 004    0x04
-            Char_CtlCharNotWS,    // 005    0x05
-            Char_CtlCharNotWS,    // 006    0x06
-            Char_CtlCharNotWS,    // 007    0x07
-            Char_CtlCharNotWS,    // 008    0x08
-            Char_HT,              // 009    0x09
-            Char_LF,              // 010    0x0A
-            Char_CtlCharNotWS,    // 011    0x0B
-            Char_FF,              // 012    0x0C
-            Char_CR,              // 013    0x0D
-            Char_CtlCharNotWS,    // 014    0x0E
-            Char_CtlCharNotWS,    // 015    0x0F
-            Char_CtlCharNotWS,    // 016    0x10
-            Char_CtlCharNotWS,    // 017    0x11
-            Char_CtlCharNotWS,    // 018    0x12
-            Char_CtlCharNotWS,    // 019    0x13
-            Char_CtlCharNotWS,    // 020    0x14
-            Char_CtlCharNotWS,    // 021    0x15
-            Char_CtlCharNotWS,    // 022    0x16
-            Char_CtlCharNotWS,    // 023    0x17
-            Char_CtlCharNotWS,    // 024    0x18
-            Char_CtlCharNotWS,    // 025    0x19
-            Char_CtlCharNotWS,    // 026    0x1A
-            Char_CtlCharNotWS,    // 027    0x1B
-            Char_CtlCharNotWS,    // 028    0x1C
-            Char_CtlCharNotWS,    // 029    0x1D
-            Char_CtlCharNotWS,    // 030    0x1E
-            Char_CtlCharNotWS,    // 031    0x1F
-            Char_Space,           // 032    0x20
-            Char_Exclamation,     // 033    0x21
-            Char_DoubleQuote,     // 034    0x22
-            Char_Sharp,           // 035    0x23
-            Char_DollarSign,      // 036    0x24
-            Char_Percent,         // 037    0x25
-            Char_Ampersand,       // 038    0x26
-            Char_SingleQuote,     // 039    0x27
-            Char_LeftParen,       // 040    0x28
-            Char_RightParen,      // 041    0x29
-            Char_Star,            // 042    0x2A
-            Char_Plus,            // 043    0x2B
-            Char_Comma,           // 044    0x2C
-            Char_Minus,           // 045    0x2D
-            Char_Dot,             // 046    0x2E
-            Char_Slash,           // 047    0x2F
-            Char_0,               // 048    0x30
-            Char_1,               // 049    0x31
-            Char_2,               // 050    0x32
-            Char_3,               // 051    0x33
-            Char_4,               // 052    0x34
-            Char_5,               // 053    0x35
-            Char_6,               // 054    0x36
-            Char_7,               // 055    0x37
-            Char_8,               // 056    0x38
-            Char_9,               // 057    0x39
-            Char_Colon,           // 058    0x3A
-            Char_SemiColon,       // 059    0x3B
-            Char_LessThan,        // 060    0x3C
-            Char_Equal,           // 061    0x3D
-            Char_GreaterThan,     // 062    0x3E
-            Char_QuestionMark,    // 063    0x3F
-            Char_AtSign,          // 064    0x40
-            Char_A,               // 065    0x41
-            Char_B,               // 066    0x42
-            Char_C,               // 067    0x43
-            Char_D,               // 068    0x44
-            Char_E,               // 069    0x45
-            Char_F,               // 070    0x46
-            Char_G,               // 071    0x47
-            Char_H,               // 072    0x48
-            Char_I,               // 073    0x49
-            Char_J,               // 074    0x4A
-            Char_K,               // 075    0x4B
-            Char_L,               // 076    0x4C
-            Char_M,               // 077    0x4D
-            Char_N,               // 078    0x4E
-            Char_O,               // 079    0x4F
-            Char_P,               // 080    0x50
-            Char_Q,               // 081    0x51
-            Char_R,               // 082    0x52
-            Char_S,               // 083    0x53
-            Char_T,               // 084    0x54
-            Char_U,               // 085    0x55
-            Char_V,               // 086    0x56
-            Char_W,               // 087    0x57
-            Char_X,               // 088    0x58
-            Char_Y,               // 089    0x59
-            Char_Z,               // 090    0x5A
-            Char_LeftBracket,     // 091    0x5B
-            Char_BackSlash,       // 092    0x5C
-            Char_RightBracket,    // 093    0x5D
-            Char_Caret,           // 094    0x5E
-            Char__,               // 095    0x5F
-            Char_BackQuote,       // 096    0x60
-            Char_a,               // 097    0x61
-            Char_b,               // 098    0x62
-            Char_c,               // 099    0x63
-            Char_d,               // 100    0x64
-            Char_e,               // 101    0x65
-            Char_f,               // 102    0x66
-            Char_g,               // 103    0x67
-            Char_h,               // 104    0x68
-            Char_i,               // 105    0x69
-            Char_j,               // 106    0x6A
-            Char_k,               // 107    0x6B
-            Char_l,               // 108    0x6C
-            Char_m,               // 109    0x6D
-            Char_n,               // 110    0x6E
-            Char_o,               // 111    0x6F
-            Char_p,               // 112    0x70
-            Char_q,               // 113    0x71
-            Char_r,               // 114    0x72
-            Char_s,               // 115    0x73
-            Char_t,               // 116    0x74
-            Char_u,               // 117    0x75
-            Char_v,               // 118    0x76
-            Char_w,               // 119    0x77
-            Char_x,               // 120    0x78
-            Char_y,               // 121    0x79
-            Char_z,               // 122    0x7A
-            Char_LeftBrace,       // 123    0x7B
-            Char_VerticalBar,     // 124    0x7C
-            Char_RightBrace,      // 125    0x7D
-            Char_Tilde,           // 126    0x7E
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 000    0x00
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 001    0x01
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 002    0x02
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 003    0x03
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 004    0x04
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 005    0x05
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 006    0x06
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 007    0x07
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 008    0x08
+            $sym_type.$prefix$HT$suffix$,              // 009    0x09
+            $sym_type.$prefix$LF$suffix$,              // 010    0x0A
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 011    0x0B
+            $sym_type.$prefix$FF$suffix$,              // 012    0x0C
+            $sym_type.$prefix$CR$suffix$,              // 013    0x0D
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 014    0x0E
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 015    0x0F
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 016    0x10
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 017    0x11
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 018    0x12
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 019    0x13
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 020    0x14
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 021    0x15
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 022    0x16
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 023    0x17
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 024    0x18
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 025    0x19
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 026    0x1A
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 027    0x1B
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 028    0x1C
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 029    0x1D
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 030    0x1E
+            $sym_type.$prefix$CtlCharNotWS$suffix$,    // 031    0x1F
+            $sym_type.$prefix$Space$suffix$,           // 032    0x20
+            $sym_type.$prefix$Exclamation$suffix$,     // 033    0x21
+            $sym_type.$prefix$DoubleQuote$suffix$,     // 034    0x22
+            $sym_type.$prefix$Sharp$suffix$,           // 035    0x23
+            $sym_type.$prefix$DollarSign$suffix$,      // 036    0x24
+            $sym_type.$prefix$Percent$suffix$,         // 037    0x25
+            $sym_type.$prefix$Ampersand$suffix$,       // 038    0x26
+            $sym_type.$prefix$SingleQuote$suffix$,     // 039    0x27
+            $sym_type.$prefix$LeftParen$suffix$,       // 040    0x28
+            $sym_type.$prefix$RightParen$suffix$,      // 041    0x29
+            $sym_type.$prefix$Star$suffix$,            // 042    0x2A
+            $sym_type.$prefix$Plus$suffix$,            // 043    0x2B
+            $sym_type.$prefix$Comma$suffix$,           // 044    0x2C
+            $sym_type.$prefix$Minus$suffix$,           // 045    0x2D
+            $sym_type.$prefix$Dot$suffix$,             // 046    0x2E
+            $sym_type.$prefix$Slash$suffix$,           // 047    0x2F
+            $sym_type.$prefix$0$suffix$,               // 048    0x30
+            $sym_type.$prefix$1$suffix$,               // 049    0x31
+            $sym_type.$prefix$2$suffix$,               // 050    0x32
+            $sym_type.$prefix$3$suffix$,               // 051    0x33
+            $sym_type.$prefix$4$suffix$,               // 052    0x34
+            $sym_type.$prefix$5$suffix$,               // 053    0x35
+            $sym_type.$prefix$6$suffix$,               // 054    0x36
+            $sym_type.$prefix$7$suffix$,               // 055    0x37
+            $sym_type.$prefix$8$suffix$,               // 056    0x38
+            $sym_type.$prefix$9$suffix$,               // 057    0x39
+            $sym_type.$prefix$Colon$suffix$,           // 058    0x3A
+            $sym_type.$prefix$SemiColon$suffix$,       // 059    0x3B
+            $sym_type.$prefix$LessThan$suffix$,        // 060    0x3C
+            $sym_type.$prefix$Equal$suffix$,           // 061    0x3D
+            $sym_type.$prefix$GreaterThan$suffix$,     // 062    0x3E
+            $sym_type.$prefix$QuestionMark$suffix$,    // 063    0x3F
+            $sym_type.$prefix$AtSign$suffix$,          // 064    0x40
+            $sym_type.$prefix$A$suffix$,               // 065    0x41
+            $sym_type.$prefix$B$suffix$,               // 066    0x42
+            $sym_type.$prefix$C$suffix$,               // 067    0x43
+            $sym_type.$prefix$D$suffix$,               // 068    0x44
+            $sym_type.$prefix$E$suffix$,               // 069    0x45
+            $sym_type.$prefix$F$suffix$,               // 070    0x46
+            $sym_type.$prefix$G$suffix$,               // 071    0x47
+            $sym_type.$prefix$H$suffix$,               // 072    0x48
+            $sym_type.$prefix$I$suffix$,               // 073    0x49
+            $sym_type.$prefix$J$suffix$,               // 074    0x4A
+            $sym_type.$prefix$K$suffix$,               // 075    0x4B
+            $sym_type.$prefix$L$suffix$,               // 076    0x4C
+            $sym_type.$prefix$M$suffix$,               // 077    0x4D
+            $sym_type.$prefix$N$suffix$,               // 078    0x4E
+            $sym_type.$prefix$O$suffix$,               // 079    0x4F
+            $sym_type.$prefix$P$suffix$,               // 080    0x50
+            $sym_type.$prefix$Q$suffix$,               // 081    0x51
+            $sym_type.$prefix$R$suffix$,               // 082    0x52
+            $sym_type.$prefix$S$suffix$,               // 083    0x53
+            $sym_type.$prefix$T$suffix$,               // 084    0x54
+            $sym_type.$prefix$U$suffix$,               // 085    0x55
+            $sym_type.$prefix$V$suffix$,               // 086    0x56
+            $sym_type.$prefix$W$suffix$,               // 087    0x57
+            $sym_type.$prefix$X$suffix$,               // 088    0x58
+            $sym_type.$prefix$Y$suffix$,               // 089    0x59
+            $sym_type.$prefix$Z$suffix$,               // 090    0x5A
+            $sym_type.$prefix$LeftBracket$suffix$,     // 091    0x5B
+            $sym_type.$prefix$BackSlash$suffix$,       // 092    0x5C
+            $sym_type.$prefix$RightBracket$suffix$,    // 093    0x5D
+            $sym_type.$prefix$Caret$suffix$,           // 094    0x5E
+            $sym_type.$prefix$_$suffix$,               // 095    0x5F
+            $sym_type.$prefix$BackQuote$suffix$,       // 096    0x60
+            $sym_type.$prefix$a$suffix$,               // 097    0x61
+            $sym_type.$prefix$b$suffix$,               // 098    0x62
+            $sym_type.$prefix$c$suffix$,               // 099    0x63
+            $sym_type.$prefix$d$suffix$,               // 100    0x64
+            $sym_type.$prefix$e$suffix$,               // 101    0x65
+            $sym_type.$prefix$f$suffix$,               // 102    0x66
+            $sym_type.$prefix$g$suffix$,               // 103    0x67
+            $sym_type.$prefix$h$suffix$,               // 104    0x68
+            $sym_type.$prefix$i$suffix$,               // 105    0x69
+            $sym_type.$prefix$j$suffix$,               // 106    0x6A
+            $sym_type.$prefix$k$suffix$,               // 107    0x6B
+            $sym_type.$prefix$l$suffix$,               // 108    0x6C
+            $sym_type.$prefix$m$suffix$,               // 109    0x6D
+            $sym_type.$prefix$n$suffix$,               // 110    0x6E
+            $sym_type.$prefix$o$suffix$,               // 111    0x6F
+            $sym_type.$prefix$p$suffix$,               // 112    0x70
+            $sym_type.$prefix$q$suffix$,               // 113    0x71
+            $sym_type.$prefix$r$suffix$,               // 114    0x72
+            $sym_type.$prefix$s$suffix$,               // 115    0x73
+            $sym_type.$prefix$t$suffix$,               // 116    0x74
+            $sym_type.$prefix$u$suffix$,               // 117    0x75
+            $sym_type.$prefix$v$suffix$,               // 118    0x76
+            $sym_type.$prefix$w$suffix$,               // 119    0x77
+            $sym_type.$prefix$x$suffix$,               // 120    0x78
+            $sym_type.$prefix$y$suffix$,               // 121    0x79
+            $sym_type.$prefix$z$suffix$,               // 122    0x7A
+            $sym_type.$prefix$LeftBrace$suffix$,       // 123    0x7B
+            $sym_type.$prefix$VerticalBar$suffix$,     // 124    0x7C
+            $sym_type.$prefix$RightBrace$suffix$,      // 125    0x7D
+            $sym_type.$prefix$Tilde$suffix$,           // 126    0x7E
 
-            Char_AfterASCII,      // for all chars in range 128..65534
-            Char_EOF              // for '\uffff' or 65535 
+            $sym_type.$prefix$AfterASCII$suffix$,      // for all chars in range 128..65534
+            $sym_type.$prefix$EOF$suffix$              // for '\uffff' or 65535 
         };
                 
         public final int getKind(int i)  // Classify character at ith location
@@ -223,8 +225,8 @@
             return (c < 128 // ASCII Character
                       ? tokenKind[c]
                       : c == '\uffff'
-                           ? Char_EOF
-                           : Char_AfterASCII);
+                           ? $sym_type.$prefix$EOF$suffix$
+                           : $sym_type.$prefix$AfterASCII$suffix$);
         }
     ./
 %End

@@ -11,35 +11,35 @@
         final static int tokenKind[] = new int[128];
         static
         {
-            tokenKind['$'] = Char_DollarSign;
-            tokenKind['_'] = Char__;
+            tokenKind['$'] = $prefix$DollarSign$suffix$;
+            tokenKind['_'] = $prefix$_$suffix$;
 
-            tokenKind['a'] = Char_a;
-            tokenKind['b'] = Char_b;
-            tokenKind['c'] = Char_c;
-            tokenKind['d'] = Char_d;
-            tokenKind['e'] = Char_e;
-            tokenKind['f'] = Char_f;
-            tokenKind['g'] = Char_g;
-            tokenKind['h'] = Char_h;
-            tokenKind['i'] = Char_i;
-            tokenKind['j'] = Char_j;
-            tokenKind['k'] = Char_k;
-            tokenKind['l'] = Char_l;
-            tokenKind['m'] = Char_m;
-            tokenKind['n'] = Char_n;
-            tokenKind['o'] = Char_o;
-            tokenKind['p'] = Char_p;
-            tokenKind['q'] = Char_q;
-            tokenKind['r'] = Char_r;
-            tokenKind['s'] = Char_s;
-            tokenKind['t'] = Char_t;
-            tokenKind['u'] = Char_u;
-            tokenKind['v'] = Char_v;
-            tokenKind['w'] = Char_w;
-            tokenKind['x'] = Char_x;
-            tokenKind['y'] = Char_y;
-            tokenKind['z'] = Char_z;
+            tokenKind['a'] = $prefix$a$suffix$;
+            tokenKind['b'] = $prefix$b$suffix$;
+            tokenKind['c'] = $prefix$c$suffix$;
+            tokenKind['d'] = $prefix$d$suffix$;
+            tokenKind['e'] = $prefix$e$suffix$;
+            tokenKind['f'] = $prefix$f$suffix$;
+            tokenKind['g'] = $prefix$g$suffix$;
+            tokenKind['h'] = $prefix$h$suffix$;
+            tokenKind['i'] = $prefix$i$suffix$;
+            tokenKind['j'] = $prefix$j$suffix$;
+            tokenKind['k'] = $prefix$k$suffix$;
+            tokenKind['l'] = $prefix$l$suffix$;
+            tokenKind['m'] = $prefix$m$suffix$;
+            tokenKind['n'] = $prefix$n$suffix$;
+            tokenKind['o'] = $prefix$o$suffix$;
+            tokenKind['p'] = $prefix$p$suffix$;
+            tokenKind['q'] = $prefix$q$suffix$;
+            tokenKind['r'] = $prefix$r$suffix$;
+            tokenKind['s'] = $prefix$s$suffix$;
+            tokenKind['t'] = $prefix$t$suffix$;
+            tokenKind['u'] = $prefix$u$suffix$;
+            tokenKind['v'] = $prefix$v$suffix$;
+            tokenKind['w'] = $prefix$w$suffix$;
+            tokenKind['x'] = $prefix$x$suffix$;
+            tokenKind['y'] = $prefix$y$suffix$;
+            tokenKind['z'] = $prefix$z$suffix$;
         };
     
         final int getKind(char c)
