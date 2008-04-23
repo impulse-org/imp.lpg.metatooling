@@ -37,6 +37,7 @@ import org.eclipse.imp.preferences.IPreferencesService;
 import org.eclipse.imp.preferences.PreferencesService;
 import org.eclipse.imp.runtime.RuntimePlugin;
 import org.eclipse.imp.wizards.GeneratedComponentWizard;
+import org.eclipse.imp.wizards.WizardUtilities;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
@@ -104,7 +105,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
     
     protected void setFileNamePrefix() {
     	String projectLocation = fProject.getLocation().toString();
-    	fFileNamePrefix = projectLocation + '/' +   getProjectSourceLocation(fProject) + fPackageName.replace('.', '/') + '/';
+    	fFileNamePrefix = projectLocation + '/' +   WizardUtilities.getProjectSourceLocation(fProject) + fPackageName.replace('.', '/') + '/';
     }
     
     protected String getFileNamePrefix() {
