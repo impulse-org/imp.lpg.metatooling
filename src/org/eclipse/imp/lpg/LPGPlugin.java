@@ -14,8 +14,8 @@ package org.eclipse.imp.lpg;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.imp.runtime.PluginBase;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -47,7 +47,9 @@ public class LPGPlugin extends PluginBase {
     }
 
     public static ImageDescriptor createImageDescriptor(Bundle bundle, IPath path) {
-        URL url= Platform.find(bundle, path);
+    	// SMS 28 Apr 2008 (updated this in process of "porting" to 3.3
+        //URL url= Platform.find(bundle, path);
+        URL url = FileLocator.find(bundle, path, null);
         if (url != null) {
             return ImageDescriptor.createFromURL(url);
         }
