@@ -13,7 +13,6 @@
 package org.eclipse.imp.lpg.wizards;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.wizards.ExtensionPointEnabler;
 import org.eclipse.imp.wizards.GeneratedComponentAttribute;
@@ -24,9 +23,6 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 
 public class NewLanguageSupportWizardPage extends GeneratedComponentWizardPage //ExtensionPointWizardPage
 {
