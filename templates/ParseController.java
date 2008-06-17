@@ -12,6 +12,7 @@ import org.eclipse.imp.parser.ISourcePositionLocator;
 import org.eclipse.imp.parser.MessageHandlerAdapter;
 import org.eclipse.imp.parser.SimpleLPGParseController;
 
+import $PLUGIN_PACKAGE$.$PLUGIN_CLASS$;
 import $AST_PKG_NODE$;
 
 /**
@@ -28,7 +29,9 @@ public class $CLASS_NAME_PREFIX$ParseController
 
 	private $CLASS_NAME_PREFIX$Lexer lexer;
 
-        public $CLASS_NAME_PREFIX$ParseController() { }
+        public $CLASS_NAME_PREFIX$ParseController() {
+        	super($PLUGIN_CLASS$.getInstance().kLanguageName);
+        }
 
 	/**
 	 * @param filePath
