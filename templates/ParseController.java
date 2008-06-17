@@ -29,9 +29,9 @@ public class $CLASS_NAME_PREFIX$ParseController
 
 	private $CLASS_NAME_PREFIX$Lexer lexer;
 
-        public $CLASS_NAME_PREFIX$ParseController() {
-        	super($PLUGIN_CLASS$.getInstance().kLanguageName);
-        }
+    public $CLASS_NAME_PREFIX$ParseController() {
+    	super($PLUGIN_CLASS$.getInstance().kLanguageName);
+    }
 
 	/**
 	 * @param filePath
