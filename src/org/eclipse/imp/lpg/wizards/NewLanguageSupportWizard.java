@@ -94,12 +94,32 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
     }
 
     protected Map<String,String> getStandardSubstitutions() {
-        Map<String,String> result= new HashMap<String,String>();
+        Map<String,String> result= getStandardSubstitutions(fProject);		// SMS 17 Jun 2008
         result.put("$LANG_NAME$", fLanguageName);
         result.put("$CLASS_NAME_PREFIX$", fClassNamePrefix);
         result.put("$PACKAGE_NAME$", fPackageName);
         return result;
     }
+    
+    
+    // SMS 17 Jun 2008:  Added to make plug-in related parameters
+    // available for use in instantiating parse controllers (which
+    // will now refer to the plug-in class to get the language id).
+    // Adapted (slightly) from GeneratedComponentWizardPage--may be
+    // time to refactor to a common ancestor.
+    public Map<String,String> getStandardSubstitutions(IProject project) {
+        Map<String,String> result= new HashMap<String,String>();
+    	result.remove("$PLUGIN_PACKAGE$");
+        result.put("$PLUGIN_PACKAGE$", getPluginPackageName(project, null));
+        // SMS 27 Mar 2007
+    	result.remove("$PLUGIN_CLASS$");
+        result.put("$PLUGIN_CLASS$", getPluginClassName(project, null));
+        result.remove("$PLUGIN_ID$");
+        result.put("$PLUGIN_ID$", getPluginID(project, null));
+        return result;
+    }
+    
+    
     
     protected String fFileNamePrefix = null;
     
