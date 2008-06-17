@@ -22,7 +22,7 @@ import org.eclipse.imp.parser.ISourcePositionLocator;
 import org.eclipse.imp.parser.MessageHandlerAdapter;
 import org.eclipse.imp.parser.SimpleLPGParseController;
 import org.eclipse.imp.services.ILanguageSyntaxProperties;
-
+import $PLUGIN_PACKAGE$.$PLUGIN_CLASS$;
 
 /**
  * NOTE:  This version of the Parse Controller is for use when the Parse
@@ -51,6 +51,10 @@ public class $CLASS_NAME_PREFIX$ParseController
 	implements IParseController
 {
     
+    public $CLASS_NAME_PREFIX$ParseController() {
+    	super($PLUGIN_CLASS$.getInstance().kLanguageName);
+    }
+
     public class ASTNodeToken extends $AST_NODE$ implements IASTNodeToken {
         public ASTNodeToken(IToken token) { super(token); }
     }
@@ -137,9 +141,6 @@ public class $CLASS_NAME_PREFIX$ParseController
             return null;
     }
 
-    public $CLASS_NAME_PREFIX$ParseController()
-    {
-    }
 
     private void createLexerAndParser(IPath filePath) {
         try {
