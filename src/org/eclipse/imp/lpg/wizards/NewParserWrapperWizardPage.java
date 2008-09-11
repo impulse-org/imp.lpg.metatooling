@@ -14,7 +14,7 @@ package org.eclipse.imp.lpg.wizards;
 
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.wizards.GeneratedComponentAttribute;
-import org.eclipse.imp.wizards.GeneratedComponentWizard;
+import org.eclipse.imp.wizards.IMPWizard;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
@@ -31,7 +31,7 @@ public class NewParserWrapperWizardPage extends NewLanguageSupportWizardPage
     	"This wizard creates new IMP parser wrapper and AST node locator.";
  
 
-    public NewParserWrapperWizardPage(GeneratedComponentWizard wizard, GeneratedComponentAttribute[] wizardAttributes) {
+    public NewParserWrapperWizardPage(IMPWizard wizard, GeneratedComponentAttribute[] wizardAttributes) {
 //		super(wizard, RuntimePlugin.IMP_RUNTIME, "parserWrapper");
 //		setTitle("");
 //		setDescription("This wizard creates new parser wrapper and AST node locator.");

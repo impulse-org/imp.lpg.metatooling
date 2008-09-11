@@ -18,7 +18,7 @@ import org.eclipse.imp.ui.dialogs.filters.ViewerFilterForJavaProjects;
 import org.eclipse.imp.ui.dialogs.validators.SelectionValidatorForJavaProjects;
 import org.eclipse.imp.utils.ValidationUtils;
 import org.eclipse.imp.wizards.GeneratedComponentAttribute;
-import org.eclipse.imp.wizards.GeneratedComponentWizard;
+import org.eclipse.imp.wizards.IMPWizard;
 import org.eclipse.imp.wizards.WizardPageField;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.events.ModifyEvent;
@@ -38,7 +38,7 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
     protected static final String thisWizardDescription =
     	"This wizard creates new LPG grammar and grammar-include files with '.g' and '.gi' extensions.";
 
-    public NewLPGGrammarWizardPage(GeneratedComponentWizard wizard, GeneratedComponentAttribute[] wizardAttributes) {
+    public NewLPGGrammarWizardPage(IMPWizard wizard, GeneratedComponentAttribute[] wizardAttributes) {
 		//super(wizard, RuntimePlugin.IMP_RUNTIME, "lpgGrammar");
 		//setTitle("LPG Grammar");
 		//setDescription("This wizard creates new LPG grammar and grammar-include files with '.g' and '.gi' extensions.");

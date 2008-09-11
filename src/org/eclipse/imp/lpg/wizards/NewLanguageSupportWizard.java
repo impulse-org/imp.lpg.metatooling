@@ -98,7 +98,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
     
     protected void setFileNamePrefix() {
     	String projectLocation = fProject.getLocation().toString();
-    	fFileNamePrefix = projectLocation + '/' +   WizardUtilities.getProjectSourceLocation(fProject) + fPackageName.replace('.', '/') + '/';
+    	fFileNamePrefix = projectLocation + '/' +   getProjectSourceLocation(fProject) + fPackageName.replace('.', '/') + '/';
     }
     
     protected String getFileNamePrefix() {
