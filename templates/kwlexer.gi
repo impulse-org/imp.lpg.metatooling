@@ -1,5 +1,5 @@
 --
--- The Java KeyWord Lexer
+-- The $LANG_NAME$ Keyword Lexer
 --
 %options package=$PACKAGE_NAME$
 %options template=$TEMPLATE$.gi
@@ -9,7 +9,6 @@
 %End
 
 %Export
-
     -- List all the keywords the kwlexer will export to the lexer and parser
     boolean
     double
@@ -29,13 +28,11 @@
 %End
 
 %Start
+    -- The Goal for the parser is a single Keyword
     Keyword
 %End
 
 %Rules
-
-    -- The Goal for the parser is a single Keyword
-
     Keyword ::= b o o l e a n  /.$setResult($_boolean);./
               | d o u b l e    /.$setResult($_double);./
               | e l s e        /.$setResult($_else);./
