@@ -16,10 +16,7 @@ import $PLUGIN_PACKAGE$.$PLUGIN_CLASS$;
 import $AST_PKG_NODE$;
 
 /**
- * @author Stan Sutton (suttons@us.ibm.com) (for the following modifications)
- * @since May 1,  2007	Addition of marker types
- * @since May 10, 2007	Conversion IProject -> ISourceProject
- * @since May 31, 2007  Adapted to extend SimpleLPGParseController
+ * The $LANG_NAME$ implementation of the IParseController IMP interface.
  */
 public class $CLASS_NAME_PREFIX$ParseController
     extends SimpleLPGParseController
