@@ -220,7 +220,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
             }
 
             IPreferencesService ps= new PreferencesService(fProject);
-            ps.setLanguageName(LPGRuntimePlugin.getLanguageID());
+            ps.setLanguageName(LPGRuntimePlugin.getInstance().getLanguageID());
             ps.setStringPreference(IPreferencesService.PROJECT_LEVEL, lpgIncDirKey, lpgTemplatesDir);
             ps.setBooleanPreference(IPreferencesService.PROJECT_LEVEL, LPGPreferencesDialogConstants.P_USEDEFAULTINCLUDEPATH, false);
         } catch (IOException e) {
