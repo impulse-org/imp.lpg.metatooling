@@ -25,6 +25,8 @@ import org.osgi.framework.BundleContext;
 public class LPGPlugin extends PluginBase {
     public static final String kPluginID= "org.eclipse.imp.lpg.metatooling";
 
+    private static final String kLanguageID= "lpgMeta"; // Only used as a preference path prefix
+
     /**
      * The unique instance of this plugin class
      */
@@ -37,6 +39,15 @@ public class LPGPlugin extends PluginBase {
     public LPGPlugin() {
         super();
         sPlugin= this;
+    }
+
+    public String getID() {
+        return kPluginID;
+    }
+
+    @Override
+    public String getLanguageID() {
+        return kLanguageID;
     }
 
     public void start(BundleContext context) throws Exception {
@@ -54,9 +65,5 @@ public class LPGPlugin extends PluginBase {
             return ImageDescriptor.createFromURL(url);
         }
         return null;
-    }
-
-    public String getID() {
-        return kPluginID;
     }
 }
