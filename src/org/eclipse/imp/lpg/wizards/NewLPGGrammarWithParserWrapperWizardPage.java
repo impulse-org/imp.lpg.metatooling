@@ -14,7 +14,7 @@ package org.eclipse.imp.lpg.wizards;
 
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.wizards.GeneratedComponentAttribute;
-import org.eclipse.imp.wizards.IMPWizard;
+import org.eclipse.imp.wizards.GeneratedComponentWizard;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
@@ -35,7 +35,7 @@ public class NewLPGGrammarWithParserWrapperWizardPage extends NewLanguageSupport
     
 	
 	
-	public NewLPGGrammarWithParserWrapperWizardPage(IMPWizard wizard, GeneratedComponentAttribute[] wizardAttributes) {
+	public NewLPGGrammarWithParserWrapperWizardPage(GeneratedComponentWizard wizard, GeneratedComponentAttribute[] wizardAttributes) {
 		super(wizard, /*RuntimePlugin.IMP_RUNTIME,*/ "lpgGrammarWithParserWrapper", true,
 				wizardAttributes, thisWizardName, thisWizardDescription);
 //		setTitle("LPG Grammar with ParserWrapper");

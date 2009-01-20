@@ -16,8 +16,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.wizards.ExtensionPointEnabler;
 import org.eclipse.imp.wizards.GeneratedComponentAttribute;
+import org.eclipse.imp.wizards.GeneratedComponentWizard;
 import org.eclipse.imp.wizards.GeneratedComponentWizardPage;
-import org.eclipse.imp.wizards.IMPWizard;
 import org.eclipse.imp.wizards.WizardPageField;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -31,7 +31,7 @@ public class NewLanguageSupportWizardPage extends GeneratedComponentWizardPage /
 	
   
    public NewLanguageSupportWizardPage(
-	    	IMPWizard owner, /*String pluginID,*/ String componentID, boolean omitIDName,
+	    	GeneratedComponentWizard owner, /*String pluginID,*/ String componentID, boolean omitIDName,
 	    	GeneratedComponentAttribute[] attributes, String wizardName, String wizardDescription)
     {
         super(owner, /*pluginID,*/ componentID, omitIDName, attributes, wizardName, wizardDescription);
