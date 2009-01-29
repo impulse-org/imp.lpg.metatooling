@@ -15,7 +15,6 @@ package org.eclipse.imp.lpg.wizards;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +36,6 @@ import org.eclipse.imp.preferences.IPreferencesService;
 import org.eclipse.imp.preferences.PreferencesService;
 import org.eclipse.imp.runtime.RuntimePlugin;
 import org.eclipse.imp.wizards.GeneratedComponentWizard;
-import org.eclipse.imp.wizards.WizardUtilities;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
@@ -45,6 +43,8 @@ import org.osgi.framework.Bundle;
 
 public class NewLanguageSupportWizard extends GeneratedComponentWizard //ExtensionPointWizard
 {
+    private static final String LPG_GENERATOR_BUNDLE_ID= "lpg.generator";
+
     protected GrammarOptions fGrammarOptions;
     
     protected String fGrammarFileName;
@@ -71,7 +71,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
 		dependencies.add("org.eclipse.jface.text");
     }
 
-    protected List getPluginDependencies() {
+    protected List<String> getPluginDependencies() {
     	return dependencies;
     }
 
@@ -210,8 +210,8 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
 
     protected void setIncludeDirPreference() {
         String lpgIncDirKey= LPGPreferencesDialogConstants.P_INCLUDEPATHTOUSE;
-        Bundle lpgMetaToolingBundle= Platform.getBundle(LPGPlugin.kPluginID);
-        URL templateDirURL= FileLocator.find(lpgMetaToolingBundle, new Path("/templates"), null);
+        Bundle lpgGeneratorBundle= Platform.getBundle(LPG_GENERATOR_BUNDLE_ID);
+        URL templateDirURL= FileLocator.find(lpgGeneratorBundle, new Path("/templates"), null);
         try {
             String lpgTemplatesDir= FileLocator.toFileURL(templateDirURL).getPath();
             if (Platform.getOS().equals(Platform.OS_WIN32)) {
