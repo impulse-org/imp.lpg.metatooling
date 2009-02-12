@@ -2,10 +2,10 @@
 -- The $LANG_NAME$ Keyword Lexer
 --
 %options package=$PACKAGE_NAME$
-%options template=$TEMPLATE$.gi
+%options template=$TEMPLATE$F.gi
 
 %Include
-    KWLexerLowerCaseMap.gi
+    KWLexerLowerCaseMapF.gi
 %End
 
 %Export
