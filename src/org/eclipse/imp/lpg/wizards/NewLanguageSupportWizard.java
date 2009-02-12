@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.lpg.LPGPlugin;
 import org.eclipse.imp.lpg.LPGRuntimePlugin;
-import org.eclipse.imp.lpg.preferences.LPGPreferencesDialogConstants;
+import org.eclipse.imp.lpg.preferences.LPGConstants;
 import org.eclipse.imp.preferences.IPreferencesService;
 import org.eclipse.imp.preferences.PreferencesService;
 import org.eclipse.imp.runtime.RuntimePlugin;
@@ -209,7 +209,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
     }
 
     protected void setIncludeDirPreference() {
-        String lpgIncDirKey= LPGPreferencesDialogConstants.P_INCLUDEPATHTOUSE;
+        String lpgIncDirKey= LPGConstants.P_INCLUDEPATHTOUSE;
         Bundle lpgGeneratorBundle= Platform.getBundle(LPG_GENERATOR_BUNDLE_ID);
         URL templateDirURL= FileLocator.find(lpgGeneratorBundle, new Path("/templates"), null);
         try {
@@ -222,7 +222,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
             IPreferencesService ps= new PreferencesService(fProject);
             ps.setLanguageName(LPGRuntimePlugin.getInstance().getLanguageID());
             ps.setStringPreference(IPreferencesService.PROJECT_LEVEL, lpgIncDirKey, lpgTemplatesDir);
-            ps.setBooleanPreference(IPreferencesService.PROJECT_LEVEL, LPGPreferencesDialogConstants.P_USEDEFAULTINCLUDEPATH, false);
+            ps.setBooleanPreference(IPreferencesService.PROJECT_LEVEL, LPGConstants.P_USEDEFAULTINCLUDEPATH, false);
         } catch (IOException e) {
             LPGPlugin.getInstance().getLog().log(new Status(IStatus.ERROR, LPGPlugin.kPluginID, 0, "Unable to resolve 'templates' directory in LPG metatooling plugin", null));
         }
