@@ -124,7 +124,9 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
 		IFile grammarFile= createGrammar(fGrammarFileName, parserTemplateName, autoGenerateASTs, fProject, monitor);
 		editFile(monitor, grammarFile);
 
-		setIncludeDirPreference();
+        // RMF 3/4/2009 - This is no longer necessary, now that all the templates (even for IMP use)
+        // are in the lpg.generator plugin.
+//		setIncludeDirPreference();
 
 		WizardUtilities.enableBuilders(monitor, fProject, new String[] { LPGBuilder.BUILDER_ID });
     }
