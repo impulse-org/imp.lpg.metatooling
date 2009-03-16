@@ -225,11 +225,11 @@ $AUTO_GENERATE$
          * for declared symbols and resolved identifier in expressions.
          */
         private final class SymbolTableVisitor extends AbstractVisitor {
-            IPrsStream prs = getParseStream();
-            ILexStream lex = prs.getLexStream();
+            IPrsStream prs = getIPrsStream();
+            ILexStream lex = prs.getILexStream();
 
             public void unimplementedVisitor(String s) { /* Useful for debugging: System.out.println(s); */ }
-            
+
             public void emitError(IToken id, String message) {
                 lex.getMessageHandler().handleMessage(ParseErrorCodes.NO_MESSAGE_CODE,
                                                       lex.getLocation(id.getStartOffset(), id.getEndOffset()),
@@ -237,9 +237,8 @@ $AUTO_GENERATE$
                                                       prs.getFileName(),
                                                       new String [] { message });
             }
-            
-            
-            public void emitError(ASTNode node, String message) {
+
+            public void emitError(IAst node, String message) {
                 lex.getMessageHandler().handleMessage(
                     ParseErrorCodes.NO_MESSAGE_CODE,
                     lex.getLocation(
@@ -249,7 +248,7 @@ $AUTO_GENERATE$
                     new String [] { message });
             }
 
-           public void emitError(int startOffset, int endOffset, String message) {
+            public void emitError(int startOffset, int endOffset, String message) {
                 lex.getMessageHandler().handleMessage(
                     ParseErrorCodes.NO_MESSAGE_CODE,
                     lex.getLocation(startOffset, endOffset),
@@ -258,7 +257,6 @@ $AUTO_GENERATE$
                     new String [] { message });
             }
 
-            
             public boolean visit(block n) {
                 n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
                 return true;
@@ -283,7 +281,7 @@ $AUTO_GENERATE$
 
                 return true;
             }
-            
+
             public void endVisit(functionDeclaration n) { symbolTableStack.pop(); }
 
             public boolean visit(declaration n) {
