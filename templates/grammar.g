@@ -8,6 +8,7 @@ $AUTO_GENERATE$
 
 %Globals
     /.import org.eclipse.imp.parser.IParser;
+    import org.eclipse.imp.parser.SymbolTable;
     import java.util.Hashtable;
     import java.util.Stack;
     ./
@@ -88,9 +89,9 @@ $AUTO_GENERATE$
 
     functionDeclaration ::= functionHeader block
     /.
-        $action_type.SymbolTable symbolTable;
-        public void setSymbolTable($action_type.SymbolTable symbolTable) { this.symbolTable = symbolTable; }
-        public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
+        SymbolTable<IAst> symbolTable;
+        public void setSymbolTable(SymbolTable<IAst> symbolTable) { this.symbolTable = symbolTable; }
+        public SymbolTable<IAst> getSymbolTable() { return symbolTable; }
     ./
     
     functionHeader ::= Type identifier '(' parameters ')'
@@ -116,9 +117,9 @@ $AUTO_GENERATE$
 
     block ::= '{' stmtList '}'
     /.
-        $action_type.SymbolTable symbolTable;
-        public void setSymbolTable($action_type.SymbolTable symbolTable) { this.symbolTable = symbolTable; }
-        public $action_type.SymbolTable getSymbolTable() { return symbolTable; }
+        SymbolTable<IAst> symbolTable;
+        public void setSymbolTable(SymbolTable<IAst> symbolTable) { this.symbolTable = symbolTable; }
+        public SymbolTable<IAst> getSymbolTable() { return symbolTable; }
     ./
 
     declarationStmt ::= declaration ';'
@@ -177,21 +178,9 @@ $AUTO_GENERATE$
 
 %Headers
     /.
-        public class SymbolTable extends Hashtable {
-            SymbolTable parent;
-            SymbolTable(SymbolTable parent) { this.parent = parent; }
-            public IAst findDeclaration(String name) {
-                IAst decl = (IAst) get(name);
-                return (decl != null
-                              ? decl
-                              : parent != null ? parent.findDeclaration(name) : null);
-            }
-            public SymbolTable getParent() { return parent; }
-        }
-        
-        Stack symbolTableStack = null;
-        SymbolTable topLevelSymbolTable = null;
-        public SymbolTable getTopLevelSymbolTable() { return topLevelSymbolTable; }
+        Stack<SymbolTable<IAst>> symbolTableStack = null;
+        SymbolTable<IAst> topLevelSymbolTable = null;
+        public SymbolTable<IAst> getTopLevelSymbolTable() { return topLevelSymbolTable; }
 
         //
         // TODO: In the future, the user will be able to identify scope structures
@@ -202,7 +191,7 @@ $AUTO_GENERATE$
         // that is defined in IScope. Thus, the implementation of this funftion will
         // be simpler as it would only need to search for an instance of IScope.
         //
-        public SymbolTable getEnclosingSymbolTable(IAst n) {
+        public SymbolTable<IAst> getEnclosingSymbolTable(IAst n) {
             for ( ; n != null; n = n.getParent())
                 if (n instanceof block)
                      return ((block) n).getSymbolTable();
@@ -214,7 +203,7 @@ $AUTO_GENERATE$
         public void resolve($ast_type root) {
             if (root != null) {
                 symbolTableStack = new Stack();
-                topLevelSymbolTable = new SymbolTable(null);
+                topLevelSymbolTable = new SymbolTable<IAst>(null);
                 symbolTableStack.push(topLevelSymbolTable);
                 root.accept(new SymbolTableVisitor());
             }
@@ -258,7 +247,7 @@ $AUTO_GENERATE$
             }
 
             public boolean visit(block n) {
-                n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
+                n.setSymbolTable(symbolTableStack.push(new SymbolTable<IAst>(symbolTableStack.peek())));
                 return true;
             }
 
@@ -267,7 +256,7 @@ $AUTO_GENERATE$
             public boolean visit(functionDeclaration n) {
                 functionHeader fh = n.getfunctionHeader();
                 IToken id = fh.getidentifier().getIToken();
-                SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
+                SymbolTable<IAst> symbol_table = symbolTableStack.peek();
                 if (symbol_table.get(id.toString()) == null)
                	     // SMS 11 Jun 2007; pursuant to fixing bug #190
                      //symbol_table.put(id.toString(), fh);
@@ -277,7 +266,7 @@ $AUTO_GENERATE$
                 //
                 // Add a symbol table for the parameters
                 //
-                n.setSymbolTable((SymbolTable) symbolTableStack.push(new SymbolTable((SymbolTable) symbolTableStack.peek())));
+                n.setSymbolTable(symbolTableStack.push(new SymbolTable<IAst>(symbolTableStack.peek())));
 
                 return true;
             }
@@ -286,7 +275,7 @@ $AUTO_GENERATE$
 
             public boolean visit(declaration n) {
                 IToken id = n.getidentifier().getIToken();
-                SymbolTable symbol_table = (SymbolTable) symbolTableStack.peek();
+                SymbolTable<IAst> symbol_table = symbolTableStack.peek();
                 if (symbol_table.get(id.toString()) == null)
                      symbol_table.put(id.toString(), n);
                 else emitError(id, "Illegal redeclaration of " + id.toString());
@@ -295,7 +284,7 @@ $AUTO_GENERATE$
 
             public boolean visit(identifier n) {
                 IToken id = n.getIDENTIFIER();
-                IAst decl = ((SymbolTable) symbolTableStack.peek()).findDeclaration(id.toString());
+                IAst decl = symbolTableStack.peek().findDeclaration(id.toString());
                 if (decl == null)
                      emitError(id, "Undeclared variable " + id.toString());
                 else n.setDeclaration(decl);
