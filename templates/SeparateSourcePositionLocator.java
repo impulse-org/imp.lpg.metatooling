@@ -9,8 +9,8 @@ import $PACKAGE_NAME$.$CLASS_NAME_PREFIX$ParseController.AbstractVisitor;
 import org.eclipse.imp.parser.ISourcePositionLocator;
 
 /**
- * NOTE:  This version of the Node Locator is for use when the Node
- * Locator and corresponding Parse Controller are generated separately from
+ * NOTE:  This version of the ISourcePositionLocator is for use when the Source
+ * Position Locator and corresponding Parse Controller are generated separately from
  * a corresponding set of LPG grammar templates and possibly in the absence
  * of the lexer, parser, and AST-related types that would be generated from
  * those templates.  To enable compilation of the Locator and Controller,
@@ -19,23 +19,20 @@ import org.eclipse.imp.parser.ISourcePositionLocator;
  * of the Node Locator refers to some of those types.  When those types
  * are replaced by real implementation types, the Locator must be modified
  * to refer to those.  Apart from statements to import needed types from
- * the Parse Controller, this Node Locator is the same as that used with
- * LPG.
+ * the Parse Controller, this SourcePositionLocator is the same as that used
+ * with LPG.
  * @see the corresponding ParseController type
  * 
  * @author Stan Sutton (suttons@us.ibm.com)
  * @since May 15, 2007
- * 
- */  
-public class $CLASS_NAME_PREFIX$ASTNodeLocator implements ISourcePositionLocator
-{
+ */
+public class $CLASS_NAME_PREFIX$SourcePositionLocator implements ISourcePositionLocator {
     private final Object[] fNode= new Object[1];
 
     private int fStartOffset;
     private int fEndOffset;
     
-    public $CLASS_NAME_PREFIX$ASTNodeLocator( ) {
-    }
+    public $CLASS_NAME_PREFIX$SourcePositionLocator( ) { }
 
     private final class NodeVisitor extends AbstractVisitor {
 
@@ -43,8 +40,7 @@ public class $CLASS_NAME_PREFIX$ASTNodeLocator implements ISourcePositionLocator
             // System.out.println("NodeVisitor.unimplementedVisitor:  Unimplemented");
         }
 
-        public boolean preVisit(ASTNode element)
-        {
+        public boolean preVisit(ASTNode element) {
             int nodeStartOffset = element.getLeftIToken().getStartOffset();
             int nodeEndOffset = element.getRightIToken().getEndOffset();
             //System.out.println("$CLASS_NAME_PREFIX$NodeLocator.NodeVisitor.preVisit($AST_NODE$):  Examining " + element.getClass().getName() +
@@ -97,7 +93,6 @@ public class $CLASS_NAME_PREFIX$ASTNodeLocator implements ISourcePositionLocator
         ASTNode n = (ASTNode) node;
         return getEndOffset(n) - getStartOffset(n);
     }
-
 
     public IPath getPath(Object node) {
         // TODO Determine path of compilation unit containing this node

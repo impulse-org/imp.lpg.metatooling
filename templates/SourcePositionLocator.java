@@ -9,16 +9,15 @@ import org.eclipse.imp.parser.ISourcePositionLocator;
 
 import lpg.runtime.*;
 
-public class $CLASS_NAME_PREFIX$ASTNodeLocator implements ISourcePositionLocator
-{
+public class $CLASS_NAME_PREFIX$SourcePositionLocator implements ISourcePositionLocator {
     private final Object[] fNode= new Object[1];
 
     private int fStartOffset;
     private int fEndOffset;
 
-    public $CLASS_NAME_PREFIX$ASTNodeLocator( ) {
-    }
-	private final class NodeVisitor extends AbstractVisitor {
+    public $CLASS_NAME_PREFIX$SourcePositionLocator( ) { }
+
+    private final class NodeVisitor extends AbstractVisitor {
 		public void unimplementedVisitor(String s) {
 			// System.out.println("NodeVisitor.unimplementedVisitor:  Unimplemented");
 		}
@@ -63,25 +62,25 @@ public class $CLASS_NAME_PREFIX$ASTNodeLocator implements ISourcePositionLocator
 	}
 
 	public int getStartOffset(Object entity) {
-                if (entity instanceof IAst) {
-                    IAst n= (IAst) entity;
-                    return n.getLeftIToken().getStartOffset();
-                } else if (entity instanceof IToken) {
-                    IToken t= (IToken) entity;
-                    return t.getStartOffset();
-                }
-                return 0;
+	    if (entity instanceof IAst) {
+	        IAst n= (IAst) entity;
+	        return n.getLeftIToken().getStartOffset();
+	    } else if (entity instanceof IToken) {
+	        IToken t= (IToken) entity;
+	        return t.getStartOffset();
+	    }
+	    return 0;
 	}
 
 	public int getEndOffset(Object entity) {
-                if (entity instanceof IAst) {
-                    IAst n= (IAst) entity;
-                    return n.getRightIToken().getEndOffset();
-                } else if (entity instanceof IToken) {
-                    IToken t= (IToken) entity;
-                    return t.getEndOffset();
-                }
-                return 0;
+	    if (entity instanceof IAst) {
+	        IAst n= (IAst) entity;
+	        return n.getRightIToken().getEndOffset();
+	    } else if (entity instanceof IToken) {
+	        IToken t= (IToken) entity;
+	        return t.getEndOffset();
+	    }
+	    return 0;
 	}
 
 	public int getLength(Object entity) {

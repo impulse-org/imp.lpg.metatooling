@@ -126,7 +126,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
 		return createFileFromTemplate(fileName, LPGPlugin.kPluginID, templateName, fPackageFolder, subs, project, monitor);
     }
 
-    protected IFile createNodeLocator(
+    protected IFile createSourcePositionLocator(
 		String fileName, String templateName, IProject project, IProgressMonitor monitor) throws CoreException
     {
     	// Note:  Not all substitution parameters may be used in all templates

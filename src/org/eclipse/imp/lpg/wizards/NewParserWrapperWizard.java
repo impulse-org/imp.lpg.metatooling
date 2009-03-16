@@ -87,11 +87,10 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
 		boolean autoGenerateASTs= fGrammarOptions.getAutoGenerateASTs();
 
 	    String parseCtlrTemplateName= "SeparateParseController.java";
-		String locatorTemplateName = "SeparateASTNodeLocator.java";
+		String locatorTemplateName = "SeparateSourcePositionLocator.java";
 
 		IFile parseControllerFile = createParseController(fControllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
-		IFile nodeLocatorFile = createNodeLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
-
+		IFile locatorFile = createSourcePositionLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
 		
         ExtensionPointEnabler.enable(fProject, "org.eclipse.imp.runtime", "parser", new String[][] {
                 { "extension:id", fProject.getName() + ".parserWrapper" },
@@ -102,9 +101,9 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
         		false,
         		getPluginDependencies(),
         		new NullProgressMonitor());
-		
+
 		editFile(monitor, parseControllerFile);
-		editFile(monitor, nodeLocatorFile);
+		editFile(monitor, locatorFile);
     }
     
     
