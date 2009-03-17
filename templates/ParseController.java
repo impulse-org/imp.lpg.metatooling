@@ -27,7 +27,7 @@ public class $CLASS_NAME_PREFIX$ParseController
 	private $CLASS_NAME_PREFIX$Lexer lexer;
 
     public $CLASS_NAME_PREFIX$ParseController() {
-    	super($PLUGIN_CLASS$.kLanguageName);
+    	super($PLUGIN_CLASS$.kLanguageID);
     }
 
 	/**
@@ -54,7 +54,7 @@ public class $CLASS_NAME_PREFIX$ParseController
 	
 
 	public ISourcePositionLocator getNodeLocator() {
-		return new $CLASS_NAME_PREFIX$ASTNodeLocator();
+		return new $CLASS_NAME_PREFIX$SourcePositionLocator();
 	}
 
         public ILanguageSyntaxProperties getSyntaxProperties() {
