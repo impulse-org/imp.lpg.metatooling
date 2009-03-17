@@ -9,7 +9,6 @@ $AUTO_GENERATE$
 %Globals
     /.import org.eclipse.imp.parser.IParser;
     import org.eclipse.imp.parser.SymbolTable;
-    import java.util.Hashtable;
     import java.util.Stack;
     ./
 %End
@@ -202,7 +201,7 @@ $AUTO_GENERATE$
 
         public void resolve($ast_type root) {
             if (root != null) {
-                symbolTableStack = new Stack();
+                symbolTableStack = new Stack<SymbolTable<IAst>>();
                 topLevelSymbolTable = new SymbolTable<IAst>(null);
                 symbolTableStack.push(topLevelSymbolTable);
                 root.accept(new SymbolTableVisitor());
