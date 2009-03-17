@@ -84,8 +84,8 @@ public class NewLPGGrammarWithParserWrapperWizard extends NewLanguageSupportWiza
         fGrammarFileName= fClassNamePrefix + "Parser.g";
 	    fLexerFileName= fClassNamePrefix + "Lexer.gi";
 	    fKwlexerFileName= fClassNamePrefix + "KWLexer.gi";
-        fControllerFileName = fGrammarOptions.getDefaultSimpleNameForParseController(fLanguageName) + ".java";	//fClassNamePrefix + "ParseController.java";
-		fLocatorFileName = fGrammarOptions.getDefaultSimpleNameForNodeLocator(fLanguageName) + ".java";			// fClassNamePrefix + "ASTNodeLocator.java";
+        fControllerFileName = fGrammarOptions.getDefaultSimpleNameForParseController(fLanguageName) + ".java";
+		fLocatorFileName = fGrammarOptions.getDefaultSimpleNameForPositionLocator(fLanguageName) + ".java";
     }
 
     	

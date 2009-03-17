@@ -77,7 +77,7 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
         fClassNamePrefix = fGrammarOptions.getClassNamePrefix();
 
         fControllerFileName = fGrammarOptions.getDefaultSimpleNameForParseController(fLanguageName) + ".java";	//fClassNamePrefix + "ParseController.java";
-		fLocatorFileName = fGrammarOptions.getDefaultSimpleNameForNodeLocator(fLanguageName) + ".java";			// fClassNamePrefix + "ASTNodeLocator.java";
+		fLocatorFileName = fGrammarOptions.getDefaultSimpleNameForPositionLocator(fLanguageName) + ".java";			// fClassNamePrefix + "ASTNodeLocator.java";
     }
 
     	

@@ -154,9 +154,9 @@ public class GrammarOptions {
         return langClass + "ParseController";
     }
     
-    public String getDefaultSimpleNameForNodeLocator(String language) {
+    public String getDefaultSimpleNameForPositionLocator(String language) {
         String langClass= upperCaseFirst(language);
-        return langClass + "ASTNodeLocator";
+        return langClass + "SourcePositionLocator";
     }
     
 }
