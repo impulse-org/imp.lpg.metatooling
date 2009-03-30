@@ -3,7 +3,7 @@
 %options import_terminals=$CLASS_NAME_PREFIX$Lexer.gi
 $AUTO_GENERATE$
 --
--- This is just a sample grammar and not a real grammar for $LANG_NAME$
+-- This is just a sample grammar and not yet a real grammar for $LANG_NAME$
 --
 
 %Globals
@@ -13,8 +13,6 @@ $AUTO_GENERATE$
     ./
 %End
 
-
-
 %Define
     $ast_class /.Object./
     $additional_interfaces /., IParser./
@@ -22,51 +20,23 @@ $AUTO_GENERATE$
 
 %Terminals
     --            
-    -- Here, you may list terminals needed by this grammar.
-    -- Furthermore, a terminal may be mapped into an alias
-    -- that can also be used in a grammar rule. In addition,
-    -- when an alias is specified here it instructs the
-    -- generated parser to use the alias in question when
-    -- referring to the symbol to which it is aliased. For
-    -- example, consider the following definitions:
-    --
-         boolean
-         double
-         else
-         false
-         if
-         int
-         return
-         true
-         void
-         while
-         
-         IDENTIFIER 
-         NUMBER
-         DoubleLiteral
-         COMMA ::= ','
-         SEMICOLON ::= ';'
-         PLUS ::= '+'
-         MINUS ::= '-'
-         ASSIGN ::= '='
-         TIMES ::= '*'
-         DIVIDE ::= '/'
-         GREATER ::= '>'
-         LESS ::= '<'
-         EQUAL ::= '=='
-         NOTEQUAL ::= '!='
-         LEFTPAREN ::= '('
-         RIGHTPAREN ::= ')'
-         LEFTBRACE ::= '{'
-         RIGHTBRACE ::= '}'
-    --
-    -- Here the terminals int, float, IDENTIFIER and NUMBER are
-    -- defined without an alias; SEMICOLON is aliased to ';';
-    -- PLUS is aliased to '+'... etc...
-    --
-    -- Note that the terminals that do not have aliases are declared
-    -- above only for documentation purposes.
-    --
+    -- Here, list aliases for terminals whose names are themselves
+    -- not a valid identifier in the parser's implementation language.
+    COMMA ::= ','
+    SEMICOLON ::= ';'
+    PLUS ::= '+'
+    MINUS ::= '-'
+    ASSIGN ::= '='
+    TIMES ::= '*'
+    DIVIDE ::= '/'
+    GREATER ::= '>'
+    LESS ::= '<'
+    EQUAL ::= '=='
+    NOTEQUAL ::= '!='
+    LEFTPAREN ::= '('
+    RIGHTPAREN ::= ')'
+    LEFTBRACE ::= '{'
+    RIGHTBRACE ::= '}'
 %End
 
 %Start
@@ -93,13 +63,13 @@ $AUTO_GENERATE$
         public SymbolTable<IAst> getSymbolTable() { return symbolTable; }
     ./
     
-    functionHeader ::= Type identifier '(' parameters ')'
+    functionHeader ::= Type identifier '('$ parameters ')'$
     
     parameters$$declaration ::= %empty
                               | parameterList
 
     parameterList$$declaration ::= declaration
-                                 | parameterList ',' declaration
+                                 | parameterList ','$ declaration
                                                             
     declaration ::= primitiveType identifier
 
@@ -112,17 +82,17 @@ $AUTO_GENERATE$
                 | whileStmt
                 | block
                 | functionStmt
-                | ';'
+                | ';'$
 
-    block ::= '{' stmtList '}'
+    block ::= '{'$ stmtList '}'$
     /.
         SymbolTable<IAst> symbolTable;
         public void setSymbolTable(SymbolTable<IAst> symbolTable) { this.symbolTable = symbolTable; }
         public SymbolTable<IAst> getSymbolTable() { return symbolTable; }
     ./
 
-    declarationStmt ::= declaration ';'
-                      | declaration '=' expression ';'
+    declarationStmt ::= declaration ';'$
+                      | declaration '='$ expression ';'$
                        
     Type ::= primitiveType
            | void
@@ -131,23 +101,23 @@ $AUTO_GENERATE$
                     | double
                     | int
                               
-    assignmentStmt ::= identifier '=' expression ';'
+    assignmentStmt ::= identifier '='$ expression ';'$
                      | BadAssignment
-    ifStmt ::= if '(' expression ')' statement
-             | if '(' expression ')' statement else statement
+    ifStmt ::= if '('$ expression ')'$ statement
+             | if '('$ expression ')'$ statement else statement
 
-    whileStmt ::= while '(' expression ')' statement
+    whileStmt ::= while '('$ expression ')'$ statement
 
-    returnStmt ::= return expression ';'
+    returnStmt ::= return expression ';'$
 
-    expression ::= expression '+' term
-                 | expression '-' term
-                 | expression '*' term
-                 | expression '/' term
-                 | expression '>' term
-                 | expression '<' term
-                 | expression '==' term
-                 | expression '!=' term
+    expression ::= expression '+'$ term
+                 | expression '-'$ term
+                 | expression '*'$ term
+                 | expression '/'$ term
+                 | expression '>'$ term
+                 | expression '<'$ term
+                 | expression '=='$ term
+                 | expression '!='$ term
                  | term
     term ::= NUMBER
            | DoubleLiteral
@@ -156,14 +126,14 @@ $AUTO_GENERATE$
            | identifier
            | functionCall
            
-    functionCall ::= identifier '(' expressions ')'
+    functionCall ::= identifier '('$ expressions ')'$
 
-    functionStmt ::= functionCall ';'
+    functionStmt ::= functionCall ';'$
     
     expressions$$expression ::= %empty
                               | expressionList
     expressionList$$expression ::= expression
-                                 | expressionList ',' expression
+                                 | expressionList ','$ expression
 
     identifier ::= IDENTIFIER
     /.
@@ -172,7 +142,7 @@ $AUTO_GENERATE$
         public IAst getDeclaration() { return decl; }
     ./
 
-    BadAssignment ::= identifier '=' MissingExpression 
+    BadAssignment ::= identifier '='$ MissingExpression 
 %End
 
 %Headers
