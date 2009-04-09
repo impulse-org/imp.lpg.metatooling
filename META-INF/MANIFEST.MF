@@ -1,6 +1,6 @@
 Bundle-SymbolicName: org.eclipse.imp.lpg.metatooling;singleton:=true
 Bundle-Name: LPG IDE (Incubation)
-Bundle-Version: 0.1.83
+Bundle-Version: 0.1.84
 Bundle-Activator: org.eclipse.imp.lpg.LPGPlugin
 Eclipse-LazyStart: true
 Bundle-Vendor: rfuhrer@watson.ibm.com
@@ -24,7 +24,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.imp.runtime,
  org.eclipse.imp.metatooling,
  org.eclipse.imp.xform,
- org.eclipse.imp.lpg.runtime
+ org.eclipse.imp.lpg.ide
 Provide-Package: org.eclipse.imp.lpg,
  org.eclipse.imp.lpg.wizards
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
