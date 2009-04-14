@@ -59,7 +59,7 @@ public class $CLASS_NAME_PREFIX$ParseController
 //			parser.resolve((ASTNode) fCurrentAst);
 //		}
 		if (fCurrentAst instanceof ASTNode) {
-			(($CLASS_NAME_PREFIX$Parser) parser).resolve((ASTNode) fCurrentAst);
+			(($CLASS_NAME_PREFIX$Parser) fParser).resolve((ASTNode) fCurrentAst);
 		}
 		
 		cacheKeywordsOnce();
