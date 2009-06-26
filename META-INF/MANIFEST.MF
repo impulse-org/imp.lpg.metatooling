@@ -3,6 +3,7 @@ Bundle-Name: LPG IDE (Incubation)
 Bundle-Version: 0.1.86
 Bundle-Activator: org.eclipse.imp.lpg.LPGPlugin
 Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
 Bundle-Vendor: rfuhrer@watson.ibm.com
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
