@@ -14,7 +14,7 @@ package org.eclipse.imp.lpg.wizards;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.imp.core.ErrorHandler;
-import org.eclipse.imp.wizards.ExtensionPointEnabler;
+import org.eclipse.imp.wizards.ExtensionEnabler;
 import org.eclipse.imp.wizards.GeneratedComponentAttribute;
 import org.eclipse.imp.wizards.GeneratedComponentWizard;
 import org.eclipse.imp.wizards.GeneratedComponentWizardPage;
@@ -150,13 +150,13 @@ public class NewLanguageSupportWizardPage extends GeneratedComponentWizardPage /
             else
             	project = getProjectBasedOnNameField();
         	
-        	IPluginModel pluginModel= ExtensionPointEnabler.getPluginModel(project);
+        	IPluginModel pluginModel= ExtensionEnabler.getPluginModel(project);
     	    if (pluginModel != null) {
     	    	// SMS  26 Jul 2007:  Load the extensions model in detail from the
     	    	// plugin.xml file using our customized method; loading the model
     	    	// in detail is necessary to make the children of an extension available
     	    	// (as needed below)
-    	    	ExtensionPointEnabler.loadImpExtensionsModel(pluginModel, project);
+    	    	ExtensionEnabler.loadImpExtensionsModel(pluginModel, project);
     	    	
 	    		IPluginExtension[] extensions= pluginModel.getExtensions().getExtensions();
 	    		for(int n= 0; n < extensions.length; n++) {

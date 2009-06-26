@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.imp.lpg.builder.LPGBuilder;
-import org.eclipse.imp.wizards.ExtensionPointEnabler;
+import org.eclipse.imp.wizards.ExtensionEnabler;
 import org.eclipse.imp.wizards.GeneratedComponentWizardPage;
 import org.eclipse.imp.wizards.WizardUtilities;
 import org.eclipse.pde.core.plugin.IPluginModel;
@@ -124,8 +124,8 @@ public class NewLPGGrammarForIMPWizard extends NewLanguageSupportWizard	//Extens
 	    // (previously we've relied on the enabling of extensions to do this)
 	    //
 	    // fProject should be set by this point
-	    IPluginModel pluginModel = ExtensionPointEnabler.getPluginModelForProject(fProject);
-	    ExtensionPointEnabler.addRequiredPluginImports(pluginModel, fProject, getPluginDependencies());
+	    IPluginModel pluginModel = ExtensionEnabler.getPluginModelForProject(fProject);
+	    ExtensionEnabler.addRequiredPluginImports(pluginModel, fProject, getPluginDependencies());
 	    
 		IFile lexerFile = createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
 		editFile(monitor, lexerFile);

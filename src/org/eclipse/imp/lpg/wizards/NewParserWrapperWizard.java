@@ -22,7 +22,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.imp.wizards.ExtensionPointEnabler;
+import org.eclipse.imp.wizards.ExtensionEnabler;
 import org.eclipse.imp.wizards.GeneratedComponentWizardPage;
 import org.eclipse.ui.INewWizard;
 
@@ -92,7 +92,7 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
 		IFile parseControllerFile = createParseController(fControllerFileName, parseCtlrTemplateName, hasKeywords, fProject, monitor);
 		IFile locatorFile = createSourcePositionLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
 		
-        ExtensionPointEnabler.enable(fProject, "org.eclipse.imp.runtime", "parser", new String[][] {
+        ExtensionEnabler.enable(fProject, "org.eclipse.imp.runtime", "parser", new String[][] {
                 { "extension:id", fProject.getName() + ".parserWrapper" },
                 { "extension:name", fLanguageName + " Parser Wrapper" },
                 { "parserWrapper:class", fPackageName + "." + fClassNamePrefix + "ParseController" },
