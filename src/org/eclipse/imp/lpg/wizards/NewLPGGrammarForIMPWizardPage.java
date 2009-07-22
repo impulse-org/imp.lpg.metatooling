@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.imp.core.ErrorHandler;
 import org.eclipse.imp.ui.dialogs.filters.ViewerFilterForJavaProjects;
 import org.eclipse.imp.ui.dialogs.validators.SelectionValidatorForJavaProjects;
-import org.eclipse.imp.utils.ValidationUtils;
+import org.eclipse.imp.ui.dialogs.validators.ValidationUtils;
 import org.eclipse.imp.wizards.GeneratedComponentAttribute;
 import org.eclipse.imp.wizards.GeneratedComponentWizard;
 import org.eclipse.imp.wizards.WizardPageField;
