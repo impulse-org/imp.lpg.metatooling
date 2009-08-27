@@ -28,8 +28,7 @@ import org.eclipse.ui.dialogs.ISelectionValidator;
  * file name. The page will only accept file name without the extension OR with the
  * extension that matches the expected one (g).
  */
-public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
-{
+public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage {
     protected static final String thisWizardName = "New LPG Grammar Wizard";
     protected static final String thisWizardDescription =
     	"This wizard creates new LPG grammar and grammar-include files with '.g' and '.gi' extensions.";
@@ -41,35 +40,18 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
 		super(wizard, /*RuntimePlugin.IMP_RUNTIME,*/ "lpgGrammar", true,
 				wizardAttributes, thisWizardName, thisWizardDescription);
     }
-	
+
     protected void createAdditionalControls(Composite parent) {
     	createTextField(parent, "LPGGrammar", NewLPGGrammarForIMPWizard.PACKAGE_FIELD_NAME,
         		"The package in which the grammar templates are to be instantiated", 
-        		"", "PackageBrowse", true);    
+        		"", "PackageBrowse", false);
     	GrammarAndParserPageHelper helper= new GrammarAndParserPageHelper(parent, null, fGrammarOptions, getShell());
 		helper.createImplLanguageField();
 		helper.createOptionsFields();
     }	
 
-
-    public void createControl(Composite parent) {
-    	
-		super.createControl(parent);
-	    
-		// SMS 11 Feb 2008
-		// Don't worry about setting the language, based on the
-		// project or otherwise, since in this case the name of
-		// the language is totally open.
-		
-		// SMS 11 Feb 2008
-		// Also, don't worry about listening for changes to the project,
-		// since the project is not presumed to define a language
-    }
-    
-    
 	// SMS 28 Nov 2007
-    protected void adjustLanguageByProject(IProject project, WizardPageField languageField)
-    {
+    protected void adjustLanguageByProject(IProject project, WizardPageField languageField) {
     	if (project != null) {
     		if (ValidationUtils.isIDEProject(project)) {
     			setLanguageIfEmpty();
@@ -81,7 +63,6 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
     	}	
     }
 
-    
     protected ViewerFilter getViewerFilterForProjects() {
     	return new ViewerFilterForJavaProjects();
     }
@@ -89,10 +70,7 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
 	protected ISelectionValidator getSelectionValidatorForProjects() {
 		return new SelectionValidatorForJavaProjects();
 	}
-    
-	
-	
-	
+
 	/*
 	 * Overrides the corresponding method in IMPWizardPage.
 	 * 
@@ -117,6 +95,4 @@ public class NewLPGGrammarWizardPage extends NewLanguageSupportWizardPage
         
         fFields.add(languageField);    
     }
-	
-	
 }
