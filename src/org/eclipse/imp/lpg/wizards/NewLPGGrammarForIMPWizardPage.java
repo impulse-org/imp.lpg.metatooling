@@ -48,7 +48,7 @@ public class NewLPGGrammarForIMPWizardPage extends NewLanguageSupportWizardPage
     protected void createAdditionalControls(Composite parent) {
     	createTextField(parent, "LPGGrammar", NewLPGGrammarForIMPWizard.PACKAGE_FIELD_NAME,
         		"The package in which the grammar templates are to be instantiated", 
-        		"", "PackageBrowse", true);    
+        		"", "PackageBrowse", false);    
     	GrammarAndParserPageHelper helper= new GrammarAndParserPageHelper(parent, null, fGrammarOptions, getShell());
 		helper.createImplLanguageField();
 		helper.createOptionsFields();
