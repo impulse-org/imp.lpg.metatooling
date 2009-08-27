@@ -124,7 +124,12 @@ public class NewLPGGrammarWizard extends NewLanguageSupportWizard	//ExtensionPoi
 	    //
 	    // fProject should be set by this point
 	    IPluginModel pluginModel = ExtensionEnabler.getPluginModelForProject(fProject);
-	    ExtensionEnabler.addRequiredPluginImports(pluginModel, fProject, getPluginDependencies());
+
+	    if (pluginModel != null) {
+	    	ExtensionEnabler.addRequiredPluginImports(pluginModel, fProject, getPluginDependencies());
+	    } else {
+	    	// RMF 8/27/2009 - Need to manipulate the project's build path to add the LPG runtime jar...
+	    }
 	    
 		IFile lexerFile = createLexer(fLexerFileName, lexerTemplateName, hasKeywords, fProject, monitor);
 		editFile(monitor, lexerFile);
