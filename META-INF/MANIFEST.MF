@@ -1,31 +1,31 @@
 Bundle-SymbolicName: org.eclipse.imp.lpg.metatooling;singleton:=true
 Bundle-Name: LPG IDE (Incubation)
-Bundle-Version: 0.1.87.qualifier
+Bundle-Version: 0.1.88.qualifier
 Bundle-Activator: org.eclipse.imp.lpg.LPGPlugin
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: rfuhrer@watson.ibm.com
-Require-Bundle: org.eclipse.core.resources,
+Require-Bundle: lpg.runtime.java;bundle-version="2.0.17",
+ org.eclipse.compare,
+ org.eclipse.core.resources,
  org.eclipse.core.runtime,
+ org.eclipse.imp.lpg.ide;bundle-version="0.1.89",
+ org.eclipse.imp.metatooling,
+ org.eclipse.imp.runtime;bundle-version="0.1.104",
+ org.eclipse.imp.smapifier,
+ org.eclipse.imp.xform,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
  org.eclipse.jface.text,
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.ltk.ui.refactoring,
  org.eclipse.pde.core,
+ org.eclipse.search,
  org.eclipse.ui,
  org.eclipse.ui.editors,
  org.eclipse.ui.ide,
  org.eclipse.ui.views,
- org.eclipse.ui.workbench.texteditor,
- lpg.runtime.java,
- org.eclipse.jdt.core,
- org.eclipse.jdt.ui,
- org.eclipse.compare,
- org.eclipse.search,
- org.eclipse.ltk.core.refactoring,
- org.eclipse.ltk.ui.refactoring,
- org.eclipse.imp.smapifier,
- org.eclipse.imp.runtime,
- org.eclipse.imp.metatooling,
- org.eclipse.imp.xform,
- org.eclipse.imp.lpg.ide
+ org.eclipse.ui.workbench.texteditor
 Provide-Package: org.eclipse.imp.lpg,
  org.eclipse.imp.lpg.wizards
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
