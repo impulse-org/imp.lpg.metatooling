@@ -67,7 +67,7 @@ public class NewLanguageSupportWizard extends GeneratedComponentWizard //Extensi
 		dependencies.add("org.eclipse.core.runtime");
 		dependencies.add("org.eclipse.core.resources");
 		dependencies.add("org.eclipse.imp.runtime");
-		dependencies.add("lpg.runtime");
+		dependencies.add("lpg.runtime.java");
 		dependencies.add("org.eclipse.jface.text");
     }
 
