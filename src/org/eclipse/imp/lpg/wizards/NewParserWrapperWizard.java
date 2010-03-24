@@ -93,10 +93,10 @@ public class NewParserWrapperWizard extends NewLanguageSupportWizard	//Extension
 		IFile locatorFile = createSourcePositionLocator(fLocatorFileName, locatorTemplateName, fProject, monitor);
 		
         ExtensionEnabler.enable(fProject, "org.eclipse.imp.runtime", "parser", new String[][] {
-                { "extension:id", fProject.getName() + ".parserWrapper" },
-                { "extension:name", fLanguageName + " Parser Wrapper" },
-                { "parserWrapper:class", fPackageName + "." + fClassNamePrefix + "ParseController" },
-                { "parserWrapper:language", fLanguageName }
+                { "extension:id", fProject.getName() + ".parser" },
+                { "extension:name", fLanguageName + " Parser" },
+                { "parser:class", fPackageName + "." + fClassNamePrefix + "ParseController" },
+                { "parser:language", fLanguageName }
         		}, 	
         		false,
         		getPluginDependencies(),
